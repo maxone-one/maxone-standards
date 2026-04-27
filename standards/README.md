@@ -28,6 +28,8 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 
 **Verantwortung & Sicherheit:**
 - [013-launch-gate-review.md](013-launch-gate-review.md) — Launch-Gate: Security & Compliance Review mit Sign-Off vor `live`
+- [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
+- [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
 
 ## Format einer Regel
 

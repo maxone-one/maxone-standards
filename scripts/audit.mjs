@@ -183,6 +183,38 @@ const localChecks = {
     if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
     return FAIL('Widget nicht eingebunden');
   },
+  '022-secret-scan': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt');
+    try {
+      execFileSync('gitleaks',
+        ['detect', '--source', project.path_local, '--no-banner', '--redact', '--no-git'],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 60000, maxBuffer: 10 * 1024 * 1024 }
+      );
+      return PASS('keine Findings');
+    } catch (err) {
+      if (err.code === 'ENOENT') return SKIP('gitleaks nicht installiert (make install-tools)');
+      if (err.signal === 'SIGTERM') return WARN('gitleaks Timeout (>60s)');
+      if (err.status === 1) return FAIL('Findings — `gitleaks detect --source <pfad> --no-git` lokal ausführen');
+      return WARN(`gitleaks Fehler: ${(err.message || '').slice(0, 80)}`);
+    }
+  },
+  '023-static-analysis': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt');
+    try {
+      execFileSync('semgrep',
+        ['--config=p/owasp-top-ten', '--severity=ERROR', '--error', '--quiet', project.path_local],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 120000, maxBuffer: 10 * 1024 * 1024 }
+      );
+      return PASS('keine ERROR-Findings');
+    } catch (err) {
+      if (err.code === 'ENOENT') return SKIP('semgrep nicht installiert (make install-tools)');
+      if (err.signal === 'SIGTERM') return WARN('semgrep Timeout (>120s)');
+      if (err.status === 1) return FAIL('ERROR-Findings — `semgrep --config=p/owasp-top-ten --severity=ERROR <pfad>` lokal ausführen');
+      return WARN(`semgrep Fehler: ${(err.message || '').slice(0, 80)}`);
+    }
+  },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
