@@ -348,6 +348,103 @@ const localChecks = {
     }
     return PASS('keine bekannten Tracker im Initial-HTML');
   },
+  '018-bundle-drift': async (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.domain) return SKIP('keine Domain');
+    if (project.tags === 'internal' || project.tags === 'infra') return SKIP('internes/Infra-Projekt');
+    if (OFFLINE) return SKIP('--local-only (HTTP-Fetch übersprungen)');
+
+    const fetchWithTimeout = async (url, timeoutMs) => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, {
+          signal: ctrl.signal,
+          redirect: 'follow',
+          headers: { 'User-Agent': 'maxone-standards-audit/018 (+Bundle-Drift-Scan)' },
+        });
+        const text = res.ok ? await res.text() : null;
+        return { ok: res.ok, status: res.status, text };
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    const baseUrl = `https://${project.domain}/`;
+    let html;
+    try {
+      const r = await fetchWithTimeout(baseUrl, 10000);
+      if (!r.ok) return WARN(`HTTP ${r.status} — Bundle-Audit nicht möglich`);
+      html = r.text;
+    } catch (err) {
+      const reason = err.name === 'AbortError' ? 'Timeout (>10s)' : (err.cause?.code || err.message || '').toString().slice(0, 60);
+      return WARN(`Domain nicht erreichbar (${reason})`);
+    }
+
+    // Asset-URLs aus <script src="..."> + <link href="...">
+    const assetRe = /<(?:script\s+[^>]*src|link\s+[^>]*href)\s*=\s*["']([^"']+)["']/gi;
+    const seen = new Set();
+    const assets = [];
+    let m;
+    while ((m = assetRe.exec(html)) !== null && assets.length < 8) {
+      let url;
+      try {
+        url = new URL(m[1], baseUrl);
+      } catch { continue; }
+      if (url.host !== project.domain) continue; // nur eigene Origin
+      if (!/\.(js|mjs|cjs|css)$/i.test(url.pathname)) continue;
+      const key = url.toString();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      assets.push(url);
+    }
+
+    if (!assets.length) return PASS('keine eigenen JS/CSS-Assets im HTML (SSR / inline)');
+
+    const driftPatterns = [
+      { name: '*.maxone.studio',        re: /\b([\w-]+)\.maxone\.studio\b/gi, severity: 'warn',
+        filter: (host) => !['mail', 'autoconfig'].includes(host.toLowerCase()) },
+      { name: 'Source-Map-Direktive',   re: /\/\/#\s*sourceMappingURL\s*=/i, severity: 'warn' },
+      { name: 'Lovable-Watermark',      re: /\blovable\.(dev|app)\b|@lovable\//i, severity: 'fail' },
+      { name: 'Bolt-Watermark',         re: /\bbolt\.new\b|stackblitz\.com/i, severity: 'fail' },
+      { name: 'Base44-Watermark',       re: /\bbase44\.com\b|@base44\//i, severity: 'fail' },
+      { name: 'v0-Watermark',           re: /\bbuilt with v0\b|v0\.dev\/team/i, severity: 'fail' },
+      { name: 'Replit-Watermark',       re: /\breplit-agent\b|replit\.com\/@/i, severity: 'fail' },
+      { name: 'Dev-Host (localhost)',   re: /\blocalhost:\d+\b/i, severity: 'warn' },
+      { name: 'Dev-Host (loopback)',    re: /\b(127\.0\.0\.1|0\.0\.0\.0|host\.docker\.internal)\b/i, severity: 'warn' },
+      { name: 'Service-Role-Key (JWT)', re: /eyJ[\w-]+\.eyJ[\w-]*c2VydmljZV9yb2xl[\w-]*\.[\w-]+/i, severity: 'fail' },
+    ];
+
+    const warnings = [];
+    const fails = [];
+    for (const url of assets) {
+      let body;
+      try {
+        const r = await fetchWithTimeout(url.toString(), 5000);
+        if (!r.ok || !r.text) continue;
+        body = r.text;
+      } catch { continue; }
+
+      const assetLabel = url.pathname.split('/').pop();
+      for (const p of driftPatterns) {
+        if (p.filter) {
+          // regex mit Capture-Group, mindestens ein Treffer der den Filter besteht
+          const matches = [...body.matchAll(p.re)];
+          const real = matches.filter(mm => p.filter(mm[1]));
+          if (!real.length) continue;
+        } else {
+          if (!p.re.test(body)) continue;
+        }
+        const entry = `${p.name} in ${assetLabel}`;
+        if (p.severity === 'fail') fails.push(entry);
+        else warnings.push(entry);
+      }
+    }
+
+    if (fails.length) return FAIL(`Drift kritisch: ${fails.join('; ')}`);
+    if (warnings.length) return WARN(`Drift: ${warnings.join('; ')}`);
+    return PASS(`${assets.length} Asset(s) geprüft, kein Drift`);
+  },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);

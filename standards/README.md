@@ -31,9 +31,10 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [016-stack-whitelist.md](016-stack-whitelist.md) — Stack-Whitelist + Plattform-Blacklist (Lovable/Bolt/Base44/v0/Replit raus)
 - [013-launch-gate-review.md](013-launch-gate-review.md) — Gate 3: Security & Compliance Review mit Sign-Off vor `live`
 - [017-dsgvo-tracker-audit.md](017-dsgvo-tracker-audit.md) — Drittdienste/Tracker (Google Fonts, GA, Pixel, Embeds) erst nach Consent
+- [018-bundle-drift-audit.md](018-bundle-drift-audit.md) — Live-Bundle ohne veraltete Hosts, Source-Maps, Plattform-Watermarks
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
-- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/015/016/017/022/023)
+- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/015/016/017/018/022/023)
 
 ## Format einer Regel
 

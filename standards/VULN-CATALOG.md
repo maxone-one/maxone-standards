@@ -316,7 +316,7 @@ Jeder Eintrag mit:
 - **Beschreibung:** Build-/Bundling-Konfiguration falsch, proprietärer Code landet im Release-Artefakt (npm-Package, Docker-Image, Frontend-Bundle, Source-Maps)
 - **Vorfall:** **Anthropic Claude Code CLI 2026-03-31** — 59,8 MB Source Map im npm-Package, ~512.000 Zeilen TypeScript exponiert. Das Tool selbst ist vibe-coded. **Kein Code-Bug, sondern Packaging-Konfig**. SAST hat es nicht gefunden, weil keine Logik-Lücke vorlag.
 - **Lehre:** Security braucht auch Packaging-Reviews. Source-Maps in Public-Bundles + npm-Package-Inhalt müssen geprüft werden.
-- **Coverage:** ✅ Standard 013 Section F (Source-Maps in Prod deaktiviert/privat), ⚠️ npm-Package-Inhalt nicht systematisch geprüft, 🔄 Standard 018 (Bundle-Drift-Audit) erweiterbar
+- **Coverage:** ✅ Standard 013 Section F (Source-Maps in Prod deaktiviert/privat) + ✅ Standard 018 (Live-Asset-Scan auf `sourceMappingURL=` Direktive), ⚠️ npm-Package-Inhalt nicht systematisch geprüft
 
 ### F. Drift-Klassen (live, schleichend)
 
@@ -327,14 +327,14 @@ Jeder Eintrag mit:
 
 #### F2 — Bundle-Drift (alte URLs / Domains)
 - **Beispiel:** repivot lädt `panel.maxone.studio` obwohl auf `.one` migriert
-- **Coverage:** ⚠️ kein Audit für Live-Bundle, 🔄 Standard 018 geplant
+- **Coverage:** ✅ Standard 018 (audit.mjs zieht bis zu 8 Live-Assets pro Domain und scannt auf `*.maxone.studio`-Reste, Plattform-Watermarks, Dev-Hosts, Service-Role-Keys; am 2026-04-27 hat das Audit bei repivot genau diesen Drift live nachgewiesen)
 
 #### F3 — Cert-Ablauf
 - **Coverage:** ⚠️ kein Audit, 🔄 Standard 019 geplant
 
 #### F4 — Source-Maps in Production
 - **Beschreibung:** Source-Maps öffentlich → Reverse-Engineering trivial
-- **Coverage:** ✅ Standard 013 Section F
+- **Coverage:** ✅ Standard 013 Section F + ✅ Standard 018 (Live-Asset-Scan)
 
 ### G. Strukturelle / Wartbarkeits-Lücken (langfristig sicherheitsrelevant)
 
@@ -404,9 +404,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | Supply | Bösartige npm | — | — | Socket.dev empfohlen | 🔴 **TODO** |
 | Supply | Packaging-Leak (E4) | F | — | manuell | ⚠️ manuell, 018 erweiterbar |
 | Drift | DNS | — | — | curl manuell | 🔴 **TODO** (019) |
-| Drift | Bundle (alte URLs) | — | — | grep im Live-Bundle | 🔴 **TODO** (018) |
+| Drift | Bundle (alte URLs, F2) | — | 018 | Live-Asset-Fetch + Pattern-Scan | ✅ hart (seit 018) |
 | Drift | Cert-Ablauf | — | — | manuell | 🔴 **TODO** (019) |
-| Drift | Source-Maps | F | — | manuell | ⚠️ manuell |
+| Drift | Source-Maps (F4) | F | 018 | Live-Asset-Scan auf sourceMappingURL | ✅ hart (seit 018) |
 | Struktur | KI-Findings 2,74× (G1) | A | — | Black-Box-% in 013-A | ⚠️ manuell |
 | Struktur | Refactoring-Anteil (G2) | — | — | — | 🔴 **TODO** |
 | Struktur | Duplikation 4× (G3) | — | — | jscpd / SonarQube | 🔴 **TODO** |
@@ -416,9 +416,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 10 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017)
+**Aktuell abgedeckt (hart):** 12 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018)
 **Aktuell manuell:** 15 Lücken
-**Aktuell offen:** 10 Lücken (großteils geplant in Standards 014, 018–021, 024, 025)
+**Aktuell offen:** 8 Lücken (großteils geplant in Standards 014, 019–021, 024, 025)
 
 ---
 
@@ -431,7 +431,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**015** CONCEPT.md (Gate 1)~~ | Insecure Design (B5) | sehr hoch — verhindert Klassen vor Code-Zeile 1 | ✅ **erledigt 2026-04-27** |
 | ~~**016** Stack-Whitelist~~ | Plattform-Lock-in (E1) | hoch — Lovable/Bolt/Base44 explizit raus | ✅ **erledigt 2026-04-27** |
 | ~~**017** DSGVO-Tracker-Audit~~ | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via HTML-Pattern + Webbkoll | ✅ **erledigt 2026-04-27** |
-| **018** Bundle-Drift-Audit | Bundle-Drift (F2), Packaging-Leak (E4) | hoch — hätte repivot/panel.maxone.studio gefunden | offen |
+| ~~**018** Bundle-Drift-Audit~~ | Bundle-Drift (F2), Source-Maps (F4) | hoch — hätte repivot/panel.maxone.studio gefunden | ✅ **erledigt 2026-04-27** |
 | **019** Cert + DNS-Realität | DNS-Drift (F1), Cert (F3) | hoch — hätte plansey/vanfree gefunden | offen |
 | **020** Pen-Test-Light | BOLA (B1), SSRF live, PII-Exposure (C7) | hoch — Enrichlead-Klasse automatisiert | offen |
 | **014** Sunset | Datenfriedhöfe, AVV-Hygiene | mittel — gerade jetzt vanfree/plansey | offen |
