@@ -56,20 +56,26 @@ async function getImpressum() {
 reichen Responses zeigen + Fehler-Log. Niemals "Impressum nicht verfügbar"
 zeigen — das ist rechtlich unsicher.
 
-## Stand pro Projekt (2026-04-27)
+## Stand pro Projekt
 
-| Projekt | Status | URL |
+Initial-Audit 2026-04-27: 4 Projekte nutzten API mit `.studio` (Standard 008
+verletzt), 5 weitere hatten lokales/kein Impressum.
+
+Nach Migration 2026-04-27:
+
+| Projekt | Status | Quelle |
 |---|---|---|
-| snapflow.one | nutzt API | `panel.maxone.studio` ❌ (auf .one migrieren) |
-| repivot.in | nutzt API | `panel.maxone.studio` ❌ |
-| plansey-engaged | nutzt API | `panel.maxone.studio` ❌ |
-| vanfree | nutzt API + 1h Cache | `panel.maxone.studio` ❌ |
-| stadt-lahn-flow | lokale Daten ❌ | — (auf API umstellen) |
-| maxone.one | unklar / lokal? | — |
-| katchi | nicht gefunden | — |
-| voltfair.de | nicht gefunden | — |
-| SolarProof | nicht gefunden | — |
-| plansey (alt) | PHP-Legacy | — |
+| snapflow.one | ✅ API `.one` | `src/pages/legal/Impressum.tsx` |
+| repivot.in | ✅ API `.one` | `frontend/src/pages/landing/Impressum.tsx` |
+| plansey-engaged | ✅ API `.one` | `src/pages/Impressum.tsx` |
+| vanfree | ✅ API `.one` + 1h Cache | `app/impressum/page.tsx` + `app/datenschutz/page.tsx` |
+| stadt-lahn-flow | ⚠ lokal in `lib/impressum-data.ts` | (bewusste Ausnahme — SLF infra-unabhängig) |
+| katchi | ⚠ Brand-Link, kein API-Call | (auf API umstellen wenn nächster Touch) |
+| voltfair.de | ⚠ lokal | (auf API umstellen) |
+| plansey | ⚠ Brand-Link, kein API-Call | (auf API umstellen) |
+| solarproof | – kein Impressum | (Brand-Site, evtl. nicht nötig) |
+| maxone.one | – hostet API selbst | – |
+| kitchen-station | – internes Tool | – |
 
 ## Audit
 
