@@ -397,6 +397,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | PII-Exposure (Endpunkt) | C, J6 | — | manuell + Vibe App Scanner | ⚠️ manuell, 020 geplant |
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
+| DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
 | LLM | Prompt Injection | — | — | — | 🔴 **TODO** |
 | LLM | Insecure Output | — | — | — | 🔴 **TODO** |
 | LLM | Sensitive Disclosure | — | — | — | 🔴 **TODO** |
@@ -417,9 +418,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 14 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019)
+**Aktuell abgedeckt (hart):** 15 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014)
 **Aktuell manuell:** 15 Lücken
-**Aktuell offen:** 6 Lücken (großteils geplant in Standards 014, 020, 021, 024, 025)
+**Aktuell offen:** 6 Lücken (großteils geplant in Standards 020, 021, 024, 025)
 
 ---
 
@@ -435,7 +436,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**018** Bundle-Drift-Audit~~ | Bundle-Drift (F2), Source-Maps (F4) | hoch — hätte repivot/panel.maxone.studio gefunden | ✅ **erledigt 2026-04-27** |
 | ~~**019** Cert + DNS-Realität~~ | DNS-Drift (F1), Cert (F3) | hoch — hat plansey (Cloudflare-IPs) und vanfree (TLS-Handshake-FAIL) live nachgewiesen | ✅ **erledigt 2026-04-27** |
 | **020** Pen-Test-Light | BOLA (B1), SSRF live, PII-Exposure (C7) | hoch — Enrichlead-Klasse automatisiert | offen |
-| **014** Sunset | Datenfriedhöfe, AVV-Hygiene | mittel — gerade jetzt vanfree/plansey | offen |
+| ~~**014** Sunset~~ | Datenfriedhöfe, AVV-Hygiene, Sunset-Drift | mittel — vanfree/plansey sind aktuelle Anwendungsfälle | ✅ **erledigt 2026-04-28** |
 | **021** Re-Review-Reminder | Drift schleichend | niedrig (kostet nichts) | offen |
 | **024** Code-Health-Budget | Refactoring-Anteil (G2), Duplikation (G3) | mittel — strukturelle Erosion langfristig | offen |
 | **025** LLM-App-Spezial | Prompt Injection (D1–D3) | hoch wenn LLM-Apps gebaut werden | offen |

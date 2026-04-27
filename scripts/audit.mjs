@@ -450,6 +450,37 @@ const localChecks = {
     if (warnings.length) return WARN(`Drift: ${warnings.join('; ')}`);
     return PASS(`${assets.length} Asset(s) geprüft, kein Drift`);
   },
+  '014-sunset': (project) => {
+    const sunsetStates = new Set(['sunset', 'sunset-pending']);
+    if (!sunsetStates.has(project.status)) return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt');
+
+    const sunsetPath = join(project.path_local, 'SUNSET.md');
+    if (!existsSync(sunsetPath)) {
+      return FAIL('SUNSET.md fehlt — Pflicht bei sunset / sunset-pending (Standard 014)');
+    }
+    const text = readFileSync(sunsetPath, 'utf8');
+    const required = [
+      { name: 'Sunset-Datum', re: /^\*\*Sunset-Datum:\*\*\s*\d{4}-\d{2}-\d{2}/m },
+      { name: 'Verantwortlich', re: /^\*\*Verantwortlich:\*\*\s*\S/m },
+      { name: 'Section A (Entscheidung)', re: /^##\s+A\.\s+Entscheidung/m },
+      { name: 'Section B (Datenexport)', re: /^##\s+B\.\s+Datenexport/m },
+      { name: 'Sign-Off', re: /^##\s+Sunset\s+Sign-Off/m },
+    ];
+    const missing = required.filter(r => !r.re.test(text)).map(r => r.name);
+    if (missing.length) return WARN(`SUNSET.md unvollständig: ${missing.join(', ')}`);
+
+    // sunset-pending: Datum < 30 Tage her, sonst WARN
+    if (project.status === 'sunset-pending') {
+      const dateMatch = text.match(/^\*\*Sunset-Datum:\*\*\s*(\d{4}-\d{2}-\d{2})/m);
+      if (dateMatch) {
+        const ageDays = Math.floor((Date.now() - new Date(dateMatch[1]).getTime()) / 86400000);
+        if (ageDays > 30) return WARN(`sunset-pending seit ${ageDays}d (>30d) — entweder live machen oder zu sunset migrieren`);
+      }
+    }
+    return PASS(`SUNSET.md vorhanden (${project.status})`);
+  },
   '019-cert-dns': async (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (!project.domain) return SKIP('keine Domain');
@@ -630,6 +661,18 @@ const sshChecks = {
       return PASS();
     } catch {
       return FAIL(`Server-Pfad fehlt: ${project.server}:${project.path_server}`);
+    }
+  },
+  '014-sunset-teardown': (project) => {
+    if (project.status !== 'sunset') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.server || !project.container) return SKIP('kein Container in Registry');
+    try {
+      const out = ssh(project.server, `docker ps --format '{{.Names}}' | grep -E '^${project.container}(-blue|-green)?$' || true`);
+      const names = out.trim().split('\n').filter(Boolean);
+      if (names.length === 0) return PASS('Container-Tear-Down vollständig');
+      return FAIL(`Container läuft noch: ${names.join(', ')} — sunset verlangt Tear-Down`);
+    } catch (e) {
+      return WARN(`SSH-Fehler: ${e.message.slice(0, 80)}`);
     }
   },
   '007-container-running': (project) => {
