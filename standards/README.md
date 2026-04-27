@@ -37,6 +37,10 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [020-pentest-light.md](020-pentest-light.md) — defensive Außensicht: exposed Files / Admin-Routen / Header-Hygiene (SPA-Catch-All-erkennend)
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
+
+**Philosophie & Pipeline:**
+- [026-self-hosted-first.md](026-self-hosted-first.md) — Self-Hosted-First, keine Abos (Ausnahmen: Domain-Registrar, TLS-CA, VPS-Hosting, Payment)
+- [027-deploy-pipeline.md](027-deploy-pipeline.md) — CI-Build → Image-Transfer → Health-Check → Traefik-Swap (formaler Pfad zu 001 + 002)
 - [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023)
 
 ## Format einer Regel

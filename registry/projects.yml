@@ -14,8 +14,16 @@
 #   path_server    — Server-Pfad (oder null)
 #   compose_file   — Name der Prod-Compose-Datei (default: docker-compose.yml)
 #   secrets_dir    — Ordnername in /opt/secrets/ (default: name; oft verschieden!)
-#   status         — live | dev | paused
+#   status         — live | dev | paused | sunset-pending | sunset
 #   tags           — Liste
+#   external_subscriptions  — (optional, Standard 026) Liste von Drittanbieter-
+#                             Abos. Jeder Eintrag: { service, reason, cost_per_month_eur,
+#                             sunset_plan }. Erlaubte reason-Werte: payment-processor,
+#                             domain-registrar, tls-ca, vps-hosting. Andere → WARN.
+#                             Komplett fehlend → WARN.
+#   deploy_pipeline         — (optional, Standard 027) "manual" für Projekte ohne
+#                             GitHub-Actions-Pipeline (interne Tools). Default = audit
+#                             erwartet .github/workflows/deploy.yml.
 
 projects:
   - name: maxone.one

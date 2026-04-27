@@ -753,6 +753,119 @@ const localChecks = {
     if (!fails.length) return PASS(`${footerFiles.length} Footer-Datei(en), alle Pflichten erfüllt`);
     return WARN(`Footer fehlt: ${fails.join(', ')}`);
   },
+  '026-self-hosted-first': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+
+    // 1. registry-Feld external_subscriptions:
+    const allowedReasons = new Set(['payment-processor', 'domain-registrar', 'tls-ca', 'vps-hosting']);
+    const subs = project.external_subscriptions;
+    const subWarnings = [];
+    if (subs === undefined) {
+      subWarnings.push('external_subscriptions in registry fehlt');
+    } else if (Array.isArray(subs)) {
+      for (const s of subs) {
+        if (!s.service || !s.reason) {
+          subWarnings.push(`Eintrag ohne service/reason: ${JSON.stringify(s).slice(0, 60)}`);
+        } else if (!allowedReasons.has(s.reason)) {
+          subWarnings.push(`${s.service}: reason=${s.reason} (nicht im Whitelist-Set)`);
+        }
+      }
+    }
+
+    // 2. docker-compose-Scan
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const composePath = join(project.path_local, composeFile);
+    const saasImageMarkers = [
+      /image:\s*\S*docker\.elastic\.co/i,
+      /image:\s*\S*datadoghq\.com/i,
+      /image:\s*\S*\bcloud-only\b/i,
+    ];
+    const composeHits = [];
+    if (existsSync(composePath)) {
+      const text = readFileSync(composePath, 'utf8');
+      for (const re of saasImageMarkers) {
+        const m = text.match(re);
+        if (m) composeHits.push(m[0].slice(0, 60));
+      }
+    }
+
+    // 3. package.json-Scan
+    const pkgPath = join(project.path_local, 'package.json');
+    const cloudOnlySdks = [
+      '@datadog/',
+      'newrelic',
+      '@sentry/cloud-only',
+      'firebase-admin',
+      '@vercel/analytics',
+      '@netlify/functions',
+    ];
+    const pkgHits = [];
+    if (existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+        const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
+        for (const name of Object.keys(deps)) {
+          for (const m of cloudOnlySdks) {
+            if (name === m || name.startsWith(m)) pkgHits.push(name);
+          }
+        }
+      } catch { /* malformed package.json — ignorieren */ }
+    }
+
+    if (composeHits.length) return FAIL(`SaaS-Image in compose: ${composeHits.join('; ')}`);
+    const allWarnings = [...subWarnings];
+    if (pkgHits.length) allWarnings.push(`Cloud-only SDK(s): ${pkgHits.join(', ')}`);
+    if (allWarnings.length) return WARN(allWarnings.join('; '));
+    return PASS('keine Abo-/SaaS-Marker, external_subscriptions sauber');
+  },
+  '027-deploy-pipeline': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.deploy_pipeline === 'manual') return SKIP('deploy_pipeline=manual (Ausnahme)');
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+
+    const wfDir = join(project.path_local, '.github', 'workflows');
+    if (!existsSync(wfDir)) return FAIL('.github/workflows/ fehlt komplett');
+
+    // Workflow-Datei finden (deploy.yml bevorzugt, sonst alle .yml/.yaml)
+    let wfFiles = [];
+    try {
+      const entries = readdirSync(wfDir).filter(f => /\.(ya?ml)$/i.test(f));
+      const preferred = entries.find(f => /deploy/i.test(f));
+      wfFiles = preferred ? [preferred] : entries;
+    } catch {
+      return FAIL('.github/workflows/ nicht lesbar');
+    }
+    if (!wfFiles.length) return FAIL('keine Workflow-Datei in .github/workflows/');
+
+    const wfText = wfFiles.map(f => {
+      try { return readFileSync(join(wfDir, f), 'utf8'); } catch { return ''; }
+    }).join('\n');
+
+    const checks = {
+      selfHosted: /runs-on:\s*\[?\s*self-hosted/i.test(wfText),
+      dockerSave: /docker\s+save\b/i.test(wfText),
+      noBuildOnProd: !/(ssh\s+root@maxone-prod|ssh\s+\$\{[^}]*PROD[^}]*\})[^"]*docker\s+(compose\s+)?build/i.test(wfText),
+    };
+    const failed = Object.entries(checks).filter(([_, ok]) => !ok).map(([k]) => k);
+
+    // docker-compose.yml-Inhalts-Pflichten
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const composePath = join(project.path_local, composeFile);
+    const composeWarn = [];
+    if (existsSync(composePath)) {
+      const text = readFileSync(composePath, 'utf8');
+      if (!/^\s*image:\s/m.test(text)) composeWarn.push('image: fehlt in compose');
+      if (!/^\s*healthcheck:/m.test(text)) composeWarn.push('healthcheck: fehlt');
+      if (!/^\s*env_file:/m.test(text)) composeWarn.push('env_file: fehlt');
+    } else {
+      composeWarn.push(`${composeFile} nicht im Repo-Root`);
+    }
+
+    if (failed.includes('noBuildOnProd')) return FAIL('Workflow baut auf Prod-Server (verbotenes Pattern in 002)');
+    if (failed.length) return WARN(`Workflow unvollständig: ${failed.join(', ')}` + (composeWarn.length ? ` (+ compose: ${composeWarn.join(', ')})` : ''));
+    if (composeWarn.length) return WARN(`compose: ${composeWarn.join(', ')}`);
+    return PASS(`${wfFiles[0]} + compose erfüllt Pipeline-Pflichten`);
+  },
 };
 
 // --- SSH Checks ---
