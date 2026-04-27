@@ -27,10 +27,11 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte
 
 **Verantwortung & Sicherheit:**
-- [013-launch-gate-review.md](013-launch-gate-review.md) — Launch-Gate: Security & Compliance Review mit Sign-Off vor `live`
+- [015-concept-gate.md](015-concept-gate.md) — Gate 1: CONCEPT.md vor erster Code-Zeile
+- [013-launch-gate-review.md](013-launch-gate-review.md) — Gate 3: Security & Compliance Review mit Sign-Off vor `live`
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
-- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/022/023)
+- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/015/022/023)
 
 ## Format einer Regel
 

@@ -215,6 +215,35 @@ const localChecks = {
       return WARN(`semgrep Fehler: ${(err.message || '').slice(0, 80)}`);
     }
   },
+  '015-concept-gate': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt');
+    const conceptPath = join(project.path_local, 'CONCEPT.md');
+    const isInternal = project.tags === 'internal' || project.tags === 'infra';
+    const isLive = project.status === 'live';
+    if (!existsSync(conceptPath)) {
+      // Bei laufenden Projekten ist CONCEPT.md retroaktiv (WARN), nur dev verlangt FAIL
+      if (isLive) return WARN('CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)');
+      if (isInternal) return WARN('CONCEPT.md fehlt (internes/Infra-Tool, Empfehlung)');
+      return FAIL('CONCEPT.md fehlt — Pflicht vor erster Code-Zeile (Standard 015)');
+    }
+    const text = readFileSync(conceptPath, 'utf8');
+    const requiredSections = [
+      { name: 'Problem',         re: /^##\s+Problem/m },
+      { name: 'Datenmodell',     re: /^##\s+Datenmodell/m },
+      { name: 'Auth-Modell',     re: /^##\s+Auth-Modell/m },
+      { name: 'Externe Dienste', re: /^##\s+Externe\s+Dienste/m },
+      { name: 'Threat-Model',    re: /^##\s+Threat[- ]Model/m },
+      { name: 'Stack',           re: /^##\s+Stack/m },
+    ];
+    const missing = requiredSections.filter(s => !s.re.test(text)).map(s => s.name);
+    if (missing.length) return WARN(`Pflicht-Sektionen fehlen: ${missing.join(', ')}`);
+    const hasGate1 = /^##\s+Gate\s*1\b/m.test(text);
+    if (!hasGate1) return WARN('Gate-1-Sign-Off-Block fehlt (## Gate 1 — Konzept-Sign-Off)');
+    const hasReviewed = /Reviewed\s+von:\s*\S/i.test(text);
+    if (!hasReviewed) return WARN('Sign-Off ohne Reviewer-Eintrag');
+    return PASS('Konzept + Gate 1 vorhanden');
+  },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
