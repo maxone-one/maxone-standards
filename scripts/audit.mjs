@@ -15,6 +15,8 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { promises as dns } from 'node:dns';
+import tls from 'node:tls';
 import yaml from 'js-yaml';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -30,6 +32,9 @@ const SERVERS = {
   'voltfair-db':   { host: '46.225.168.235', user: 'root', key: '~/.ssh/voltfair' },
   'vybora-prod':   { host: '46.225.88.53',   user: 'root', key: '~/.ssh/id_ed25519' },
 };
+
+// Standard 019 — DNS-Whitelist: alle eigenen Server-IPs.
+const KNOWN_SERVER_IPS = new Set(Object.values(SERVERS).map(s => s.host));
 
 function parseArgs() {
   const args = {};
@@ -444,6 +449,100 @@ const localChecks = {
     if (fails.length) return FAIL(`Drift kritisch: ${fails.join('; ')}`);
     if (warnings.length) return WARN(`Drift: ${warnings.join('; ')}`);
     return PASS(`${assets.length} Asset(s) geprüft, kein Drift`);
+  },
+  '019-cert-dns': async (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.domain) return SKIP('keine Domain');
+    if (project.tags === 'internal' || project.tags === 'infra') return SKIP('internes/Infra-Projekt');
+    if (OFFLINE) return SKIP('--local-only (Netzwerk übersprungen)');
+
+    const issues = [];
+
+    // 1. DNS A-Record
+    let dnsIPs = [];
+    try {
+      dnsIPs = await Promise.race([
+        dns.resolve4(project.domain),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('DNS-Timeout')), 5000)),
+      ]);
+    } catch (err) {
+      return WARN(`DNS-Lookup fehlgeschlagen: ${(err.message || '').slice(0, 60)}`);
+    }
+    const ownIPs = dnsIPs.filter(ip => KNOWN_SERVER_IPS.has(ip));
+    const foreignIPs = dnsIPs.filter(ip => !KNOWN_SERVER_IPS.has(ip));
+    if (!ownIPs.length) {
+      issues.push({ severity: 'warn', msg: `DNS zeigt nicht auf eigene Server: ${dnsIPs.join(', ')}` });
+    } else if (foreignIPs.length) {
+      issues.push({ severity: 'warn', msg: `DNS gemischt (eigene + fremd: ${foreignIPs.join(', ')})` });
+    }
+
+    // 2. TLS-Cert via tls.connect
+    const cert = await new Promise((resolve) => {
+      let settled = false;
+      const finish = (v) => { if (!settled) { settled = true; resolve(v); } };
+      const timer = setTimeout(() => finish({ error: 'TLS-Timeout (>5s)' }), 5000);
+      let socket;
+      try {
+        socket = tls.connect({
+          host: project.domain,
+          port: 443,
+          servername: project.domain,
+          rejectUnauthorized: false, // Cert auch dann inspizieren wenn ungültig
+          timeout: 5000,
+        }, () => {
+          const c = socket.getPeerCertificate(false);
+          clearTimeout(timer);
+          socket.end();
+          finish({ cert: c, authorized: socket.authorized, authError: socket.authorizationError });
+        });
+        socket.on('error', (err) => {
+          clearTimeout(timer);
+          finish({ error: (err.code || err.message || '').toString().slice(0, 60) });
+        });
+      } catch (err) {
+        clearTimeout(timer);
+        finish({ error: (err.message || '').slice(0, 60) });
+      }
+    });
+
+    if (cert.error) {
+      return FAIL(`TLS-Handshake fehlgeschlagen: ${cert.error}`);
+    }
+    const c = cert.cert;
+    if (!c || !c.valid_to) {
+      return FAIL('TLS-Cert nicht lesbar');
+    }
+
+    // Restlaufzeit
+    const expiresAt = new Date(c.valid_to).getTime();
+    const daysLeft = Math.floor((expiresAt - Date.now()) / 86400000);
+    if (daysLeft < 0) issues.push({ severity: 'fail', msg: `Cert abgelaufen vor ${Math.abs(daysLeft)}d (${c.valid_to})` });
+    else if (daysLeft < 7) issues.push({ severity: 'fail', msg: `Cert läuft in ${daysLeft}d ab` });
+    else if (daysLeft < 14) issues.push({ severity: 'warn', msg: `Cert läuft in ${daysLeft}d ab` });
+
+    // Issuer
+    const issuerOrg = c.issuer?.O || c.issuer?.CN || '(unbekannt)';
+    if (!/let'?s encrypt/i.test(issuerOrg)) {
+      issues.push({ severity: 'warn', msg: `Issuer "${issuerOrg}" — Standard 004 verlangt Let's Encrypt` });
+    }
+
+    // Subject / SAN
+    const cn = c.subject?.CN || '';
+    const san = (c.subjectaltname || '').toLowerCase();
+    const matchesCN = cn === project.domain || (cn.startsWith('*.') && project.domain.endsWith(cn.slice(1)));
+    const matchesSAN = san.split(',').map(s => s.trim().replace(/^dns:/, '')).some(d =>
+      d === project.domain || (d.startsWith('*.') && project.domain.endsWith(d.slice(1))));
+    if (!matchesCN && !matchesSAN) {
+      issues.push({ severity: 'fail', msg: `Cert deckt ${project.domain} nicht ab (CN=${cn || '–'}, SAN=${san.slice(0, 60) || '–'})` });
+    }
+
+    if (issues.some(i => i.severity === 'fail')) {
+      return FAIL(issues.filter(i => i.severity === 'fail').map(i => i.msg).join('; '));
+    }
+    if (issues.length) {
+      return WARN(issues.map(i => i.msg).join('; '));
+    }
+    return PASS(`DNS=${dnsIPs.join(',')}, Cert ${daysLeft}d, ${issuerOrg}`);
   },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');

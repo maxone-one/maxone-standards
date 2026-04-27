@@ -322,15 +322,16 @@ Jeder Eintrag mit:
 
 #### F1 — DNS-Drift
 - **Beschreibung:** Domain zeigt nicht mehr auf eigenen Server (z.B. plansey.app → Lovable, vanfree-Domain → IONOS Parking)
-- **Vorfall:** im aktuellen Projekt-Audit gefunden, 2026-04-27
-- **Coverage:** ⚠️ kein Audit, 🔄 Standard 019 geplant
+- **Vorfall:** im aktuellen Projekt-Audit gefunden, 2026-04-27 — plansey.app zeigt auf 172.67.165.34 + 104.21.11.40 (Cloudflare) statt eigenen Hetzner-Server
+- **Coverage:** ✅ Standard 019 (audit.mjs `dns.resolve4` gegen `KNOWN_SERVER_IPS`-Whitelist; fremde IPs werden mit konkreter IP-Liste gewarnt)
 
 #### F2 — Bundle-Drift (alte URLs / Domains)
 - **Beispiel:** repivot lädt `panel.maxone.studio` obwohl auf `.one` migriert
 - **Coverage:** ✅ Standard 018 (audit.mjs zieht bis zu 8 Live-Assets pro Domain und scannt auf `*.maxone.studio`-Reste, Plattform-Watermarks, Dev-Hosts, Service-Role-Keys; am 2026-04-27 hat das Audit bei repivot genau diesen Drift live nachgewiesen)
 
 #### F3 — Cert-Ablauf
-- **Coverage:** ⚠️ kein Audit, 🔄 Standard 019 geplant
+- **Vorfall:** vanfree (planexo.io) hat 2026-04-27 TLS-Handshake-Fehler — Audit hat es als FAIL geflaggt; karastelev.de hatte 2026-04-22 Account-Ratelimit-Sprenger durch HTTP-01 (Auslöser für DNS-01-Direktive)
+- **Coverage:** ✅ Standard 019 (audit.mjs `tls.connect` zieht Cert, prüft Restlaufzeit (>14d OK / 7-14d WARN / <7d FAIL), Issuer (Let's Encrypt) und Subject/SAN-Match)
 
 #### F4 — Source-Maps in Production
 - **Beschreibung:** Source-Maps öffentlich → Reverse-Engineering trivial
@@ -403,9 +404,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | Platform | Lovable/Bolt/v0 | J8 | 016 | Marker + Lockfile-Scan | ✅ hart (seit 016) |
 | Supply | Bösartige npm | — | — | Socket.dev empfohlen | 🔴 **TODO** |
 | Supply | Packaging-Leak (E4) | F | — | manuell | ⚠️ manuell, 018 erweiterbar |
-| Drift | DNS | — | — | curl manuell | 🔴 **TODO** (019) |
+| Drift | DNS (F1) | — | 019 | dns.resolve4 + Server-IP-Whitelist | ✅ hart (seit 019) |
 | Drift | Bundle (alte URLs, F2) | — | 018 | Live-Asset-Fetch + Pattern-Scan | ✅ hart (seit 018) |
-| Drift | Cert-Ablauf | — | — | manuell | 🔴 **TODO** (019) |
+| Drift | Cert-Ablauf (F3) | — | 019 | tls.connect + Restlaufzeit-Check | ✅ hart (seit 019) |
 | Drift | Source-Maps (F4) | F | 018 | Live-Asset-Scan auf sourceMappingURL | ✅ hart (seit 018) |
 | Struktur | KI-Findings 2,74× (G1) | A | — | Black-Box-% in 013-A | ⚠️ manuell |
 | Struktur | Refactoring-Anteil (G2) | — | — | — | 🔴 **TODO** |
@@ -416,9 +417,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 12 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018)
+**Aktuell abgedeckt (hart):** 14 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019)
 **Aktuell manuell:** 15 Lücken
-**Aktuell offen:** 8 Lücken (großteils geplant in Standards 014, 019–021, 024, 025)
+**Aktuell offen:** 6 Lücken (großteils geplant in Standards 014, 020, 021, 024, 025)
 
 ---
 
@@ -432,7 +433,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**016** Stack-Whitelist~~ | Plattform-Lock-in (E1) | hoch — Lovable/Bolt/Base44 explizit raus | ✅ **erledigt 2026-04-27** |
 | ~~**017** DSGVO-Tracker-Audit~~ | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via HTML-Pattern + Webbkoll | ✅ **erledigt 2026-04-27** |
 | ~~**018** Bundle-Drift-Audit~~ | Bundle-Drift (F2), Source-Maps (F4) | hoch — hätte repivot/panel.maxone.studio gefunden | ✅ **erledigt 2026-04-27** |
-| **019** Cert + DNS-Realität | DNS-Drift (F1), Cert (F3) | hoch — hätte plansey/vanfree gefunden | offen |
+| ~~**019** Cert + DNS-Realität~~ | DNS-Drift (F1), Cert (F3) | hoch — hat plansey (Cloudflare-IPs) und vanfree (TLS-Handshake-FAIL) live nachgewiesen | ✅ **erledigt 2026-04-27** |
 | **020** Pen-Test-Light | BOLA (B1), SSRF live, PII-Exposure (C7) | hoch — Enrichlead-Klasse automatisiert | offen |
 | **014** Sunset | Datenfriedhöfe, AVV-Hygiene | mittel — gerade jetzt vanfree/plansey | offen |
 | **021** Re-Review-Reminder | Drift schleichend | niedrig (kostet nichts) | offen |

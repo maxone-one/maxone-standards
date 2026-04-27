@@ -32,9 +32,10 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [013-launch-gate-review.md](013-launch-gate-review.md) — Gate 3: Security & Compliance Review mit Sign-Off vor `live`
 - [017-dsgvo-tracker-audit.md](017-dsgvo-tracker-audit.md) — Drittdienste/Tracker (Google Fonts, GA, Pixel, Embeds) erst nach Consent
 - [018-bundle-drift-audit.md](018-bundle-drift-audit.md) — Live-Bundle ohne veraltete Hosts, Source-Maps, Plattform-Watermarks
+- [019-cert-dns-reality.md](019-cert-dns-reality.md) — DNS auf eigenen Server + TLS-Cert gültig + LE-Issuer
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
-- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/015/016/017/018/022/023)
+- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/015/016/017/018/019/022/023)
 
 ## Format einer Regel
 
