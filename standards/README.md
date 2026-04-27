@@ -6,14 +6,25 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 
 ## Index
 
+**Infrastruktur & Deploy:**
 - [001-deployment-blue-green.md](001-deployment-blue-green.md) — Blue/Green Deploy für alle Live-Projekte
 - [002-no-build-on-prod.md](002-no-build-on-prod.md) — Niemals Docker-Builds auf Prod-Servern
 - [003-secrets-store.md](003-secrets-store.md) — Zentraler Secrets-Store unter `/opt/secrets/`
 - [004-tls-dns01.md](004-tls-dns01.md) — TLS-Certs immer per DNS-01, nie HTTP-01
+
+**Tests & Doku:**
 - [005-test-first.md](005-test-first.md) — Smoke + Unit Tests bevor "ist live" gemeldet wird
 - [006-handoff-md.md](006-handoff-md.md) — Jedes Projekt hat HANDOFF.md auf dem Server
+
+**Naming & Domains:**
 - [007-paths-naming.md](007-paths-naming.md) — Pfade und Container-Naming-Konventionen
 - [008-domain-policy.md](008-domain-policy.md) — Neue Resourcen auf .one, nie .studio
+
+**UI & Compliance:**
+- [009-impressum-widget.md](009-impressum-widget.md) — Impressum aus zentraler API
+- [010-credits-api.md](010-credits-api.md) — Credits aus zentraler API
+- [011-vector-chat-widget.md](011-vector-chat-widget.md) — Vector-Chat-Widget in jedem Projekt
+- [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte (proposed)
 
 ## Format einer Regel
 

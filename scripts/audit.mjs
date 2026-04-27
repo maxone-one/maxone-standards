@@ -11,8 +11,8 @@
 // ~/.ssh/voltfair für voltfair-cli (46.225.107.118). Bei Fehler wird der Check
 // als WARN (nicht FAIL) gewertet, damit das Audit auch ohne Konnektivität läuft.
 
-import { existsSync, readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import yaml from 'js-yaml';
@@ -56,6 +56,36 @@ const PASS = (msg) => ({ ok: true, msg });
 const FAIL = (msg) => ({ ok: false, msg });
 const WARN = (msg) => ({ ok: true, warn: true, msg });
 const SKIP = (msg) => ({ ok: true, skip: true, msg });
+
+// Walk repo source files (skip node_modules, .next, dist, .git, etc.)
+const SKIP_DIRS = new Set(['node_modules', '.next', '.git', 'dist', 'build', '.turbo', '.svelte-kit', 'coverage', '.cache', 'out']);
+const SCAN_EXT = new Set(['.tsx', '.ts', '.jsx', '.js', '.svelte', '.astro', '.vue', '.html', '.mjs']);
+
+function* walkSource(root, depth = 0) {
+  if (depth > 8) return;
+  let entries;
+  try { entries = readdirSync(root, { withFileTypes: true }); } catch { return; }
+  for (const e of entries) {
+    if (e.name.startsWith('.') && e.name !== '.well-known') continue;
+    if (SKIP_DIRS.has(e.name)) continue;
+    const p = join(root, e.name);
+    if (e.isDirectory()) yield* walkSource(p, depth + 1);
+    else if (e.isFile() && SCAN_EXT.has(extname(e.name))) yield p;
+  }
+}
+
+function grepRepo(repoRoot, regex, maxFiles = 5) {
+  const hits = [];
+  for (const file of walkSource(repoRoot)) {
+    let text;
+    try { text = readFileSync(file, 'utf8'); } catch { continue; }
+    if (regex.test(text)) {
+      hits.push(file.slice(repoRoot.length + 1).replace(/\\/g, '/'));
+      if (hits.length >= maxFiles) break;
+    }
+  }
+  return hits;
+}
 
 // --- Local Checks ---
 
@@ -116,6 +146,62 @@ const localChecks = {
     if (smoke && !testingMd) return WARN('smoke.mjs ja, TESTING.md fehlt');
     if (!smoke && testingMd) return WARN('TESTING.md ja, smoke.mjs fehlt');
     return FAIL('weder smoke.mjs noch TESTING.md');
+  },
+  '009-impressum-widget': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    const apiNew = grepRepo(project.path_local, /panel\.maxone\.one\/functions\/v1\/impressum/, 1);
+    const apiOld = grepRepo(project.path_local, /panel\.maxone\.studio\/functions\/v1\/impressum/, 1);
+    if (apiNew.length) return PASS(`API .one in ${apiNew[0]}`);
+    if (apiOld.length) return WARN(`nutzt panel.maxone.studio (auf .one migrieren) — ${apiOld[0]}`);
+    const localImpressum = grepRepo(project.path_local, /\b(impressum|imprint)\b/i, 1);
+    if (localImpressum.length) return WARN(`Impressum lokal? siehe ${localImpressum[0]}`);
+    return SKIP('keine Impressum-Erwähnung gefunden');
+  },
+  '010-credits-api': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.name === 'maxone.one') return SKIP('hostet die API selbst');
+    if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    const api = grepRepo(project.path_local, /maxone\.one\/api\/credits\//, 1);
+    if (api.length) return PASS(`API in ${api[0]}`);
+    const localCredits = grepRepo(project.path_local, /\bCredits(Overlay|Page|Section)\b|\/credits\b/, 1);
+    if (localCredits.length) return WARN(`Credits lokal? siehe ${localCredits[0]} (auf API umstellen)`);
+    return WARN('keine Credits-Route gefunden (sollte hinzugefügt werden)');
+  },
+  '011-vector-chat': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.name === 'vector') return SKIP('hostet Widget selbst');
+    if (project.name === 'maxone.one') return PASS('hostet Widget mit, Einbau geprüft separat');
+    if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    const widgetNew = grepRepo(project.path_local, /agent\.maxone\.one\/widget\/vector-chat\.js/, 1);
+    const widgetOld = grepRepo(project.path_local, /agent\.maxone\.studio\/widget/, 1);
+    if (widgetNew.length) return PASS(`eingebunden in ${widgetNew[0]}`);
+    if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
+    return FAIL('Widget nicht eingebunden');
+  },
+  '012-footer': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    // Footer-Komponente finden
+    const footerFiles = [];
+    for (const file of walkSource(project.path_local)) {
+      const base = file.split(/[\\/]/).pop().toLowerCase();
+      if (/^footer\.(tsx|jsx|svelte|astro|vue)$/.test(base) || /^globalfooter\./.test(base)) {
+        footerFiles.push(file);
+        if (footerFiles.length >= 3) break;
+      }
+    }
+    if (!footerFiles.length) return WARN('keine Footer-Komponente gefunden');
+    const text = footerFiles.map(f => { try { return readFileSync(f, 'utf8'); } catch { return ''; } }).join('\n');
+    const checks = {
+      impressum: /\/impressum\b/.test(text),
+      datenschutz: /\/datenschutz\b/.test(text),
+      year: /getFullYear\(\)|new Date\(\)/.test(text),
+      attribution: /maxone\b/i.test(text),
+    };
+    const fails = Object.entries(checks).filter(([_, ok]) => !ok).map(([k]) => k);
+    if (!fails.length) return PASS(`${footerFiles.length} Footer-Datei(en), alle Pflichten erfüllt`);
+    return WARN(`Footer fehlt: ${fails.join(', ')}`);
   },
 };
 
