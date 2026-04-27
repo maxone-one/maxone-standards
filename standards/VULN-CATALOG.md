@@ -249,11 +249,11 @@ Jeder Eintrag mit:
 #### C1 — Tracker ohne Consent
 - **Rechtsgrundlage:** TTDSG § 25, DSGVO Art. 6
 - **Vorfall:** ständig — auch eigener 30-min-Vibe-Coding-Test 2026-04-27 hatte das Problem
-- **Coverage:** ✅ Standard 013 Section D, 🔄 Standard 017 geplant (Audit-Automation)
+- **Coverage:** ✅ Standard 013 Section D + ✅ Standard 017 (audit.mjs HTML-Pattern-Scan auf GA/GTM/FB-Pixel/Hotjar/Mixpanel/Segment/Amplitude/Intercom/CrazyEgg/LinkedIn/TikTok/YouTube/Vimeo/Maps; Webbkoll für JS-injizierte Tracker manuell)
 
 #### C2 — Google Fonts via CDN
 - **Rechtsgrundlage:** **LG München I, Az. 3 O 17493/20** — Schadensersatz an betroffene IP
-- **Coverage:** ✅ Standard 013 Section D, 🔄 Standard 017 geplant
+- **Coverage:** ✅ Standard 013 Section D + ✅ Standard 017 (audit.mjs HTML-Pattern-Scan auf `fonts.googleapis.com` / `fonts.gstatic.com` — am 2026-04-27 hat das Audit repivot + snapflow live als Verstoss geflaggt)
 
 #### C3 — PII in Logs
 - **Beschreibung:** E-Mails, IPs, Namen in Server-Logs ohne Notwendigkeit
@@ -390,8 +390,8 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | OWASP | Auth-Failures | B | — | manuell | ⚠️ manuell |
 | OWASP | Webhook-Sig | G | — | manuell | ⚠️ manuell |
 | OWASP | Logging | H, I | — | manuell | ⚠️ manuell |
-| DSGVO | Tracker ohne Consent | D | — | Webbkoll manuell | 🔴 **TODO** (017) |
-| DSGVO | Google Fonts | D | — | manuell | 🔴 **TODO** (017) |
+| DSGVO | Tracker ohne Consent (C1) | D | 017 | HTML-Pattern-Scan + Webbkoll | ✅ hart (seit 017) |
+| DSGVO | Google Fonts (C2) | D | 017 | HTML-Pattern-Scan | ✅ hart (seit 017) |
 | DSGVO | PII in Logs | — | — | — | 🔴 **TODO** |
 | DSGVO | PII-Exposure (Endpunkt) | C, J6 | — | manuell + Vibe App Scanner | ⚠️ manuell, 020 geplant |
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
@@ -416,9 +416,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 8 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016)
+**Aktuell abgedeckt (hart):** 10 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017)
 **Aktuell manuell:** 15 Lücken
-**Aktuell offen:** 12 Lücken (großteils geplant in Standards 014, 017–021, 024, 025)
+**Aktuell offen:** 10 Lücken (großteils geplant in Standards 014, 018–021, 024, 025)
 
 ---
 
@@ -430,7 +430,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 |---|---|---|---|
 | ~~**015** CONCEPT.md (Gate 1)~~ | Insecure Design (B5) | sehr hoch — verhindert Klassen vor Code-Zeile 1 | ✅ **erledigt 2026-04-27** |
 | ~~**016** Stack-Whitelist~~ | Plattform-Lock-in (E1) | hoch — Lovable/Bolt/Base44 explizit raus | ✅ **erledigt 2026-04-27** |
-| **017** DSGVO-Tracker-Audit | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via Webbkoll | offen |
+| ~~**017** DSGVO-Tracker-Audit~~ | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via HTML-Pattern + Webbkoll | ✅ **erledigt 2026-04-27** |
 | **018** Bundle-Drift-Audit | Bundle-Drift (F2), Packaging-Leak (E4) | hoch — hätte repivot/panel.maxone.studio gefunden | offen |
 | **019** Cert + DNS-Realität | DNS-Drift (F1), Cert (F3) | hoch — hätte plansey/vanfree gefunden | offen |
 | **020** Pen-Test-Light | BOLA (B1), SSRF live, PII-Exposure (C7) | hoch — Enrichlead-Klasse automatisiert | offen |

@@ -20,6 +20,10 @@ import yaml from 'js-yaml';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
+// Module-level Flag, in main() aus --local-only gesetzt. Standard 017 fragt
+// Live-Domains via fetch() ab — bei --local-only wird übersprungen.
+let OFFLINE = false;
+
 const SERVERS = {
   'maxone-prod':   { host: '128.140.40.235', user: 'root', key: '~/.ssh/id_ed25519' },
   'voltfair-cli':  { host: '46.225.107.118', user: 'root', key: '~/.ssh/voltfair' },
@@ -297,6 +301,53 @@ const localChecks = {
     }
     return PASS('keine Blacklist-Marker / -Pakete gefunden');
   },
+  '017-dsgvo-tracker': async (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.domain) return SKIP('keine Domain');
+    if (project.tags === 'internal' || project.tags === 'infra') return SKIP('internes/Infra-Projekt');
+    if (OFFLINE) return SKIP('--local-only (HTTP-Fetch übersprungen)');
+
+    const url = `https://${project.domain}/`;
+    let html;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 10000);
+      const res = await fetch(url, {
+        signal: ctrl.signal,
+        redirect: 'follow',
+        headers: { 'User-Agent': 'maxone-standards-audit/017 (+DSGVO-Tracker-Scan)' },
+      });
+      clearTimeout(timer);
+      if (!res.ok) return WARN(`HTTP ${res.status} — manueller Webbkoll-Check empfohlen`);
+      html = await res.text();
+    } catch (err) {
+      const reason = err.name === 'AbortError' ? 'Timeout (>10s)' : (err.cause?.code || err.message || '').toString().slice(0, 60);
+      return WARN(`Domain nicht erreichbar (${reason}) — manueller Webbkoll-Check empfohlen`);
+    }
+
+    const trackerPatterns = [
+      { name: 'Google Fonts (LG München I)', re: /\b(fonts\.googleapis\.com|fonts\.gstatic\.com)\b/i },
+      { name: 'Google Analytics / GTM',      re: /\b(google-analytics\.com|googletagmanager\.com|analytics\.google\.com)\b/i },
+      { name: 'Facebook Pixel',              re: /\b(connect\.facebook\.net|facebook\.com\/tr)\b/i },
+      { name: 'LinkedIn Insight',            re: /\bsnap\.licdn\.com\b/i },
+      { name: 'TikTok Pixel',                re: /\banalytics\.tiktok\.com\b/i },
+      { name: 'Hotjar',                      re: /\bstatic\.hotjar\.com\b/i },
+      { name: 'Mixpanel',                    re: /\bcdn\.mxpnl\.com\b/i },
+      { name: 'Segment',                     re: /\bcdn\.segment\.com\b/i },
+      { name: 'Amplitude',                   re: /\bcdn\.amplitude\.com\b/i },
+      { name: 'Intercom',                    re: /\b(widget\.intercom\.io|js\.intercomcdn\.com)\b/i },
+      { name: 'Crazy Egg',                   re: /\bscript\.crazyegg\.com\b/i },
+      { name: 'YouTube-Embed',               re: /\b(www\.youtube\.com\/embed|youtube\.com\/iframe_api)\b/i },
+      { name: 'Vimeo-Embed',                 re: /\bplayer\.vimeo\.com\/video\b/i },
+      { name: 'Google Maps-Embed',           re: /\b(maps\.googleapis\.com|maps\.google\.com\/maps\?)\b/i },
+    ];
+
+    const hits = trackerPatterns.filter(p => p.re.test(html)).map(p => p.name);
+    if (hits.length) {
+      return WARN(`Tracker im Initial-HTML: ${hits.join(', ')} — vor Consent rechtswidrig (DSGVO Art. 6 + TTDSG § 25)`);
+    }
+    return PASS('keine bekannten Tracker im Initial-HTML');
+  },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
@@ -412,7 +463,7 @@ const sshChecks = {
 
 // --- Runner ---
 
-function runChecks(checks, projects, filterStandard, kind) {
+async function runChecks(checks, projects, filterStandard, kind) {
   const results = { pass: 0, fail: 0, warn: 0, skip: 0 };
   const failures = [];
   const warnings = [];
@@ -421,7 +472,7 @@ function runChecks(checks, projects, filterStandard, kind) {
     for (const [id, fn] of Object.entries(checks)) {
       if (filterStandard && !id.startsWith(filterStandard)) continue;
       let r;
-      try { r = fn(project); }
+      try { r = await fn(project); }
       catch (err) { r = FAIL(`Check-Fehler: ${err.message.slice(0, 100)}`); }
 
       if (!printedHeader) { console.log(`\n=== ${project.name} (${kind}) ===`); printedHeader = true; }
@@ -434,8 +485,9 @@ function runChecks(checks, projects, filterStandard, kind) {
   return { results, failures, warnings };
 }
 
-function main() {
+async function main() {
   const args = parseArgs();
+  OFFLINE = !!args['local-only'];
   let registry = loadRegistry();
   if (args.project) {
     registry = registry.filter(p => p.name === args.project);
@@ -444,12 +496,12 @@ function main() {
 
   console.log(`maxone-standards audit — ${registry.length} Projekt(e)`);
 
-  const local = runChecks(localChecks, registry, args.standard, 'local');
+  const local = await runChecks(localChecks, registry, args.standard, 'local');
 
   let ssh = { results: { pass: 0, fail: 0, warn: 0, skip: 0 }, failures: [], warnings: [] };
   if (!args['local-only']) {
     console.log('\n--- SSH-Checks (--local-only zum Überspringen) ---');
-    ssh = runChecks(sshChecks, registry, args.standard, 'ssh');
+    ssh = await runChecks(sshChecks, registry, args.standard, 'ssh');
   }
 
   const total = local.results.pass + local.results.fail + local.results.warn + local.results.skip
