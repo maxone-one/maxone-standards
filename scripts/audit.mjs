@@ -183,6 +183,30 @@ const localChecks = {
     if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
     return FAIL('Widget nicht eingebunden');
   },
+  '013-launch-gate': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    const reviewPath = join(project.path_local, 'LAUNCH-REVIEW.md');
+    const isInternal = project.tags === 'internal' || project.tags === 'infra';
+    if (!existsSync(reviewPath)) {
+      return isInternal ? WARN('LAUNCH-REVIEW.md fehlt (internes/Infra-Tool, Empfehlung)')
+                        : FAIL('LAUNCH-REVIEW.md fehlt');
+    }
+    const text = readFileSync(reviewPath, 'utf8');
+    const hasSignOff = /^##\s+Sign-Off/m.test(text);
+    const hasResp = /Verantwortlich:\s*\S/i.test(text);
+    if (!hasSignOff || !hasResp) {
+      return isInternal ? WARN('LAUNCH-REVIEW.md ohne Sign-Off (internes Tool)')
+                        : FAIL('LAUNCH-REVIEW.md ohne Sign-Off-Block + Verantwortlichen');
+    }
+    // Datum aus dem letzten Sign-Off-Header ziehen ("## Sign-Off — YYYY-MM-DD")
+    const dateMatches = [...text.matchAll(/^##\s+Sign-Off[^\n]*?(\d{4}-\d{2}-\d{2})/gm)];
+    if (!dateMatches.length) return WARN('Sign-Off ohne Datum (Format "## Sign-Off — YYYY-MM-DD")');
+    const lastDate = dateMatches[dateMatches.length - 1][1];
+    const ageDays = Math.floor((Date.now() - new Date(lastDate).getTime()) / 86400000);
+    if (ageDays > 365) return WARN(`Sign-Off älter als 12 Monate (${lastDate}, ${ageDays}d) — Re-Review fällig`);
+    return PASS(`Sign-Off ${lastDate}`);
+  },
   '012-footer': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');

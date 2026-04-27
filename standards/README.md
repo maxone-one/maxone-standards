@@ -26,6 +26,9 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [011-vector-chat-widget.md](011-vector-chat-widget.md) — Vector-Chat-Widget in jedem Projekt
 - [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte
 
+**Verantwortung & Sicherheit:**
+- [013-launch-gate-review.md](013-launch-gate-review.md) — Launch-Gate: Security & Compliance Review mit Sign-Off vor `live`
+
 ## Format einer Regel
 
 ```markdown
