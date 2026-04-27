@@ -24,7 +24,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [009-impressum-widget.md](009-impressum-widget.md) — Impressum aus zentraler API
 - [010-credits-api.md](010-credits-api.md) — Credits aus zentraler API
 - [011-vector-chat-widget.md](011-vector-chat-widget.md) — Vector-Chat-Widget in jedem Projekt
-- [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte (proposed)
+- [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte
 
 ## Format einer Regel
 

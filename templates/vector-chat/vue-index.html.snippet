@@ -1,0 +1,37 @@
+<!-- ============================================================ -->
+<!-- Vector-Chat-Widget — Standard 011 — Vue/Vite                 -->
+<!-- Datei: index.html                                            -->
+<!-- ============================================================ -->
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Vector-Chat -->
+    <link rel="preconnect" href="https://agent.maxone.one" crossorigin>
+    <link rel="preload" as="script" href="https://agent.maxone.one/widget/vector-chat.js" crossorigin>
+    <script src="https://agent.maxone.one/widget/vector-chat.js" async crossorigin></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+
+    <vector-chat
+      hide-on="/impressum,/datenschutz,/admin,/portal,/onboarding">
+    </vector-chat>
+  </body>
+</html>
+
+<!--
+Vue-Compiler erkennt <vector-chat> sonst nicht als Custom-Element.
+In vite.config.ts:
+
+  import vue from '@vitejs/plugin-vue'
+  export default defineConfig({
+    plugins: [vue({
+      template: { compilerOptions: { isCustomElement: tag => tag === 'vector-chat' } }
+    })]
+  })
+-->

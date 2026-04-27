@@ -1,10 +1,10 @@
 # 012 — Footer-Standard
 
-**Status:** proposed (zur Diskussion mit Max)
+**Status:** active
 **Seit:** 2026-04-27
 **Gilt für:** alle Customer-facing Projekte
 
-## Regel (Vorschlag)
+## Regel
 
 Jedes Customer-facing Projekt hat einen Footer mit fester Struktur. Die
 Implementierung ist pro Framework angepasst (React/Svelte/Astro/...), die
@@ -54,10 +54,11 @@ Pattern (analog zu `stadt-lahn-flow/GlobalFooter.tsx`): ein Wrapper, der via
 
 ## Wie anwenden
 
-Pro-Framework-Skelett liegt in `templates/footer/`:
-- `templates/footer/Footer.tsx` (React)
-- `templates/footer/Footer.svelte` (Svelte)
-- `templates/footer/Footer.astro` (Astro)
+Pro-Framework-Skelett liegt in [templates/footer/](../templates/footer/):
+- `Footer.tsx` (React)
+- `GlobalFooter.tsx` (Wrapper mit Hide-Logik)
+- `Footer.svelte` (Svelte/SvelteKit)
+- `Footer.astro` (Astro)
 
 Skelett kopieren, Brand-Texte austauschen, Navigation einsetzen, fertig.
 Niemals von Grund auf neu schreiben.

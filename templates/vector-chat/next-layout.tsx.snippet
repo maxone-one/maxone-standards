@@ -1,0 +1,52 @@
+// ============================================================
+// Vector-Chat-Widget — Standard 011 — Next.js App Router
+// Datei: app/layout.tsx (oder app/(public)/layout.tsx)
+// ============================================================
+
+import Script from 'next/script';
+
+// In <head> (über <Metadata> hinaus, falls vorhanden):
+export const metadata = {
+  // ... bestehende Metadata bleibt
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="de">
+      <head>
+        <link rel="preconnect" href="https://agent.maxone.one" crossOrigin="anonymous" />
+        <link rel="preload" as="script" href="https://agent.maxone.one/widget/vector-chat.js" crossOrigin="anonymous" />
+      </head>
+      <body>
+        {children}
+
+        {/* Web-Component: TS kennt das Element nicht, daher als any */}
+        {/* @ts-ignore */}
+        <vector-chat
+          hide-on="/impressum,/datenschutz,/admin,/portal,/onboarding"
+        />
+
+        <Script
+          src="https://agent.maxone.one/widget/vector-chat.js"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+        />
+      </body>
+    </html>
+  );
+}
+
+// Für TypeScript: in einer .d.ts-Datei (z.B. types/vector-chat.d.ts):
+//
+// declare namespace JSX {
+//   interface IntrinsicElements {
+//     'vector-chat': React.DetailedHTMLProps<
+//       React.HTMLAttributes<HTMLElement> & {
+//         'hide-on'?: string;
+//         'user-name'?: string;
+//         'user-email'?: string;
+//       },
+//       HTMLElement
+//     >;
+//   }
+// }

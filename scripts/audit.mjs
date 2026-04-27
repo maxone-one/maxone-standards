@@ -162,7 +162,8 @@ const localChecks = {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.name === 'maxone.one') return SKIP('hostet die API selbst');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
-    const api = grepRepo(project.path_local, /maxone\.one\/api\/credits\//, 1);
+    // Echter API-Call: maxone.one/api/credits/<slug> mit fetch oder axios oder als Konstante
+    const api = grepRepo(project.path_local, /(['"`])https?:\/\/maxone\.one\/api\/credits\//, 1);
     if (api.length) return PASS(`API in ${api[0]}`);
     const localCredits = grepRepo(project.path_local, /\bCredits(Overlay|Page|Section)\b|\/credits\b/, 1);
     if (localCredits.length) return WARN(`Credits lokal? siehe ${localCredits[0]} (auf API umstellen)`);

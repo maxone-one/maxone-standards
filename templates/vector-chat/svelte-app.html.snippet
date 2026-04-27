@@ -1,0 +1,28 @@
+<!-- ============================================================ -->
+<!-- Vector-Chat-Widget — Standard 011 — SvelteKit                -->
+<!-- Datei: src/app.html                                          -->
+<!-- ============================================================ -->
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Vector-Chat: preconnect + preload -->
+    <link rel="preconnect" href="https://agent.maxone.one" crossorigin>
+    <link rel="preload" as="script" href="https://agent.maxone.one/widget/vector-chat.js" crossorigin>
+    <script src="https://agent.maxone.one/widget/vector-chat.js" async crossorigin></script>
+
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+
+    <!-- Vector-Chat: Web-Component am Body-Ende -->
+    <vector-chat
+      hide-on="/impressum,/datenschutz,/admin,/portal,/onboarding">
+    </vector-chat>
+  </body>
+</html>
