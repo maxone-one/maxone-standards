@@ -189,7 +189,7 @@ Jeder Eintrag mit:
 - **Verbreitung:** **94 %** der getesteten Apps mit mindestens einer BOLA-/Access-Control-Lücke (OWASP Top 10 2021 Statistik) — die häufigste Klasse überhaupt
 - **Vorfall:** **Enrichlead 2025** — jeder Nutzer konnte fremde Daten ändern + kostenpflichtige Features nutzen → Projekt eingestellt
 - **Vorfall:** **Lovable 2026** — BOLA-Lücke blieb 48 Tage offen, Bug-Bounty-Report wurde als „erledigt" geschlossen
-- **Coverage:** ✅ Standard 013 Section B (curl User-A vs User-B), ✅ Section J Punkt 7, 🔄 Standard 020 geplant (automatisierter Pen-Test)
+- **Coverage:** ✅ Standard 013 Section B (curl User-A vs User-B), ✅ Section J Punkt 7, ✅ Standard 020 (Pen-Test-Light: defensive Außensicht — exposed Files / Admin-Routen / Status-Endpunkte / Header-Hygiene). Echte BOLA mit zwei Test-Usern bleibt manuell in 013-C / Section J.
 
 #### B2 — Vertical Privilege Escalation
 - **OWASP:** A01
@@ -275,7 +275,7 @@ Jeder Eintrag mit:
 - **Rechtsgrundlage:** DSGVO Art. 32 („Stand der Technik") + Art. 33 (72h-Meldepflicht) + Art. 83 (bis 4 % Jahresumsatz)
 - **Beschreibung:** Medizinische Daten, Zahlungsinfos, Adressen, Namen direkt per öffentlicher API/URL abrufbar — meist Folge von B6 (RLS-Misconfig) oder Unauth-Routes
 - **Vorfall:** Escape.tech-Scan März 2026 — **175 PII-Leaks** in 5.600 Vibe-Coded Apps, inklusive Medical Records und Payment Data, in Produktion (nicht Test)
-- **Coverage:** ✅ Standard 013 Section C (RLS) + Section J Punkt 6 (Unauth-Routes-Liste). 🔴 **TODO:** automatisierter Endpunkt-Scan auf personenbezogene Felder (Standard 020 geplant)
+- **Coverage:** ✅ Standard 013 Section C (RLS) + Section J Punkt 6 (Unauth-Routes-Liste) + ✅ Standard 020 (Pen-Test-Light: prüft `.env`/`.git/`/`backup.sql` exposed — am 2026-04-28 lief der Audit live über alle 8 Domains, 0 Critical-Treffer). Vollständiger Endpunkt-Scan auf personenbezogene Felder bleibt manuell.
 
 ### D. AI-Agent-spezifische Risiken (OWASP LLM Top 10, 2025)
 
@@ -381,7 +381,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | AI | SSRF | J3 | 023 | semgrep | ✅ hart |
 | AI | Hardcoded Secrets | J4, F | 022 | gitleaks | ✅ hart |
 | AI | Hallucination / Slopsquatting | — | 022 (Lockfile) | Socket.dev empfohlen | ⚠️ teilweise, 015 reduziert |
-| OWASP | BOLA | B, J7 | — | curl-Skript | ⚠️ manuell, 020 geplant |
+| OWASP | BOLA | B, J7 | 020 (außen) | curl-Skript + Pen-Test-Light | ⚠️ teilweise (außen hart, intern manuell) |
 | OWASP | Privilege Escalation | B | — | manuell | ⚠️ manuell |
 | OWASP | Crypto Failures | — | teilweise via 023 | semgrep | 🔴 **TODO** |
 | OWASP | SQL/Command Injection | — | 023 | semgrep | ✅ hart |
@@ -394,7 +394,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | Tracker ohne Consent (C1) | D | 017 | HTML-Pattern-Scan + Webbkoll | ✅ hart (seit 017) |
 | DSGVO | Google Fonts (C2) | D | 017 | HTML-Pattern-Scan | ✅ hart (seit 017) |
 | DSGVO | PII in Logs | — | — | — | 🔴 **TODO** |
-| DSGVO | PII-Exposure (Endpunkt) | C, J6 | — | manuell + Vibe App Scanner | ⚠️ manuell, 020 geplant |
+| DSGVO | PII-Exposure (Endpunkt) | C, J6 | 020 (außen) | manuell + Pen-Test-Light + Vibe App Scanner | ⚠️ teilweise (`.env`/`.git`/Backup hart, Endpunkt-Scan manuell) |
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
 | DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
@@ -419,8 +419,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
 **Aktuell abgedeckt (hart):** 15 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014)
-**Aktuell manuell:** 15 Lücken
-**Aktuell offen:** 6 Lücken (großteils geplant in Standards 020, 021, 024, 025)
+**Teilweise abgedeckt (außen hart, innen manuell):** 2 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen)
+**Aktuell manuell:** 13 Lücken
+**Aktuell offen:** 6 Lücken (großteils geplant in Standards 021, 024, 025)
 
 ---
 
@@ -435,7 +436,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**017** DSGVO-Tracker-Audit~~ | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via HTML-Pattern + Webbkoll | ✅ **erledigt 2026-04-27** |
 | ~~**018** Bundle-Drift-Audit~~ | Bundle-Drift (F2), Source-Maps (F4) | hoch — hätte repivot/panel.maxone.studio gefunden | ✅ **erledigt 2026-04-27** |
 | ~~**019** Cert + DNS-Realität~~ | DNS-Drift (F1), Cert (F3) | hoch — hat plansey (Cloudflare-IPs) und vanfree (TLS-Handshake-FAIL) live nachgewiesen | ✅ **erledigt 2026-04-27** |
-| **020** Pen-Test-Light | BOLA (B1), SSRF live, PII-Exposure (C7) | hoch — Enrichlead-Klasse automatisiert | offen |
+| ~~**020** Pen-Test-Light~~ | BOLA (B1, außen), SSRF (außen), PII-Exposure (C7, außen), Header-Hygiene | hoch — Enrichlead-Klasse außen-automatisiert; SPA-Catch-All-erkennend | ✅ **erledigt 2026-04-28** |
 | ~~**014** Sunset~~ | Datenfriedhöfe, AVV-Hygiene, Sunset-Drift | mittel — vanfree/plansey sind aktuelle Anwendungsfälle | ✅ **erledigt 2026-04-28** |
 | **021** Re-Review-Reminder | Drift schleichend | niedrig (kostet nichts) | offen |
 | **024** Code-Health-Budget | Refactoring-Anteil (G2), Duplikation (G3) | mittel — strukturelle Erosion langfristig | offen |

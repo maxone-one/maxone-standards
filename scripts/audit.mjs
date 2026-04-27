@@ -481,6 +481,129 @@ const localChecks = {
     }
     return PASS(`SUNSET.md vorhanden (${project.status})`);
   },
+  '020-pentest-light': async (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.domain) return SKIP('keine Domain');
+    if (project.tags === 'internal' || project.tags === 'infra') return SKIP('internes/Infra-Projekt');
+    if (OFFLINE) return SKIP('--local-only (Netzwerk übersprungen)');
+
+    const baseUrl = `https://${project.domain}`;
+    const probe = async (path, method = 'GET') => {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 3000);
+      try {
+        const res = await fetch(baseUrl + path, {
+          method,
+          signal: ctrl.signal,
+          redirect: 'follow',
+          headers: { 'User-Agent': 'maxone-standards-audit/020 (+Pentest-Light)' },
+        });
+        const ct = res.headers.get('content-type') || '';
+        // Bei text/html: kurzen Body lesen (max 4 KB) für Inhalts-Heuristik (SPA-Fallback erkennen)
+        let body = null;
+        if (method === 'GET' && res.ok && /text\/(html|plain)/i.test(ct)) {
+          const reader = res.body?.getReader();
+          if (reader) {
+            const chunks = [];
+            let total = 0;
+            while (total < 4096) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              total += value.length;
+            }
+            try { reader.cancel(); } catch {}
+            body = Buffer.concat(chunks).toString('utf8').slice(0, 4096);
+          }
+        }
+        return { status: res.status, headers: res.headers, contentType: ct, body };
+      } catch {
+        return { status: 0, headers: null, contentType: '', body: null };
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    // Baseline: zufälliger Pfad — wenn der schon 200/HTML zurückgibt, ist es ein SPA-Catch-All-Routing.
+    // Dann müssen Probes per Inhalt unterschieden werden, nicht per Status-Code.
+    const baseline = await probe('/__maxone-audit-nonexistent-' + Math.random().toString(36).slice(2, 10) + '__', 'GET');
+    const isSpaCatchAll = baseline.status === 200 && /text\/html/i.test(baseline.contentType);
+
+    const exposedPaths = [
+      { path: '/.env',              severity: 'fail', name: '.env',
+        contentRe: /^[A-Z_][A-Z0-9_]*\s*=/m },
+      { path: '/.env.local',        severity: 'fail', name: '.env.local',
+        contentRe: /^[A-Z_][A-Z0-9_]*\s*=/m },
+      { path: '/.env.production',   severity: 'fail', name: '.env.production',
+        contentRe: /^[A-Z_][A-Z0-9_]*\s*=/m },
+      { path: '/.git/HEAD',         severity: 'fail', name: '.git/HEAD',
+        contentRe: /^ref:\s+refs\//m },
+      { path: '/.git/config',       severity: 'fail', name: '.git/config',
+        contentRe: /\[core\]|\[remote\s/i },
+      { path: '/backup.sql',        severity: 'fail', name: 'backup.sql',
+        contentRe: /(CREATE TABLE|INSERT INTO|PostgreSQL database dump)/i },
+      { path: '/dump.sql',          severity: 'fail', name: 'dump.sql',
+        contentRe: /(CREATE TABLE|INSERT INTO|PostgreSQL database dump)/i },
+      { path: '/server-status',     severity: 'warn', name: 'server-status',
+        contentRe: /Apache Server Status|Server Version:/i },
+      { path: '/nginx_status',      severity: 'warn', name: 'nginx_status',
+        contentRe: /Active connections:/i },
+      { path: '/phpmyadmin/',       severity: 'warn', name: 'phpmyadmin',
+        contentRe: /phpMyAdmin/i },
+    ];
+
+    const fails = [];
+    const warnings = [];
+
+    // 1. Pfad-Probes — auf SPA-Sites brauchen wir Inhalts-Match, sonst genügt Status 200 + non-HTML
+    for (const p of exposedPaths) {
+      const r = await probe(p.path, 'GET');
+      if (r.status !== 200) continue;
+      let realHit = false;
+      if (isSpaCatchAll) {
+        // Auf SPA: nur dann FAIL, wenn der Body wirklich nach erwartetem Inhalt aussieht
+        if (r.body && p.contentRe.test(r.body)) realHit = true;
+      } else {
+        // Kein Catch-All: 200 mit non-HTML reicht
+        if (!/text\/html/i.test(r.contentType)) realHit = true;
+        else if (r.body && p.contentRe.test(r.body)) realHit = true;
+      }
+      if (realHit) {
+        const entry = `${p.name} exposed`;
+        if (p.severity === 'fail') fails.push(entry); else warnings.push(entry);
+      }
+    }
+
+    // 2. Admin-Route — nur prüfen wenn KEIN SPA-Catch-All (sonst False-Positive garantiert)
+    if (!isSpaCatchAll) {
+      const adminProbe = await probe('/admin', 'GET');
+      if (adminProbe.status === 200 && adminProbe.body) {
+        const looksLikeLogin = /<input[^>]*type=["']password["']|<form[^>]*login|sign.?in|anmelden/i.test(adminProbe.body);
+        if (!looksLikeLogin) warnings.push('/admin antwortet 200 ohne erkennbare Login-Form');
+      }
+    }
+
+    // 3. Header-Hygiene auf "/" (1 GET)
+    const root = await probe('/', 'GET');
+    if (root.status === 0) {
+      return WARN(`Hauptpfad nicht erreichbar — keine Header-Prüfung möglich (Probes: ${fails.length} fail, ${warnings.length} warn)`);
+    }
+    if (root.headers) {
+      if (!root.headers.get('strict-transport-security')) warnings.push('HSTS-Header fehlt');
+      if (!root.headers.get('x-content-type-options')) warnings.push('X-Content-Type-Options fehlt');
+      const xfo = root.headers.get('x-frame-options');
+      const csp = root.headers.get('content-security-policy') || '';
+      if (!xfo && !/frame-ancestors/i.test(csp)) warnings.push('X-Frame-Options + frame-ancestors fehlen beide');
+      const server = root.headers.get('server') || '';
+      if (/\d/.test(server)) warnings.push(`Server-Header verrät Version: "${server}"`);
+      if (root.headers.get('x-powered-by')) warnings.push(`X-Powered-By gesetzt: "${root.headers.get('x-powered-by')}"`);
+    }
+
+    const spaNote = isSpaCatchAll ? ' [SPA-Catch-All erkannt — Probes via Inhalts-Match]' : '';
+    if (fails.length) return FAIL(`Critical exposed: ${fails.join('; ')}` + (warnings.length ? ` (+${warnings.length} warn)` : '') + spaNote);
+    if (warnings.length) return WARN(warnings.join('; ') + spaNote);
+    return PASS('keine Treffer in Probe + Header-Set vollständig' + spaNote);
+  },
   '019-cert-dns': async (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (!project.domain) return SKIP('keine Domain');
