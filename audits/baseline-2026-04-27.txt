@@ -1,0 +1,224 @@
+maxone-standards audit — 11 Projekt(e)
+
+=== maxone.one (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [WARN] 009-impressum-widget — Impressum lokal? siehe src/lib/components/shared/Footer.svelte
+  [skip] 010-credits-api — hostet die API selbst
+  [OK]   011-vector-chat — hostet Widget mit, Einbau geprüft separat
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+
+=== stadtlahnflow (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [WARN] 009-impressum-widget — Impressum lokal? siehe crawler/src/crawl-regional.ts
+  [OK]   010-credits-api — API in src/app/credits/page.tsx
+  [FAIL] 011-vector-chat — Widget nicht eingebunden
+  [WARN] 012-footer — Footer fehlt: year
+
+=== katchi (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [WARN] 009-impressum-widget — Impressum lokal? siehe index.html
+  [OK]   010-credits-api — API in src/pages/Credits.tsx
+  [OK]   011-vector-chat — eingebunden in index.html
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+
+=== repivot (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.prod.yml: image: + build:
+  [OK]   004-tls-dns01
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [OK]   009-impressum-widget — API .one in frontend/src/pages/landing/Impressum.tsx
+  [OK]   010-credits-api — API in frontend/src/pages/landing/Credits.tsx
+  [OK]   011-vector-chat — eingebunden in frontend/index.html
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+
+=== vanfree (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [OK]   009-impressum-widget — API .one in app/datenschutz/page.tsx
+  [OK]   010-credits-api — API in app/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in app/layout.tsx
+  [WARN] 012-footer — keine Footer-Komponente gefunden
+
+=== plansey (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [skip] 004-tls-dns01 — keine Traefik-Labels (vermutlich kein eigener Reverse-Proxy)
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [WARN] 009-impressum-widget — Impressum lokal? siehe plansey-next/app/[locale]/layout.tsx
+  [OK]   010-credits-api — API in plansey-next/app/[locale]/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in plansey-next/app/[locale]/layout.tsx
+  [WARN] 012-footer — Footer fehlt: impressum, datenschutz, attribution
+
+=== kitchen-station (local) ===
+  [OK]   007-paths
+  [FAIL] 001-blue-green — deploy=single (sollte blue-green sein)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [skip] 004-tls-dns01 — keine Domain
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [skip] 009-impressum-widget — Internes Tool
+  [skip] 010-credits-api — Internes Tool
+  [skip] 011-vector-chat — Internes Tool
+  [skip] 012-footer — Internes Tool
+
+=== voltfair (local) ===
+  [OK]   007-paths
+  [FAIL] 001-blue-green — deploy=single (sollte blue-green sein)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [WARN] 005-test-first — smoke.mjs ja, TESTING.md fehlt
+  [WARN] 009-impressum-widget — Impressum lokal? siehe app/(public)/credits/page.tsx
+  [OK]   010-credits-api — API in app/(public)/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in app/layout.tsx
+  [WARN] 012-footer — Footer fehlt: attribution
+
+=== solarproof (local) ===
+  [OK]   007-paths
+  [FAIL] 001-blue-green — deploy=null (sollte blue-green sein)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [skip] 004-tls-dns01 — keine Domain
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [OK]   010-credits-api — API in src/components/CreditsOverlay.tsx
+  [OK]   011-vector-chat — eingebunden in index.html
+  [WARN] 012-footer — keine Footer-Komponente gefunden
+
+=== vector (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [skip] 009-impressum-widget — Infra-Projekt
+  [skip] 010-credits-api — Infra-Projekt
+  [skip] 011-vector-chat — hostet Widget selbst
+  [skip] 012-footer — Infra-Projekt
+
+=== snapflow (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [OK]   009-impressum-widget — API .one in src/pages/legal/Impressum.tsx
+  [OK]   010-credits-api — API in src/pages/Credits.tsx
+  [OK]   011-vector-chat — eingebunden in index.html
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+
+--- SSH-Checks (--local-only zum Überspringen) ---
+
+=== maxone.one (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/maxone/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — beide Slots vorhanden
+
+=== stadtlahnflow (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/slf/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: slf-app-blue (Blue/Green normal)
+
+=== katchi (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/katchi/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: katchi-app-green (Blue/Green normal)
+
+=== repivot (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/repivot/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: repivot-backend-blue (Blue/Green normal)
+
+=== vanfree (ssh) ===
+  [OK]   006-handoff-md
+  [FAIL] 003-secrets-store — /opt/secrets/planexo/keys.env fehlt
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: planexo-app-blue (Blue/Green normal)
+
+=== plansey (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/plansey/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: plansey-app-green (Blue/Green normal)
+
+=== kitchen-station (ssh) ===
+  [OK]   006-handoff-md
+  [FAIL] 003-secrets-store — /opt/secrets/kitchen-station/keys.env fehlt
+  [OK]   007-paths-server
+  [OK]   007-container-running
+
+=== voltfair (ssh) ===
+  [OK]   006-handoff-md
+  [skip] 003-secrets-store — Store nur auf maxone-prod
+  [OK]   007-paths-server
+  [skip] 007-container-running — kein Container
+
+=== solarproof (ssh) ===
+  [skip] 006-handoff-md — kein Server
+  [skip] 003-secrets-store — Store nur auf maxone-prod
+  [skip] 007-paths-server — kein Server
+  [skip] 007-container-running — kein Container
+
+=== vector (ssh) ===
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/vector/keys.env
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: vector-blue (Blue/Green normal)
+
+=== snapflow (ssh) ===
+  [OK]   006-handoff-md
+  [FAIL] 003-secrets-store — /opt/secrets/snapflow/keys.env fehlt
+  [OK]   007-paths-server
+  [OK]   007-container-running — 1 Slot aktiv: snapflow-app-green (Blue/Green normal)
+
+--- Summary ---
+  Total:   154
+  Passed:  104
+  Warning: 17
+  Failed:  14
+  Skipped: 19
+
+--- Failures ---
+  stadtlahnflow        011-vector-chat              Widget nicht eingebunden
+  katchi               005-test-first               weder smoke.mjs noch TESTING.md
+  repivot              005-test-first               weder smoke.mjs noch TESTING.md
+  vanfree              005-test-first               weder smoke.mjs noch TESTING.md
+  plansey              005-test-first               weder smoke.mjs noch TESTING.md
+  kitchen-station      001-blue-green               deploy=single (sollte blue-green sein)
+  kitchen-station      005-test-first               weder smoke.mjs noch TESTING.md
+  voltfair             001-blue-green               deploy=single (sollte blue-green sein)
+  solarproof           001-blue-green               deploy=null (sollte blue-green sein)
+  vector               005-test-first               weder smoke.mjs noch TESTING.md
+  snapflow             005-test-first               weder smoke.mjs noch TESTING.md
+  vanfree              003-secrets-store            /opt/secrets/planexo/keys.env fehlt
+  kitchen-station      003-secrets-store            /opt/secrets/kitchen-station/keys.env fehlt
+  snapflow             003-secrets-store            /opt/secrets/snapflow/keys.env fehlt
