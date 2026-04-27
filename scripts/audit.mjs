@@ -150,6 +150,7 @@ const localChecks = {
   '009-impressum-widget': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    if (project.tags === 'internal') return SKIP('Internes Tool');
     const apiNew = grepRepo(project.path_local, /panel\.maxone\.one\/functions\/v1\/impressum/, 1);
     const apiOld = grepRepo(project.path_local, /panel\.maxone\.studio\/functions\/v1\/impressum/, 1);
     if (apiNew.length) return PASS(`API .one in ${apiNew[0]}`);
@@ -162,6 +163,7 @@ const localChecks = {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.name === 'maxone.one') return SKIP('hostet die API selbst');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    if (project.tags === 'internal') return SKIP('Internes Tool');
     // Echter API-Call: maxone.one/api/credits/<slug> mit fetch oder axios oder als Konstante
     const api = grepRepo(project.path_local, /(['"`])https?:\/\/maxone\.one\/api\/credits\//, 1);
     if (api.length) return PASS(`API in ${api[0]}`);
@@ -174,6 +176,7 @@ const localChecks = {
     if (project.name === 'vector') return SKIP('hostet Widget selbst');
     if (project.name === 'maxone.one') return PASS('hostet Widget mit, Einbau geprüft separat');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    if (project.tags === 'internal') return SKIP('Internes Tool');
     const widgetNew = grepRepo(project.path_local, /agent\.maxone\.one\/widget\/vector-chat\.js/, 1);
     const widgetOld = grepRepo(project.path_local, /agent\.maxone\.studio\/widget/, 1);
     if (widgetNew.length) return PASS(`eingebunden in ${widgetNew[0]}`);
@@ -183,6 +186,7 @@ const localChecks = {
   '012-footer': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
+    if (project.tags === 'internal') return SKIP('Internes Tool');
     // Footer-Komponente finden
     const footerFiles = [];
     for (const file of walkSource(project.path_local)) {

@@ -53,22 +53,26 @@ verändert die Seite).
 **User-Context** durchreichen wo eingeloggte User existieren — das gibt Vector
 im Chat sofort den Kontext "wer fragt".
 
-## Stand pro Projekt (2026-04-27)
+## Stand pro Projekt
+
+Stand 2026-04-27 (initial-audit): 7/9 Projekte hatten kein Widget — entgegen
+ursprünglicher Annahme. Recherche-Bericht hatte halluziniert.
+
+Stand 2026-04-27 (nach Roll-out): alle 9 Customer-facing Projekte ✅
 
 | Projekt | Status |
 |---|---|
-| maxone.one | ✅ |
+| maxone.one | ✅ (hostet Widget mit) |
 | voltfair.de | ✅ + User-Context |
-| karastelev (mein-buch) | ✅ |
-| stadt-lahn-flow | ✅ |
-| snapflow.one | ✅ |
-| katchi | ✅ |
-| repivot.in | ✅ |
-| plansey | ✅ |
-| plansey-engaged | ✅ |
-| **vanfree** | **❌ fehlt komplett** |
-| SolarProof | deprecated React-Variante (wegmigrieren) |
-| Kitchen Station, trader, vybora.dev, viktoria-from-fotografie, zrow, stadtpunkt | unklar (prüfen) |
+| stadt-lahn-flow | ✅ (in `src/app/layout.tsx`) |
+| snapflow.one | ✅ (in `index.html`) |
+| katchi | ✅ (in `index.html`) |
+| repivot.in | ✅ (in `frontend/index.html`) |
+| vanfree | ✅ (in `app/layout.tsx`) |
+| plansey | ✅ (in `plansey-next/app/[locale]/layout.tsx`) |
+| solarproof | ✅ (in `index.html`) |
+| vector | – (hostet Widget selbst) |
+| kitchen-station | – (internes Tool, kein Customer-facing) |
 
 ## Audit
 

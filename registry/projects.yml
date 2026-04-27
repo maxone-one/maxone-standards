@@ -104,7 +104,8 @@ projects:
     path_server: /opt/kitchen-station
     secrets_dir: kitchen-station
     status: live
-    tags: product
+    tags: internal
+    notes: Internes Tool, kein Customer-facing-Traffic. Ausnahme von Standards 011 (Vector-Chat) und 012 (Footer).
 
   - name: voltfair
     workspace: voltfair
