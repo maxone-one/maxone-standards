@@ -9,9 +9,11 @@
 #   domain         — Live-Domain (oder null)
 #   server         — Hostname oder null
 #   deploy         — blue-green | single | null
-#   container      — Container-Name(n)
+#   container      — Container-Name (Audit prüft <container>-blue/-green bei blue-green)
 #   path_local     — lokaler Repo-Pfad
 #   path_server    — Server-Pfad (oder null)
+#   compose_file   — Name der Prod-Compose-Datei (default: docker-compose.yml)
+#   secrets_dir    — Ordnername in /opt/secrets/ (default: name; oft verschieden!)
 #   status         — live | dev | paused
 #   tags           — Liste
 
@@ -24,6 +26,7 @@ projects:
     container: maxone-v2
     path_local: c:\Users\max\Projects\maxone.one
     path_server: /opt/maxone-v2
+    secrets_dir: maxone
     status: live
     tags: brand
 
@@ -35,9 +38,10 @@ projects:
     container: slf-app
     path_local: c:\Users\max\Projects\stadt-lahn-flow
     path_server: /opt/stadtlahnfluss
+    secrets_dir: slf
     status: live
     tags: customer
-    notes: Server-Pfad heißt aus historischen Gründen "stadtlahnfluss", Container "slf-*"
+    notes: Server-Pfad "stadtlahnfluss", Container/Secrets "slf-*" (historisch)
 
   - name: katchi
     workspace: katchi
@@ -47,6 +51,7 @@ projects:
     container: katchi-app
     path_local: c:\Users\max\Projects\katchi
     path_server: /opt/katchi
+    secrets_dir: katchi
     status: live
     tags: product
 
@@ -58,9 +63,11 @@ projects:
     container: repivot-backend
     path_local: c:\Users\max\Projects\repivot.in
     path_server: /opt/repivot.me
+    compose_file: docker-compose.prod.yml
+    secrets_dir: repivot
     status: live
     tags: product
-    notes: Split in repivot-backend + repivot-frontend (zwei Container-Familien); /opt/repivot ist eine alte Version
+    notes: Split in repivot-backend + repivot-frontend; Prod-Compose ist .prod.yml (Profiles blue/green)
 
   - name: vanfree
     workspace: vanfree
@@ -70,9 +77,10 @@ projects:
     container: planexo-app
     path_local: c:\Users\max\Projects\vanfree
     path_server: /opt/planexo
+    secrets_dir: planexo
     status: live
     tags: product
-    notes: Phase-1-Rename Code abgeschlossen, Phase-2 Server pending; Container/Pfad heißen noch planexo-*
+    notes: Phase-1-Rename Code abgeschlossen, Phase-2 Server pending; Container/Pfad/Secrets noch planexo-*
 
   - name: plansey
     workspace: plansey
@@ -82,6 +90,7 @@ projects:
     container: plansey-app
     path_local: c:\Users\max\Projects\plansey
     path_server: /opt/plansey-next
+    secrets_dir: plansey
     status: live
     tags: product
 
@@ -93,6 +102,7 @@ projects:
     container: kitchen-station-app
     path_local: c:\Users\max\Projects\Kitchen Station
     path_server: /opt/kitchen-station
+    secrets_dir: kitchen-station
     status: live
     tags: product
 
@@ -104,6 +114,7 @@ projects:
     container: null
     path_local: c:\Users\max\Projects\voltfair.de
     path_server: /opt/voltfair
+    secrets_dir: voltfair
     status: live
     tags: brand
 
@@ -126,6 +137,7 @@ projects:
     container: vector
     path_local: c:\Users\max\Projects\vector
     path_server: /opt/vector
+    secrets_dir: vector
     status: live
     tags: infra
 
@@ -137,6 +149,6 @@ projects:
     container: snapflow-app
     path_local: c:\Users\max\Projects\snapflow.one
     path_server: /opt/snapflow.one
+    secrets_dir: snapflow
     status: live
     tags: product
-    notes: Server-Pfad heißt /opt/snapflow.one (mit TLD), nicht /opt/snapflow

@@ -82,21 +82,23 @@ const localChecks = {
   },
   '002-no-build-on-prod': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
-    const composePath = join(project.path_local, 'docker-compose.yml');
-    if (!existsSync(composePath)) return WARN('docker-compose.yml nicht im Repo-Root');
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const composePath = join(project.path_local, composeFile);
+    if (!existsSync(composePath)) return WARN(`${composeFile} nicht im Repo-Root`);
     const text = readFileSync(composePath, 'utf8');
     const hasImage = /^\s*image:\s/m.test(text);
     const hasBuild = /^\s*build:/m.test(text);
-    if (hasImage && hasBuild) return PASS('image: + build:');
-    if (hasImage && !hasBuild) return PASS('nur image: (CI-Build separat)');
-    if (!hasImage && hasBuild) return FAIL('nur build:, kein image: → Server würde bauen!');
-    return WARN('weder image: noch build: gefunden');
+    if (hasImage && hasBuild) return PASS(`${composeFile}: image: + build:`);
+    if (hasImage && !hasBuild) return PASS(`${composeFile}: nur image: (CI-Build separat)`);
+    if (!hasImage && hasBuild) return FAIL(`${composeFile}: nur build:, kein image: → Server würde bauen!`);
+    return WARN(`${composeFile}: weder image: noch build: gefunden`);
   },
   '004-tls-dns01': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (!project.domain) return SKIP('keine Domain');
-    const composePath = join(project.path_local, 'docker-compose.yml');
-    if (!existsSync(composePath)) return WARN('docker-compose.yml fehlt');
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const composePath = join(project.path_local, composeFile);
+    if (!existsSync(composePath)) return WARN(`${composeFile} fehlt`);
     const text = readFileSync(composePath, 'utf8');
     if (!/traefik\.enable=true/.test(text) && !/traefik\.http\.routers/.test(text)) {
       return SKIP('keine Traefik-Labels (vermutlich kein eigener Reverse-Proxy)');
@@ -131,11 +133,12 @@ const sshChecks = {
   },
   '003-secrets-store': (project) => {
     if (project.server !== 'maxone-prod') return SKIP('Store nur auf maxone-prod');
+    const dir = project.secrets_dir ?? project.name;
     try {
-      ssh('maxone-prod', `test -f /opt/secrets/${project.name}/keys.env`);
-      return PASS();
+      ssh('maxone-prod', `test -f /opt/secrets/${dir}/keys.env`);
+      return PASS(`/opt/secrets/${dir}/keys.env`);
     } catch {
-      return FAIL(`/opt/secrets/${project.name}/keys.env fehlt`);
+      return FAIL(`/opt/secrets/${dir}/keys.env fehlt`);
     }
   },
   '007-paths-server': (project) => {
