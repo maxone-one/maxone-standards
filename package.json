@@ -1,0 +1,18 @@
+{
+  "name": "maxone-standards",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Governance-Repo für Architektur-, Deploy-, Security- und Test-Standards aller maxone-Projekte",
+  "scripts": {
+    "audit": "node scripts/audit.mjs",
+    "audit:local": "node scripts/audit.mjs --local-only",
+    "audit:project": "node scripts/audit.mjs --project"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

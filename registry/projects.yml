@@ -1,0 +1,142 @@
+# Project Registry — Single Source of Truth über alle Projekte
+#
+# Wird von scripts/audit.mjs gelesen, um Compliance-Status pro Projekt zu
+# berichten. Bei jedem neuen Projekt: Eintrag hier hinzufügen.
+#
+# Felder:
+#   name           — Projekt-Slug (für Audit-Output)
+#   workspace      — Datei-Name des .code-workspace (ohne Endung)
+#   domain         — Live-Domain (oder null)
+#   server         — Hostname oder null
+#   deploy         — blue-green | single | null
+#   container      — Container-Name(n)
+#   path_local     — lokaler Repo-Pfad
+#   path_server    — Server-Pfad (oder null)
+#   status         — live | dev | paused
+#   tags           — Liste
+
+projects:
+  - name: maxone.one
+    workspace: maxone.one
+    domain: maxone.one
+    server: maxone-prod
+    deploy: blue-green
+    container: maxone-v2
+    path_local: c:\Users\max\Projects\maxone.one
+    path_server: /opt/maxone-v2
+    status: live
+    tags: brand
+
+  - name: stadtlahnflow
+    workspace: stadt-lahn-flow
+    domain: stadtlahnflow.de
+    server: maxone-prod
+    deploy: blue-green
+    container: slf-app
+    path_local: c:\Users\max\Projects\stadt-lahn-flow
+    path_server: /opt/stadtlahnfluss
+    status: live
+    tags: customer
+    notes: Server-Pfad heißt aus historischen Gründen "stadtlahnfluss", Container "slf-*"
+
+  - name: katchi
+    workspace: katchi
+    domain: katchi.maxone.one
+    server: maxone-prod
+    deploy: blue-green
+    container: katchi-app
+    path_local: c:\Users\max\Projects\katchi
+    path_server: /opt/katchi
+    status: live
+    tags: product
+
+  - name: repivot
+    workspace: repivot.in
+    domain: repivot.maxone.one
+    server: maxone-prod
+    deploy: blue-green
+    container: repivot-backend
+    path_local: c:\Users\max\Projects\repivot.in
+    path_server: /opt/repivot.me
+    status: live
+    tags: product
+    notes: Split in repivot-backend + repivot-frontend (zwei Container-Familien); /opt/repivot ist eine alte Version
+
+  - name: vanfree
+    workspace: vanfree
+    domain: planexo.io
+    server: maxone-prod
+    deploy: blue-green
+    container: planexo-app
+    path_local: c:\Users\max\Projects\vanfree
+    path_server: /opt/planexo
+    status: live
+    tags: product
+    notes: Phase-1-Rename Code abgeschlossen, Phase-2 Server pending; Container/Pfad heißen noch planexo-*
+
+  - name: plansey
+    workspace: plansey
+    domain: plansey.app
+    server: maxone-prod
+    deploy: blue-green
+    container: plansey-app
+    path_local: c:\Users\max\Projects\plansey
+    path_server: /opt/plansey-next
+    status: live
+    tags: product
+
+  - name: kitchen-station
+    workspace: kitchen-station
+    domain: null
+    server: maxone-prod
+    deploy: single
+    container: kitchen-station-app
+    path_local: c:\Users\max\Projects\Kitchen Station
+    path_server: /opt/kitchen-station
+    status: live
+    tags: product
+
+  - name: voltfair
+    workspace: voltfair
+    domain: voltfair.de
+    server: voltfair-cli
+    deploy: single
+    container: null
+    path_local: c:\Users\max\Projects\voltfair.de
+    path_server: /opt/voltfair
+    status: live
+    tags: brand
+
+  - name: solarproof
+    workspace: solarproof
+    domain: null
+    server: null
+    deploy: null
+    container: null
+    path_local: c:\Users\max\Projects\SolarProof
+    path_server: null
+    status: live
+    tags: brand
+
+  - name: vector
+    workspace: vector
+    domain: agent.maxone.one
+    server: maxone-prod
+    deploy: blue-green
+    container: vector
+    path_local: c:\Users\max\Projects\vector
+    path_server: /opt/vector
+    status: live
+    tags: infra
+
+  - name: snapflow
+    workspace: snapflow
+    domain: snapflow.one
+    server: maxone-prod
+    deploy: blue-green
+    container: snapflow-app
+    path_local: c:\Users\max\Projects\snapflow.one
+    path_server: /opt/snapflow.one
+    status: live
+    tags: product
+    notes: Server-Pfad heißt /opt/snapflow.one (mit TLD), nicht /opt/snapflow

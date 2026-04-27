@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "name": "maxone-standards",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "registry/cache/**": true
+    },
+    "files.associations": {
+      "*.md": "markdown"
+    },
+    "markdown.extension.toc.levels": "2..4"
+  },
+  "extensions": {
+    "recommendations": [
+      "yzhang.markdown-all-in-one",
+      "redhat.vscode-yaml",
+      "alefragnani.project-manager"
+    ]
+  }
+}

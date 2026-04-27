@@ -1,0 +1,14 @@
+node_modules/
+.DS_Store
+*.log
+
+# AI environments — bestehende Configs anderer Umgebungen NICHT committen,
+# aber auch nicht löschen (siehe CLAUDE.md Multi-Umgebung Regel)
+.vybora/
+.clinerules
+.cursorrules
+.antigravity/
+
+# Lokale Audit-Caches
+registry/cache/
+audit-results.json

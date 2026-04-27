@@ -1,0 +1,62 @@
+# Blue/Green Deployment Template
+#
+# Verwendung:
+#   1. Diese Datei als docker-compose.yml ins Projekt kopieren
+#   2. Alle <PROJEKT> mit dem Projekt-Slug ersetzen
+#   3. <DOMAIN> auf die Live-Domain anpassen
+#   4. Healthcheck-URL ggf. anpassen (Default: /api/health)
+#
+# Deploy-Workflow:
+#   - Aktiver Slot wird via "active"-Label markiert (siehe deploy.yml-Template)
+#   - Neuer Image-Tag landet im inaktiven Slot
+#   - Container startet, Health-Check muss grün werden
+#   - Erst dann swappt Traefik auf neuen Slot
+
+services:
+  <PROJEKT>-blue:
+    image: <PROJEKT>-app:latest
+    container_name: <PROJEKT>-app-blue
+    restart: unless-stopped
+    env_file: .env
+    mem_limit: 2g
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      # Active marker (only one of blue/green should have this)
+      - <PROJEKT>.slot=blue
+      # Router (only attached to active slot via deploy script)
+      - traefik.http.routers.<PROJEKT>.rule=Host(`<DOMAIN>`)
+      - traefik.http.routers.<PROJEKT>.entrypoints=websecure
+      - traefik.http.routers.<PROJEKT>.tls=true
+      - traefik.http.routers.<PROJEKT>.tls.certresolver=letsencrypt
+      - traefik.http.services.<PROJEKT>.loadbalancer.server.port=3000
+
+  <PROJEKT>-green:
+    image: <PROJEKT>-app:latest
+    container_name: <PROJEKT>-app-green
+    restart: unless-stopped
+    env_file: .env
+    mem_limit: 2g
+    networks:
+      - coolify
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - traefik.enable=false  # off by default until swapped active
+      - <PROJEKT>.slot=green
+
+networks:
+  coolify:
+    external: true
