@@ -302,7 +302,7 @@ Jeder Eintrag mit:
 - **Beschreibung:** Code lebt auf Lovable/Bolt/Base44/v0/Replit. Wenn die Plattform eine Lücke hat, sind alle Apps darauf betroffen — auch wenn der eigene Code sauber ist
 - **Vorfall:** **Base44 Juli 2025** — Plattform-Lücke gab Angreifern Zugriff auf fremde private Apps
 - **Vorfall:** **Lovable 2026** — drei dokumentierte Security-Incidents, jüngster: BOLA-Lücke 48 Tage offen
-- **Coverage:** ✅ Standard 013 Section J Punkt 8 (Plattform-Lock-in-Check), 🔄 Standard 016 geplant (Stack-Whitelist)
+- **Coverage:** ✅ Standard 013 Section J Punkt 8 (Plattform-Lock-in-Check), ✅ Standard 016 (Stack-Whitelist + Audit auf Marker/Lockfile)
 
 #### E2 — Bösartige npm-Packages (Supply-Chain)
 - **Beschreibung:** Angreifer published Package mit ähnlichem Namen oder kompromittiert legitimes Package
@@ -400,7 +400,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | LLM | Insecure Output | — | — | — | 🔴 **TODO** |
 | LLM | Sensitive Disclosure | — | — | — | 🔴 **TODO** |
 | LLM | Excessive Agency (Replit) | E | — | manuell | ⚠️ manuell |
-| Platform | Lovable/Bolt/v0 | J8 | — | manuell | ⚠️ manuell, 016 geplant |
+| Platform | Lovable/Bolt/v0 | J8 | 016 | Marker + Lockfile-Scan | ✅ hart (seit 016) |
 | Supply | Bösartige npm | — | — | Socket.dev empfohlen | 🔴 **TODO** |
 | Supply | Packaging-Leak (E4) | F | — | manuell | ⚠️ manuell, 018 erweiterbar |
 | Drift | DNS | — | — | curl manuell | 🔴 **TODO** (019) |
@@ -416,9 +416,9 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 7 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components)
-**Aktuell manuell:** 16 Lücken
-**Aktuell offen:** 12 Lücken (großteils geplant in Standards 014, 016–021, 024)
+**Aktuell abgedeckt (hart):** 8 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016)
+**Aktuell manuell:** 15 Lücken
+**Aktuell offen:** 12 Lücken (großteils geplant in Standards 014, 017–021, 024, 025)
 
 ---
 
@@ -429,7 +429,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | Standard | Schließt ab | Hebel | Status |
 |---|---|---|---|
 | ~~**015** CONCEPT.md (Gate 1)~~ | Insecure Design (B5) | sehr hoch — verhindert Klassen vor Code-Zeile 1 | ✅ **erledigt 2026-04-27** |
-| **016** Stack-Whitelist | Plattform-Lock-in (E1) | hoch — Lovable/Bolt/Base44 explizit raus | offen |
+| ~~**016** Stack-Whitelist~~ | Plattform-Lock-in (E1) | hoch — Lovable/Bolt/Base44 explizit raus | ✅ **erledigt 2026-04-27** |
 | **017** DSGVO-Tracker-Audit | Tracker (C1), Google Fonts (C2) | hoch — automatisierbar via Webbkoll | offen |
 | **018** Bundle-Drift-Audit | Bundle-Drift (F2), Packaging-Leak (E4) | hoch — hätte repivot/panel.maxone.studio gefunden | offen |
 | **019** Cert + DNS-Realität | DNS-Drift (F1), Cert (F3) | hoch — hätte plansey/vanfree gefunden | offen |

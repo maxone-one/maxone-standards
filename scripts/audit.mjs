@@ -244,6 +244,59 @@ const localChecks = {
     if (!hasReviewed) return WARN('Sign-Off ohne Reviewer-Eintrag');
     return PASS('Konzept + Gate 1 vorhanden');
   },
+  '016-stack-whitelist': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt');
+    const isLive = project.status === 'live';
+    const isInternal = project.tags === 'internal' || project.tags === 'infra';
+    const findings = [];
+
+    // 1. Plattform-Marker-Files im Repo-Root
+    const blacklistMarkers = [
+      '.lovable', 'lovable.config.js', 'lovable.config.ts', 'lovable.config.json',
+      '.bolt', '.stackblitz',
+      '.replit', 'replit.nix',
+    ];
+    for (const marker of blacklistMarkers) {
+      if (existsSync(join(project.path_local, marker))) {
+        findings.push(`Plattform-Marker ${marker}`);
+      }
+    }
+
+    // 2. Lockfile-Scan auf Blacklist-Pakete
+    const lockfiles = ['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock'];
+    const blacklistPkgRe = /(@lovable\/|@stackblitz\/sdk|@base44\/|@replit\/agent|"v0":)/i;
+    for (const lf of lockfiles) {
+      const lfPath = join(project.path_local, lf);
+      if (!existsSync(lfPath)) continue;
+      try {
+        const lfText = readFileSync(lfPath, 'utf8');
+        if (blacklistPkgRe.test(lfText)) {
+          const match = lfText.match(blacklistPkgRe);
+          findings.push(`Blacklist-Paket in ${lf}: ${match[1]}`);
+        }
+      } catch {
+        // unlesbar — überspringen
+      }
+    }
+
+    // 3. Cloud-Konfig (warning, nicht fail) — Vercel/Cloudflare bei customer-facing
+    const cloudConfigs = ['vercel.json', 'wrangler.toml'];
+    const cloudFindings = [];
+    for (const cc of cloudConfigs) {
+      if (existsSync(join(project.path_local, cc))) cloudFindings.push(cc);
+    }
+
+    if (findings.length) {
+      const msg = findings.join(', ');
+      if (isLive && !isInternal) return FAIL(`Blacklist-Treffer: ${msg}`);
+      return WARN(`Blacklist-Treffer: ${msg}`);
+    }
+    if (cloudFindings.length && project.tags === 'customer') {
+      return WARN(`Cloud-Konfig (${cloudFindings.join(', ')}) bei Customer-Projekt — DSFA-Pflicht prüfen`);
+    }
+    return PASS('keine Blacklist-Marker / -Pakete gefunden');
+  },
   '013-launch-gate': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
