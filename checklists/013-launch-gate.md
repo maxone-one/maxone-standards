@@ -113,6 +113,63 @@ Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
 - [ ] Monitoring / Alerting: jemand erfährt es, wenn die Site down ist
       (Vector-Health-Check für maxone-Projekte)
 
+## J. Vibe-Coding-Lückenklassen (NEU 2026-04-27)
+
+Hintergrund: Studienlage 2025/26 (Veracode, Georgetown CSET, Tenzai,
+Escape.tech, Georgia Tech Vibe Security Radar) zeigt, dass AI-generierter
+Code reproduzierbar dieselben Klassen einbaut. Diese Sektion fängt sie ab.
+
+- [ ] **XSS:** kein `dangerouslySetInnerHTML` (React) / `{@html …}` (Svelte) /
+      `v-html` (Vue) ohne DOMPurify oder gleichwertigen Sanitizer.
+      Suchbefehl:
+      `grep -rEn "dangerouslySetInnerHTML|@html |v-html=" src/`
+      → jeder Treffer in `LAUNCH-REVIEW.md` Section J namentlich begründet.
+
+- [ ] **Log-Injection:** kein `console.log` / `logger.info` mit roher
+      User-Input-Konkatenation. Strukturiertes Logging (Pino, Winston) statt
+      Template-Strings. Suchbefehl:
+      `grep -rEn 'console\.(log|info|error).*\$\{.*req\.' src/`
+      → 0 Treffer in Auth-/User-Pfaden.
+
+- [ ] **SSRF:** jeder `fetch(url)` / `axios.get(url)` / `http.request(url)`
+      mit URL aus User-Input hat (1) Allowlist erlaubter Hosts UND (2)
+      Block für RFC1918 (10/8, 172.16/12, 192.168/16), 127.0.0.1,
+      169.254.169.254 (AWS-Metadata), 100.64/10 (Carrier-NAT).
+      Manuelle Review der Treffer von:
+      `grep -rEn 'fetch\(.*req\.|axios\..*req\.' src/`
+      Hintergrund: Tenzai 2026 — alle 5 getesteten AI-Coding-Tools
+      bauen dieselbe SSRF-Lücke ein, 100 %.
+
+- [ ] **Backend-Secrets:** Standard 022 (`gitleaks`) hat 0 Findings im
+      aktuellen Code. Findings nur in der Git-Historie sind dokumentiert
+      und betroffene Keys rotiert. Ergänzt Section F (Frontend-Bundle-Scan),
+      ersetzt sie nicht.
+
+- [ ] **Static Analysis:** Standard 023 (`semgrep --config=p/owasp-top-ten
+      --severity=ERROR`) hat 0 ERROR-Findings. WARNING-/INFO-Findings hier
+      namentlich aufführen mit Begründung.
+
+- [ ] **Unauth-Routes:** Vollständige Liste aller API-Routen erstellt
+      (`find . -path '*/api/*' -name '*.ts'` o.ä.), jede mit Auth-Status
+      markiert (`auth-required` / `public-by-design`). Public-Routen
+      (Health, Webhooks, öffentliche APIs) namentlich begründet.
+      Pen-Test: `curl` ohne Token gegen jede `auth-required` Route →
+      401/403 erwartet, nicht 200.
+
+- [ ] **BOLA / horizontale Privilege-Escalation:** Pen-Test (siehe
+      Section B): User-A-Token gegen User-B-Resource, gegen User-B-Order,
+      gegen User-B-Datei → jeweils 403. Hintergrund: Enrichlead 2025,
+      genau dieser Fall.
+
+- [ ] **Plattform-Lock-in:** Falls Code ursprünglich auf Lovable / Bolt /
+      Base44 / v0 / Replit-Agent gebaut wurde: vollständige Migration auf
+      eigene Infra durchgeführt UND kompletter Code-Re-Read durch zweite
+      Person (Mensch oder VAULT-Persona-Session). Ursprung in
+      `LAUNCH-REVIEW.md` Section J dokumentiert.
+      Hintergrund: Escape.tech 2026 — von 5.600 produktiv deployten
+      Lovable/Bolt/Base44-Apps haben 2.000 hochkritische Lücken, 400
+      exponierte Secrets, 175 PII-Leaks live.
+
 ---
 
 ## Sign-Off-Block (kopieren ins LAUNCH-REVIEW.md)
@@ -122,7 +179,7 @@ Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
 
 - **Verantwortlich:** Vor- Nachname (@github-user)
 - **Geprüft am:** YYYY-MM-DD
-- **Sektionen abgehakt:** A B C D E F G H I (alle 9)
+- **Sektionen abgehakt:** A B C D E F G H I J (alle 10)
 - **Black-Box-Anteil KI-generiert:** X %
   - Tools verwendet: ...
   - Reviewed durch: ... (Skill, zweite Person, ...)

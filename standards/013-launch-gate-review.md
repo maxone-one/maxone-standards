@@ -59,6 +59,8 @@ File. Alte Einträge bleiben stehen — Audit-Trail.
      lassen, Output ins Review-File anhängen
    - Lockfile-Pflicht (`package-lock.json` / `pnpm-lock.yaml` committed)
    - `npm audit --production` ohne Critical/High
+   - **Standard 022** (`gitleaks`) und **Standard 023** (`semgrep` OWASP-Top-10)
+     müssen ohne Findings durchlaufen — siehe Checklist Section J.
 
 **4. Datenschutz-Spezifika (DSGVO):**
    - Liste aller Cookies (Name, Zweck, Lebensdauer, First/Third-Party)

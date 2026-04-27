@@ -108,6 +108,34 @@
 - [ ] HANDOFF.md auf Server: ✅
 - [ ] Monitoring/Alerting: ...
 
+## J. Vibe-Coding-Lückenklassen (NEU 2026-04-27)
+
+- [ ] XSS-Scan (`dangerouslySetInnerHTML` / `@html` / `v-html`):
+      __ Treffer, davon __ mit Sanitizer, __ begründet ohne
+- [ ] Log-Injection-Scan (Template-Strings in Loggern): __ Treffer
+- [ ] SSRF-Review (fetch/axios mit User-Input): __ Aufrufe geprüft,
+      __ mit Allowlist + RFC1918-Block
+- [ ] Standard 022 (`gitleaks`): __ Findings im Code, __ in Historie,
+      Status: ...
+- [ ] Standard 023 (`semgrep` OWASP-Top-10): __ ERROR, __ WARNING
+      (WARNING-Findings unten dokumentieren)
+- [ ] Unauth-Routes-Liste:
+  | Route | Methode | Auth-Status | Begründung |
+  |-------|---------|-------------|------------|
+  |       |         |             |            |
+- [ ] BOLA-Pen-Test: User-A-Token vs User-B-Resource → 403 (Curl-Output
+      kurz dokumentieren)
+- [ ] Plattform-Lock-in: Code ursprünglich gebaut mit:
+      ☐ Claude Code  ☐ Cursor  ☐ Vybora  ☐ Lovable  ☐ Bolt  ☐ Base44
+      ☐ v0  ☐ Replit-Agent  ☐ andere: ___
+      Falls Lovable/Bolt/Base44/v0/Replit: Migration durchgeführt am ...,
+      Code-Re-Read durch ...
+
+**Semgrep-WARNING-Findings (mit Begründung):**
+- ...
+
+**Notizen:** ...
+
 ---
 
 ## Sign-Off — 2026-MM-DD
@@ -115,7 +143,7 @@
 - **Verantwortlich:** Vor- Nachname (@github-user)
 - **Rolle:** <Geschäftsführer / CTO / Lead Dev / ...>
 - **Geprüft am:** 2026-MM-DD
-- **Sektionen abgehakt:** A B C D E F G H I
+- **Sektionen abgehakt:** A B C D E F G H I J
 - **Black-Box-Anteil KI-generiert:** __ %
   - Tools verwendet: ...
   - Reviewed durch: ...

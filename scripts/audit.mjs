@@ -231,6 +231,12 @@ const localChecks = {
       return isInternal ? WARN('LAUNCH-REVIEW.md ohne Sign-Off (internes Tool)')
                         : FAIL('LAUNCH-REVIEW.md ohne Sign-Off-Block + Verantwortlichen');
     }
+    // Section J (Vibe-Coding-Lückenklassen) ist seit 2026-04-27 Pflicht
+    const hasSectionJ = /^##\s+J\./m.test(text);
+    if (!hasSectionJ) {
+      return isInternal ? WARN('Section J (Vibe-Coding-Lückenklassen) fehlt — siehe checklists/013-launch-gate.md')
+                        : FAIL('Section J (Vibe-Coding-Lückenklassen) fehlt — Pflicht seit 2026-04-27');
+    }
     // Datum aus dem letzten Sign-Off-Header ziehen ("## Sign-Off — YYYY-MM-DD")
     const dateMatches = [...text.matchAll(/^##\s+Sign-Off[^\n]*?(\d{4}-\d{2}-\d{2})/gm)];
     if (!dateMatches.length) return WARN('Sign-Off ohne Datum (Format "## Sign-Off — YYYY-MM-DD")');
