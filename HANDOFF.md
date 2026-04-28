@@ -1,6 +1,6 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration + Parallel-Session-Merge mit Standard 032)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration + Parallel-Session-Merge mit Standard 032 + Workflow-Validierung-und-Baseline-Refresh)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
 **Status:** 32 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
 
@@ -240,6 +240,54 @@ gepusht hat. Lokal war 013 aber bereits durch „Launch-Gate Review" belegt mit
 dass der lokale Stand der einzige ist. Die Sandbox erlaubt parallele Sessions
 am selben Repo, ohne dass eine die andere sieht. Nummern-Kollisionen können
 auftreten — bei Standards-Renumber: derjenige mit weniger Cross-Refs muss weichen.
+
+---
+
+## Session-Update 2026-04-28d — Workflow End-to-End validiert + Baseline aktualisiert
+
+Beide Codepfade des `scheduled-audit.yml` jetzt manuell durchgelaufen
+(`workflow_dispatch`), bevor der erste echte `schedule:` am 11.05. trifft.
+
+**Validierte Runs:**
+- `25057397742` (`emit_issues=false`, 9 s) — minimaler Pfad, nur Audit + commit-back
+- `25057591747` (`emit_issues=false`, 27 s, nach `npm ci`-Fix) — voller Audit
+- `25057692232` (`emit_issues=true`, 48 s) — inkl. issues-`{json,md}`-Generierung
+
+**Drei Bugs gefunden + gefixt** (jeweils im selben Run-Cycle):
+1. `actions/upload-artifact@v4` failte mit *Org Artifact Storage Quota hit*
+   (Quota ist org-shared, von anderen Repos leergesaugt). Fix: commit-back
+   nach `audits/` statt Artifact-Upload (Plain-Text, ~17 KB, diffbar via
+   `git log audits/`). Workflow hat jetzt `permissions: contents: write`.
+2. `js-yaml` ERR_MODULE_NOT_FOUND — Workflow hatte keinen `npm ci` Step.
+   Fix: `npm ci --omit=dev --no-audit --no-fund` vor dem Audit-Step.
+3. Crash unsichtbar wegen `set +e` — Workflow meldete success obwohl Audit
+   einen 17-Zeilen-Stack-Trace produziert hatte. Fix: Heuristik
+   `grep -q '^--- Summary ---'` failt den Step wenn Summary fehlt.
+
+**Authoritative Baseline jetzt** (committed als `audits/audit-2026-04-28.txt`):
+- 396 Total / 105 Passed / 75 Warning / 78 Failed / 138 Skipped
+- 106 deduplizierte Issues (53 FAIL + 53 WARN) als `audits/issues-2026-04-28.{json,md}`
+- Vorherige Baseline 2026-04-27 (154/104/17/14/19) war noch ohne `--root=/opt`,
+  hatte also nur die Repo-internen Checks gesehen, nicht die Server-Pfade.
+  Die heutige Run misst gegen die echten `/opt/<projekt>/`-Verzeichnisse →
+  vollständigeres Bild, auch deshalb höhere Findings-Zahlen.
+
+**Patterns aus den 106 Findings** (Issue-Triage-Material):
+- 6 Standards failen für *alle 11 Projekte* (je 11× Findings):
+  013-launch-gate, 015-concept-gate, 021-re-review-reminder,
+  024-code-health-budget, 026-self-hosted-first, 027-deploy-pipeline
+- Davon sind **021 + 026 reine Registry-Einträge** (`last_review_date`,
+  `external_subscriptions`) — niedrig hängende Frucht, 22 Findings auf
+  einen Schlag wegfegbar wenn die Daten vom User bereitstehen
+- 027 (`.github/workflows/` fehlt) ist projekt-Code, nicht Registry —
+  betrifft alle Projekte, weil das CI-Build-Pattern aus Standard 027 noch
+  nicht ausgerollt ist
+- 005 (Smoke-Tests) für 8 von 11 Projekten — siehe globaler CLAUDE.md-
+  Block „Projekte OHNE Teststrecke (nachholen bei nächstem Deploy-Arbeit)"
+
+**Nicht akut, aber notiert:** GH-Annotation warnt
+`actions/checkout@v4` läuft auf Node.js 20 (deprecated, zwangs-Migration auf
+Node.js 24 ab 2026-06-02). Beim nächsten Workflow-Touch updaten.
 
 ---
 
