@@ -23,8 +23,15 @@ jobs:
   audit:
     runs-on: [self-hosted, Linux, X64]
     timeout-minutes: 20
+    permissions:
+      contents: write  # noetig fuer commit-back von audits/ (siehe Step "Commit audit results")
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Vollstaendige History fuer push-back. fetch-depth=0 ist kein
+          # Performance-Problem (Repo ist klein, < 5 MB).
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Detect Node
         run: node --version
@@ -45,9 +52,20 @@ jobs:
         if: ${{ inputs.emit_issues != 'false' }}
         run: node scripts/audit.mjs --root=/opt --emit=issues || true
 
-      - name: Upload audit artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: audit-${{ steps.audit.outputs.date }}
-          path: audits/
-          retention-days: 90
+      # Commit-back statt actions/upload-artifact: Org-Artifact-Quota ist
+      # geteilt mit allen anderen Repos und kann ueberlaufen (passiert am
+      # 2026-04-28). Audit-Output ist Plain-Text (~15 KB) und gehoert
+      # logisch in audits/ neben der Baseline. Diff via `git log audits/`
+      # ist staerker als Artifact-Download.
+      - name: Commit audit results
+        run: |
+          set -e
+          DATE="${{ steps.audit.outputs.date }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "audits/audit-${DATE}.txt"
+          # issues-*.{json,md} nur committen wenn emit_issues=true (sonst leere Add)
+          [ "${{ inputs.emit_issues }}" != "false" ] && git add "audits/issues-${DATE}.json" "audits/issues-${DATE}.md" 2>/dev/null || true
+          git diff --cached --quiet && { echo "Keine Aenderungen."; exit 0; }
+          git commit -m "audit: scheduled run ${DATE}" -m "Triggered by ${GITHUB_EVENT_NAME} on ${GITHUB_SHA:0:7}."
+          git push origin HEAD:main
