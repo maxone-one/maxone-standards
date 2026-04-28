@@ -185,10 +185,12 @@ Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
    bietet bessere Observability (`systemctl list-timers`,
    `journalctl -u`, `OnFailure=`). Niedrige Priorität.
 
-3. **ℹ️ snapflow pg_cron-Extension** — Extension aktiv, aber keine
-   `cron.schedule()`-Calls in den SQL-Migrations. Entweder
-   ungenutzt (löschen) oder via Supabase Studio konfiguriert
-   (in Migration nachreichen für Reproduzierbarkeit).
+3. **✅ snapflow pg_cron-Extension — bereits Standard-031-konform**
+   Migration `20260429_demo_reset_cron.sql` (dated tomorrow, im Repo)
+   definiert `snapflow-demo-reset` Cron @ 01:00 UTC daily,
+   `cron.schedule('snapflow-demo-reset', '0 1 * * *', SELECT snapflow.reset_demo_data())`.
+   Wird beim nächsten Deploy aktiv, dann ein zweiter Heartbeat-Marker
+   für snapflow neben `pg_cron`-Extension. Keine Aktion nötig.
 
 **Keine Aktion nötig:**
 - `scripts/scheduled-audit.cmd` (jetzt als Fallback dokumentiert)
