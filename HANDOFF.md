@@ -252,19 +252,18 @@ existiert — sobald `.github/workflows/scheduled-audit.yml` da ist: PASS.
 
 ---
 
-## Migration `path_local` → server-resident `--root` (offen, blockt CI-Audit)
+## ✅ Migration `path_local` → server-resident `--root` (erledigt 2026-04-28)
 
-Audit-Script erwartet `path_local` aus `registry/projects.yml` (Windows-Pfade
-auf User-NUC). Damit der GH-Action-Lauf auf `voltfair-server` (Linux) klappt,
-braucht es **eine** der zwei Migrationen:
+Variante A umgesetzt: `--root=<dir>` Flag in `audit.mjs` swappt für jedes
+Projekt `path_local` durch `path_server` (mit Fallback `<root>/<name>`,
+falls `path_server` null ist). Wenig invasiv, lokale Devbox bleibt
+unverändert. GH-Action ruft `--root=/opt` auf — Linux-Audit-Lauf am 11.05.
+greift damit jetzt auf `/opt/<projekt>/` zu, nicht mehr auf Windows-Pfade.
 
-- **Variante A (empfohlen):** `--root=/opt` Flag in `audit.mjs`, das
-  `path_local` ignoriert und für jedes Projekt `/opt/<slug>/` nimmt. Wenig
-  invasiv, aber lokale Devbox + CI laufen mit unterschiedlichen Roots.
-- **Variante B:** `repo:` URL pro Projekt in `registry/projects.yml`, Audit
-  klont in tmp/. Vollständiger, aber teurer (clone für 11 Projekte).
-
-→ Variante A umsetzen wenn der GH-Action-Workflow scharf gemacht wird.
+Lokal-getestet mit `--project=voltfair --standard=005 --root=/opt`: path_local
+wird zu `/opt/voltfair`, existsSync-Check schlägt erwartungsgemäß fehl
+(Windows-Devbox hat das Verzeichnis nicht) — auf Linux wird der Pfad
+existieren. Fallback für SolarProof (`path_server: null`) → `/opt/solarproof`.
 
 ---
 
@@ -301,9 +300,10 @@ hat **eigene Memories**. Wichtige Punkte daher hier wiederholen:
 | Datei | Status |
 |---|---|
 | `audits/baseline-2026-04-27.txt` | ✅ existiert, ist die Diff-Anker-Datei |
-| `scripts/scheduled-audit.cmd` | ✅ existiert, getestet (manuell) |
-| Trigger-Registrierung | ❌ offen — User-Entscheidung A/B/C/D |
-| `audits/audit-2026-05-11.txt` | wird vom Trigger erzeugt |
+| `scripts/scheduled-audit.cmd` | ✅ existiert, manueller Fallback |
+| `.github/workflows/scheduled-audit.yml` | ✅ existiert, läuft auf `voltfair-server` (Standard 031) |
+| `audit.mjs --root=<dir>` | ✅ implementiert, swap path_local→path_server |
+| `audits/audit-2026-05-11.txt` | wird vom GH-Action-Trigger erzeugt |
 | Diff-Report | wird nach Lauf erstellt |
 
 ---

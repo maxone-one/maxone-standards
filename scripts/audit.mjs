@@ -6,6 +6,11 @@
 //   node scripts/audit.mjs --project=snapflow # nur ein Projekt
 //   node scripts/audit.mjs --standard=001     # nur eine Regel
 //   node scripts/audit.mjs --local-only       # SSH-Checks überspringen
+//   node scripts/audit.mjs --root=/opt        # path_local durch path_server
+//                                              ersetzen (Linux-Audit, Standard 031
+//                                              GH-Action-Runner). Wert wird als
+//                                              Fallback genutzt, wenn ein Projekt
+//                                              keinen path_server hat: <root>/<name>.
 //
 // SSH-Checks brauchen ~/.ssh/id_ed25519 für maxone-prod (128.140.40.235) und
 // ~/.ssh/voltfair für voltfair-cli (46.225.107.118). Bei Fehler wird der Check
@@ -1695,6 +1700,21 @@ async function main() {
   const args = parseArgs();
   OFFLINE = !!args['local-only'];
   let registry = loadRegistry();
+
+  // Standard 031: --root=/opt erlaubt dem GH-Action-Runner, gegen die
+  // server-residenten Projekt-Verzeichnisse zu prüfen statt gegen die
+  // Windows-`path_local`-Pfade des User-NUC. Bevorzugt path_server (siehe
+  // registry/projects.yml), fällt auf <root>/<name> zurück. Projekte ohne
+  // path_server *und* ohne Match unter <root>/<name> bleiben SKIPpen-fähig
+  // (existsSync-Checks in den localChecks tun das automatisch).
+  if (args.root) {
+    const root = String(args.root);
+    registry = registry.map(p => ({
+      ...p,
+      path_local: p.path_server || join(root, p.name),
+    }));
+  }
+
   if (args.project) {
     registry = registry.filter(p => p.name === args.project);
     if (!registry.length) { console.error(`Projekt nicht in Registry: ${args.project}`); process.exit(2); }
