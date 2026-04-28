@@ -287,7 +287,18 @@ Beide Codepfade des `scheduled-audit.yml` jetzt manuell durchgelaufen
 
 **Nicht akut, aber notiert:** GH-Annotation warnt
 `actions/checkout@v4` läuft auf Node.js 20 (deprecated, zwangs-Migration auf
-Node.js 24 ab 2026-06-02). Beim nächsten Workflow-Touch updaten.
+Node.js 24 ab 2026-06-02). Beim nächsten Workflow-Touch updaten. ✅ erledigt
+(`d4fcebb`): bump auf `actions/checkout@v5`, validiert via Run `25064109263`.
+
+**Defense-in-Depth ergänzt** (`a2481e3`): neuer Workflow
+[`.github/workflows/pr-validate-audit.yml`](.github/workflows/pr-validate-audit.yml)
+läuft auf jeden PR/Push zu main, der `audit.mjs` / `package*.json` /
+`registry/**` / `standards/**` ändert. Macht in <10 s: Syntax-Check, Smoke-
+Audit (1 Projekt × 1 Standard), Registry-Parse-Check. Faengt damit die
+Klasse Bug ab, die am 2026-04-28 erst beim scheduled run sichtbar wurde
+(`js-yaml` fehlt). Initialer Run `25064731831`: 7 s, alle Steps ✅.
+Läuft auf `ubuntu-latest` statt self-hosted, damit ein down-`voltfair-server`
+keinen PR blockt.
 
 ---
 
