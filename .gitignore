@@ -12,3 +12,7 @@ node_modules/
 # Lokale Audit-Caches
 registry/cache/
 audit-results.json
+
+# --emit=issues Output (regenerierbar, NICHT committen)
+audits/issues-*.json
+audits/issues-*.md

@@ -11,7 +11,7 @@
 // ~/.ssh/voltfair für voltfair-cli (46.225.107.118). Bei Fehler wird der Check
 // als WARN (nicht FAIL) gewertet, damit das Audit auch ohne Konnektivität läuft.
 
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -1513,6 +1513,103 @@ async function main() {
     for (const e of expiringSoon) {
       console.log(`  ${e.project.padEnd(20)} ${String(e.standard).padEnd(36)} läuft am ${e.expires_until} ab`);
     }
+  }
+
+  // --emit=issues — schreibt audits/issues-<date>.{json,md} mit
+  // GitHub-Issue-Format pro FAIL/WARN. Allstar-Pattern: Findings als
+  // strukturierte Issue-Bodies, die per `gh issue create` aufgelöst werden
+  // können. Nicht selbst posten — User triggert das.
+  if (args.emit === 'issues') {
+    const allWarns = [...local.warnings, ...ssh.warnings];
+    const issues = [];
+    const seen = new Set();
+    // Standard-Prefix → Datei-Lookup (audit-IDs sind Prefixe wie "013-launch-gate",
+    // echte Files können "013-launch-gate-review.md" heißen — also nach Prefix mappen)
+    const stdFiles = readdirSync(join(ROOT, 'standards'))
+      .filter(f => /^\d{3}-.+\.md$/.test(f));
+    function findStandardFile(id) {
+      const prefix = id.slice(0, 3);
+      return stdFiles.find(f => f.startsWith(prefix + '-')) ?? null;
+    }
+    function pushIssue(item, severity) {
+      const key = `${item.project}::${item.id}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const title = `[${item.id}] ${item.project} — ${item.msg.slice(0, 80)}${item.msg.length > 80 ? '…' : ''}`;
+      const stdFile = findStandardFile(item.id);
+      const stdLink = stdFile
+        ? `siehe [\`standards/${stdFile}\`](../standards/${stdFile})`
+        : `siehe [\`standards/\`](../standards/)`;
+      const body = [
+        `**Projekt:** \`${item.project}\``,
+        `**Standard:** \`${item.id}\` — ${stdLink}`,
+        `**Severity:** ${severity.toUpperCase()}`,
+        '',
+        '## Audit-Befund',
+        '',
+        '```',
+        item.msg,
+        '```',
+        '',
+        '## Kontext',
+        '',
+        `Gefunden vom Audit-Lauf am ${today.toISOString().slice(0, 10)} ` +
+          `(\`scripts/audit.mjs\`).`,
+        '',
+        '## Akzeptanzkriterium',
+        '',
+        `Re-Run \`node scripts/audit.mjs --project=${item.project} --standard=${item.id.slice(0, 3)}\` ` +
+          `liefert PASS (oder explizite Ausnahme in \`registry/exceptions.yml\`).`,
+      ].join('\n');
+      issues.push({
+        title,
+        body,
+        labels: ['standards-audit', `standard:${item.id.slice(0, 3)}`, `project:${item.project}`, `severity:${severity}`],
+      });
+    }
+    for (const f of allFails) pushIssue(f, 'fail');
+    for (const w of allWarns) pushIssue(w, 'warn');
+
+    const auditsDir = join(ROOT, 'audits');
+    if (!existsSync(auditsDir)) mkdirSync(auditsDir, { recursive: true });
+    const stamp = today.toISOString().slice(0, 10);
+    const jsonPath = join(auditsDir, `issues-${stamp}.json`);
+    const mdPath = join(auditsDir, `issues-${stamp}.md`);
+    writeFileSync(jsonPath, JSON.stringify(issues, null, 2), 'utf8');
+
+    const mdLines = [
+      `# Audit-Issues — ${stamp}`,
+      '',
+      `${issues.length} Befund(e) (${allFails.length} FAIL, ${allWarns.length} WARN, dedupliziert per Projekt+Standard)`,
+      '',
+      'Anwendbar via:',
+      '```bash',
+      'jq -c \'.[]\' audits/issues-' + stamp + '.json | while read -r i; do',
+      '  gh issue create \\',
+      '    --title "$(echo "$i" | jq -r .title)" \\',
+      '    --body  "$(echo "$i" | jq -r .body)" \\',
+      '    --label "$(echo "$i" | jq -r \'.labels | join(",")\')"',
+      'done',
+      '```',
+      '',
+      '---',
+      '',
+    ];
+    for (const i of issues) {
+      mdLines.push(`## ${i.title}`);
+      mdLines.push('');
+      mdLines.push(`**Labels:** ${i.labels.map(l => `\`${l}\``).join(', ')}`);
+      mdLines.push('');
+      mdLines.push(i.body);
+      mdLines.push('');
+      mdLines.push('---');
+      mdLines.push('');
+    }
+    writeFileSync(mdPath, mdLines.join('\n'), 'utf8');
+    console.log(`\n--- --emit=issues ---`);
+    console.log(`  ${issues.length} Issue(s) geschrieben:`);
+    console.log(`    ${jsonPath} (gh CLI Input)`);
+    console.log(`    ${mdPath}   (human-readable)`);
   }
 
   // Score 0-10 pro Standard (Scorecard-Pattern; SKIP zählt nicht im Nenner)
