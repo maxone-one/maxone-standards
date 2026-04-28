@@ -6,9 +6,9 @@
 
 ## Was dieses Repo ist
 
-Governance-Repo für die 12 maxone-Standards (Architektur/Deploy/Security/UI)
-über 11 Projekte. Nicht der Code der Projekte selbst — nur die Regeln, das
-Audit-Script und die Templates.
+Governance-Repo für die 29 maxone-Standards (Architektur/Deploy/Security/UI/
+LLM-Härtung) über 11 Projekte. Nicht der Code der Projekte selbst — nur die
+Regeln, das Audit-Script und die Templates.
 
 ## Wichtige Eigenheiten
 
@@ -19,9 +19,14 @@ Audit-Script und die Templates.
 - **`registry/projects.yml`** — Single Source of Truth für die 11 Projekte.
   Hat `path_local` (Windows-Pfade), keinen `repo:`-URL — Audit ist daher
   lokal-gebunden und nicht in einer Cloud-Sandbox lauffähig.
-- **Bewusste Ausnahmen** sind in `standards/*.md` dokumentiert (z.B. SLF darf
-  Impressum lokal halten — siehe Tabelle in `009-impressum-widget.md`).
-  Bevor du eine WARN/FAIL-Meldung als Bug behandelst: Standard-Doku checken.
+- **`registry/exceptions.yml`** — formale Ausnahmen pro (Projekt, Standard)
+  mit `granted_at` + `expires_until` + `granted_by`. Audit reklassifiziert
+  FAIL/WARN nach SKIP, solange Ausnahme aktiv. Default-Lebensdauer 6 Monate;
+  abgelaufene Ausnahmen → Audit zeigt wieder echtes FAIL/WARN.
+- **Bewusste Ausnahmen** außer den o.g. formalen sind in `standards/*.md`
+  dokumentiert (z.B. SLF Impressum lokal — Tabelle in
+  `009-impressum-widget.md`). Bevor du eine WARN/FAIL-Meldung als Bug
+  behandelst: Standard-Doku + `registry/exceptions.yml` checken.
 
 ## Audit-Lauf
 

@@ -1,0 +1,55 @@
+# Standard-Ausnahmen — formale, ablaufende Befreiungen pro (Projekt, Standard)
+#
+# Wird von scripts/audit.mjs geladen. Wenn eine aktive Ausnahme matcht, wird
+# das Check-Ergebnis von FAIL/WARN nach SKIP reklassifiziert mit Reason,
+# granted_at, expires_until im Output.
+#
+# **Default-Lebensdauer = 6 Monate.** Wer länger braucht, muss aktiv erneuern.
+# Nicht-Erneuerung läuft automatisch ab → Audit nimmt die Ausnahme weg und
+# zeigt das echte FAIL/WARN. Das ist beabsichtigt: Drift-Schutz.
+#
+# Felder:
+#   project        — Projekt-Slug aus registry/projects.yml
+#   standard       — Standard-Präfix (z.B. "011" oder "011-vector-chat-widget").
+#                    Match per startsWith — "011" matched alle 011-* Checks.
+#   reason         — Pflicht. Warum dieser Ausnahme-Eintrag existiert.
+#                    Wenn der Grund wegfällt, Eintrag entfernen.
+#   granted_at     — YYYY-MM-DD, Tag der Bewilligung
+#   expires_until  — YYYY-MM-DD. Pflicht. Audit ignoriert Ausnahme nach Ablauf.
+#                    Bei Ablauf in <30 Tagen warnt das Audit-Summary
+#                    ("Ausnahmen laufen bald aus").
+#   granted_by     — Name (max, vector, …) — nachvollziehbar wer es freigab
+#
+# **Hinweis:** Wenn der Underlying-Check PASS liefert, obwohl eine Ausnahme
+# aktiv ist, listet das Audit das als "Removal-Kandidat" — die Ausnahme ist
+# nicht mehr nötig und kann gelöscht werden.
+#
+# Bei Erneuerung: granted_at + expires_until aktualisieren, NICHT neuen Block
+# anhängen (sonst doppelt).
+
+exceptions:
+  # kitchen-station ist ein internes Tool ohne Customer-Traffic — Vector-Chat
+  # und Footer-Standard-Block sind explizit nicht passend.
+  - project: kitchen-station
+    standard: '011'
+    reason: Internes Tool ohne Customer-facing-Traffic — Vector-Chat-Widget nicht passend
+    granted_at: '2026-04-28'
+    expires_until: '2026-10-28'
+    granted_by: max
+
+  - project: kitchen-station
+    standard: '012'
+    reason: Internes Tool ohne Customer-facing-Traffic — Footer-Standard nicht passend
+    granted_at: '2026-04-28'
+    expires_until: '2026-10-28'
+    granted_by: max
+
+  # SLF hat das Impressum bewusst lokal in lib/impressum-data.ts, weil das
+  # Projekt infra-unabhängig laufen soll (kann ohne maxone.one-API leben).
+  # Siehe Standard 009 Tabelle.
+  - project: stadtlahnflow
+    standard: '009'
+    reason: SLF infra-unabhängig — Impressum lokal in lib/impressum-data.ts
+    granted_at: '2026-04-28'
+    expires_until: '2026-10-28'
+    granted_by: max

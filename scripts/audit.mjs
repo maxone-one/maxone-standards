@@ -50,6 +50,29 @@ function loadRegistry() {
   return yaml.load(text).projects;
 }
 
+function loadExceptions() {
+  const path = join(ROOT, 'registry', 'exceptions.yml');
+  if (!existsSync(path)) return [];
+  try {
+    const text = readFileSync(path, 'utf8');
+    return yaml.load(text)?.exceptions ?? [];
+  } catch (e) {
+    console.warn(`[exceptions] Parse-Fehler in ${path}: ${e.message.slice(0, 80)} — ignoriere`);
+    return [];
+  }
+}
+
+// Findet eine aktive (nicht abgelaufene) Ausnahme für (project, checkId).
+// standard-Match per startsWith: "011" matched "011-vector-chat-widget".
+function findActiveException(exceptions, projectName, checkId, today) {
+  return exceptions.find(e => {
+    if (e.project !== projectName) return false;
+    if (!checkId.startsWith(String(e.standard))) return false;
+    if (!e.expires_until) return false;  // Pflichtfeld — ohne Ablauf nicht aktiv
+    return new Date(e.expires_until) >= today;
+  });
+}
+
 function ssh(server, command, timeoutMs = 8000) {
   const cfg = SERVERS[server];
   if (!cfg) throw new Error(`unbekannter Server: ${server}`);
@@ -1362,10 +1385,12 @@ const sshChecks = {
 
 // --- Runner ---
 
-async function runChecks(checks, projects, filterStandard, kind) {
+async function runChecks(checks, projects, filterStandard, kind, exceptions = [], today = new Date()) {
   const results = { pass: 0, fail: 0, warn: 0, skip: 0 };
   const failures = [];
   const warnings = [];
+  const exceptionsApplied = [];
+  const removalCandidates = [];
   for (const project of projects) {
     let printedHeader = false;
     for (const [id, fn] of Object.entries(checks)) {
@@ -1374,6 +1399,24 @@ async function runChecks(checks, projects, filterStandard, kind) {
       try { r = await fn(project); }
       catch (err) { r = FAIL(`Check-Fehler: ${err.message.slice(0, 100)}`); }
 
+      // Aktive Ausnahme? → reklassifiziere FAIL/WARN nach SKIP. PASS bleibt
+      // PASS, wird aber als Removal-Kandidat markiert (Ausnahme nicht mehr nötig).
+      const exc = findActiveException(exceptions, project.name, id, today);
+      if (exc) {
+        const expSuffix = `(expires ${exc.expires_until}, granted ${exc.granted_at ?? '?'} by ${exc.granted_by ?? '?'})`;
+        if (!r.ok) {
+          // Originally FAIL or WARN
+          r = SKIP(`exception: ${exc.reason} ${expSuffix}`);
+          exceptionsApplied.push({ project: project.name, id, exc });
+        } else if (r.warn) {
+          r = SKIP(`exception: ${exc.reason} ${expSuffix}`);
+          exceptionsApplied.push({ project: project.name, id, exc });
+        } else if (r.ok && !r.skip) {
+          // Originally PASS — Ausnahme wäre nicht mehr nötig
+          removalCandidates.push({ project: project.name, id, exc });
+        }
+      }
+
       if (!printedHeader) { console.log(`\n=== ${project.name} (${kind}) ===`); printedHeader = true; }
       if (r.skip) { results.skip++; console.log(`  [skip] ${id} — ${r.msg}`); }
       else if (r.warn) { results.warn++; warnings.push({ project: project.name, id, msg: r.msg }); console.log(`  [WARN] ${id} — ${r.msg}`); }
@@ -1381,7 +1424,7 @@ async function runChecks(checks, projects, filterStandard, kind) {
       else { results.fail++; failures.push({ project: project.name, id, msg: r.msg }); console.log(`  [FAIL] ${id} — ${r.msg}`); }
     }
   }
-  return { results, failures, warnings };
+  return { results, failures, warnings, exceptionsApplied, removalCandidates };
 }
 
 async function main() {
@@ -1393,14 +1436,18 @@ async function main() {
     if (!registry.length) { console.error(`Projekt nicht in Registry: ${args.project}`); process.exit(2); }
   }
 
+  const exceptions = loadExceptions();
+  const today = new Date();
+
   console.log(`maxone-standards audit — ${registry.length} Projekt(e)`);
+  if (exceptions.length) console.log(`(${exceptions.length} Ausnahme(n) aus registry/exceptions.yml geladen)`);
 
-  const local = await runChecks(localChecks, registry, args.standard, 'local');
+  const local = await runChecks(localChecks, registry, args.standard, 'local', exceptions, today);
 
-  let ssh = { results: { pass: 0, fail: 0, warn: 0, skip: 0 }, failures: [], warnings: [] };
+  let ssh = { results: { pass: 0, fail: 0, warn: 0, skip: 0 }, failures: [], warnings: [], exceptionsApplied: [], removalCandidates: [] };
   if (!args['local-only']) {
     console.log('\n--- SSH-Checks (--local-only zum Überspringen) ---');
-    ssh = await runChecks(sshChecks, registry, args.standard, 'ssh');
+    ssh = await runChecks(sshChecks, registry, args.standard, 'ssh', exceptions, today);
   }
 
   const total = local.results.pass + local.results.fail + local.results.warn + local.results.skip
@@ -1417,6 +1464,37 @@ async function main() {
   if (allFails.length) {
     console.log('\n--- Failures ---');
     for (const f of allFails) console.log(`  ${f.project.padEnd(20)} ${f.id.padEnd(28)} ${f.msg}`);
+  }
+
+  // Ausnahmen-Berichte
+  const allExceptionsApplied = [...local.exceptionsApplied, ...ssh.exceptionsApplied];
+  if (allExceptionsApplied.length) {
+    console.log('\n--- Ausnahmen aktiv (FAIL/WARN unterdrückt) ---');
+    for (const e of allExceptionsApplied) {
+      console.log(`  ${e.project.padEnd(20)} ${e.id.padEnd(36)} bis ${e.exc.expires_until} — ${e.exc.reason}`);
+    }
+  }
+
+  const allRemovalCandidates = [...local.removalCandidates, ...ssh.removalCandidates];
+  if (allRemovalCandidates.length) {
+    console.log('\n--- Ausnahmen REMOVAL-KANDIDAT (Check liefert PASS — Ausnahme nicht mehr nötig) ---');
+    for (const e of allRemovalCandidates) {
+      console.log(`  ${e.project.padEnd(20)} ${e.id.padEnd(36)} — Eintrag aus exceptions.yml entfernen`);
+    }
+  }
+
+  // Bald ablaufende Ausnahmen
+  const exp30 = new Date(today.getTime() + 30 * 86400000);
+  const expiringSoon = exceptions.filter(e => {
+    if (!e.expires_until) return false;
+    const d = new Date(e.expires_until);
+    return d >= today && d < exp30;
+  });
+  if (expiringSoon.length) {
+    console.log('\n--- Ausnahmen laufen in <30 Tagen ab ---');
+    for (const e of expiringSoon) {
+      console.log(`  ${e.project.padEnd(20)} ${String(e.standard).padEnd(36)} läuft am ${e.expires_until} ab`);
+    }
   }
 
   process.exit(allFails.length > 0 ? 1 : 0);
