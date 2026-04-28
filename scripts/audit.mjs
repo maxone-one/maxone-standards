@@ -192,6 +192,10 @@ const localChecks = {
     const apiOld = grepRepo(project.path_local, /panel\.maxone\.studio\/functions\/v1\/impressum/, 1);
     if (apiNew.length) return PASS(`API .one in ${apiNew[0]}`);
     if (apiOld.length) return WARN(`nutzt panel.maxone.studio (auf .one migrieren) — ${apiOld[0]}`);
+    if (project.impressum_local_intentional) {
+      // e.g. SLF: legal data must stay local for infra independence (see CLAUDE.md)
+      return PASS('lokal (bewusste Ausnahme — siehe Projekt-CLAUDE.md)');
+    }
     const localImpressum = grepRepo(project.path_local, /\b(impressum|imprint)\b/i, 1);
     if (localImpressum.length) return WARN(`Impressum lokal? siehe ${localImpressum[0]}`);
     return SKIP('keine Impressum-Erwähnung gefunden');

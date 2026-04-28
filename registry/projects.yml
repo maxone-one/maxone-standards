@@ -55,6 +55,7 @@ projects:
     secrets_dir: slf
     status: live
     tags: customer
+    impressum_local_intentional: true  # Infrastruktur-Unabhaengigkeit (siehe Projekt-CLAUDE.md)
     notes: Server-Pfad "stadtlahnfluss", Container/Secrets "slf-*" (historisch)
 
   - name: katchi
