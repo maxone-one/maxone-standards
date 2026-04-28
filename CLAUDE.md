@@ -6,9 +6,9 @@
 
 ## Was dieses Repo ist
 
-Governance-Repo für die 29 maxone-Standards (Architektur/Deploy/Security/UI/
-LLM-Härtung) über 11 Projekte. Nicht der Code der Projekte selbst — nur die
-Regeln, das Audit-Script und die Templates.
+Governance-Repo für die 30 maxone-Standards (Architektur/Deploy/Security/UI/
+LLM-Härtung/Mail) über 11 Projekte. Nicht der Code der Projekte selbst — nur
+die Regeln, das Audit-Script und die Templates.
 
 ## Wichtige Eigenheiten
 
@@ -35,10 +35,13 @@ node scripts/audit.mjs                    # voller Lauf inkl. SSH
 node scripts/audit.mjs --local-only       # nur lokal
 node scripts/audit.mjs --project=katchi   # nur ein Projekt
 node scripts/audit.mjs --standard=009     # nur ein Standard
+node scripts/audit.mjs --emit=issues      # GH-Issue-Format (json + md)
 ```
 
-Output ist plain-text mit `[OK]`, `[WARN]`, `[FAIL]`, `[skip]` und einem
-Summary-Block am Ende.
+Output ist plain-text mit `[OK]`, `[WARN]`, `[FAIL]`, `[skip]`, einem
+Score-Block (0–10 pro Standard) und einem Summary-Block am Ende.
+`--emit=issues` schreibt zusätzlich `audits/issues-<date>.{json,md}`
+(gh-CLI-tauglich, dedupliziert per Projekt+Standard, gitignored).
 
 ## Baseline
 

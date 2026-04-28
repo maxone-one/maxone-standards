@@ -358,6 +358,14 @@ Jeder Eintrag mit:
 - **Beschreibung:** Source-Maps öffentlich → Reverse-Engineering trivial
 - **Coverage:** ✅ Standard 013 Section F + ✅ Standard 018 (Live-Asset-Scan)
 
+#### F5 — Mail-Architektur-Drift (Outbound/Inbound-Kanal-Verwechslung)
+- **Beschreibung:** App schickt ausgehende Mail über Stalwart-SMTP statt Brevo HTTP-API; oder Diagnose sucht im falschen System (Stalwart-Logs für Outbound). Pre-Flight-Check für Brevo-Domain-Auth fehlt → Brevo wirft Mails still mit `event=error` weg, DB-Status bleibt `sent`. JMAP-Client strippt `{accountId}`-Template aus `uploadUrl` → Sent-Kopien landen als Orphan-Blobs im Default-Account `"a"`, Stalwart antwortet 200 ohne Side-Effect. Health-Checks mit Fake-Auth-Headers triggern Stalwart-Auto-Ban nach 2 Calls → Self-Inflicted-Outage in Restart-Loop.
+- **Vorfall:** **2026-03-24** Stalwart Admin Lockout (Orphan-Container blockiert RocksDB) → Brevo-Credentials in CLI exponiert → Key-Rotation → Downtime aller Projekte
+- **Vorfall:** **2026-04-05** Self-Inflicted Fail2Ban Loop — `zentinel-health` schickte alle 2min `Basic healthcheck:invalid` → Stalwart bannte Edge-IP → Restart-Loop bis Max die Timer manuell stoppte
+- **Vorfall:** **2026-04-10** Sent-Items-Blackhole + Brevo Silent Rejection — 7 Sent-Kopien als Blob-Orphans in Default-Account verloren (5 Tage); 1 Mail (`max@maxone.one → r.jenau@linagames.de`) von Brevo still rejected weil Domain noch nicht authentifiziert war (Empfänger-Rückfrage 7 Tage später)
+- **Vorfall:** **2026-04-27** Falsch-Negativ-Diagnose — Mail-Status-Frage „hat X meine Mail bekommen?" wurde fälschlich aus Stalwart-Logs beantwortet (zeigten nichts → falsches „nein"); korrekte Antwort lag in Brevo Events API
+- **Coverage:** ✅ Standard 030 (Mail-Architektur — Pre-Flight-Pflicht, Anti-Pattern-Scan für `uploadUrl.split("{")` / `Basic healthcheck:invalid` / `/.well-known/jmap`-Request / Public-URL aus Edge-Function / fehlender DB-Status `rejected_unauthenticated_domain`). Quelle: [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-studio-org/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md) (20 Regeln, lebendiges Dokument).
+
 ### G. Strukturelle / Wartbarkeits-Lücken (langfristig sicherheitsrelevant)
 
 Keine klassische CVE — aber wenn die Codebase strukturell zerfällt, multipliziert
@@ -434,6 +442,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | Drift | Bundle (alte URLs, F2) | — | 018 | Live-Asset-Fetch + Pattern-Scan | ✅ hart (seit 018) |
 | Drift | Cert-Ablauf (F3) | — | 019 | tls.connect + Restlaufzeit-Check | ✅ hart (seit 019) |
 | Drift | Source-Maps (F4) | F | 018 | Live-Asset-Scan auf sourceMappingURL | ✅ hart (seit 018) |
+| Drift | Mail-Architektur-Drift (F5) | — | 030 | Mail-Marker-Scan + Pre-Flight-Pflicht + Anti-Pattern-Scan (Regel 4/14/15/19/20) | ✅ hart (seit 030) |
 | Struktur | KI-Findings 2,74× (G1) | A | — | Black-Box-% in 013-A | ⚠️ manuell |
 | Struktur | Refactoring-Anteil (G2) | — | 024 | git log + Pattern-Match | ✅ hart (seit 024) |
 | Struktur | Duplikation 4× (G3) | — | 024 (manuell jscpd) | jscpd in Audit-Cron + Datei-/Funktions-Längen | ⚠️ teilweise (Längen hart, jscpd manuell) |
@@ -443,7 +452,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 22 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection direct LLM01 via 025, Indirect Prompt Injection LLM01 via 029, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028)
+**Aktuell abgedeckt (hart):** 23 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection direct LLM01 via 025, Indirect Prompt Injection LLM01 via 029, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028, Mail-Architektur-Drift F5 via 030)
 **Teilweise abgedeckt:** 4 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell, Cascading-Hallucination ASI02-03 teilweise via 025)
 **Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
 **Aktuell offen:** 3 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5, Agentic Memory Poisoning ASI01 — alle nur Tool-Empfehlung oder TODO, kein eigener Standard)
@@ -468,6 +477,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**025** LLM-App-Spezial~~ | Prompt Injection (D1–D3), Excessive Agency (D4) | hoch — VECTOR + Vector-Chat + Zentinel + SolarProof betroffen | ✅ **erledigt 2026-04-28** |
 | ~~**028** Container-Misconfig-Audit~~ | B6 (Container-Layer): privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/` | hoch — schließt 002+004-Compose-Blindspot, hat live FAILs an stadtlahnflow + katchi (CI-Pattern unvollständig) und vanfree (`ghcr.io/...:latest`-Pull) gefunden | ✅ **erledigt 2026-04-28** |
 | ~~**029** Indirect-Prompt-Injection-Test~~ | LLM01:2025 (indirect via RAG/Telegram/Email/Web/Upload) | hoch — schließt die größte ungetestete LLM-Klasse (Bing/Copilot/ChatGPT-Memory-Klasse), hat live FAILs an vector + voltfair + stadtlahnflow gefunden | ✅ **erledigt 2026-04-28** |
+| ~~**030** Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart)~~ | F5 (Mail-Architektur-Drift): Pre-Flight-Pflicht für Brevo-Domain-Auth, JMAP-Template-Erhaltung, Health-Check-Anti-Patterns, interner vs. Public-Hostname | hoch — destilliert 20 Bibel-Regeln aus 4 realen Vorfällen (03-24/04-05/04-10/04-27) in Audit-Checks; verhindert Sent-Blackholes, Self-Bans, Silent-Brevo-Rejections | ✅ **erledigt 2026-04-28** |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern

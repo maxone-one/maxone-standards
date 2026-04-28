@@ -1038,6 +1038,142 @@ const localChecks = {
     }
     return PASS(`${totalPayloads} Payloads, ${sourcesList}`);
   },
+  // Standard 030 — Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart).
+  // Destillat der ZENTINEL-STALWART-BIBEL (20 Regeln aus 4 Vorfällen).
+  // Greift nur Projekte mit Mail-Markern; alle anderen SKIP.
+  '030-mail-architecture': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    // 1. Mail-Marker einsammeln
+    const mailFiles = [];
+    const edgeFunctionFiles = [];
+    function scan(dir, depth) {
+      if (depth > 6) return;
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+      for (const e of entries) {
+        const full = join(dir, e.name);
+        if (e.isDirectory()) {
+          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv|__pycache__)/.test(e.name)) continue;
+          scan(full, depth + 1);
+        } else if (/\.(js|ts|tsx|jsx|mjs|cjs|py|sql)$/i.test(e.name)) {
+          mailFiles.push(full);
+          // Edge-Function-Heuristik: liegt unter supabase/functions/ oder functions/
+          if (/[\\/](supabase[\\/])?functions[\\/].+\.(ts|js|mjs)$/i.test(full)) {
+            edgeFunctionFiles.push(full);
+          }
+          if (mailFiles.length > 800) return;
+        }
+      }
+    }
+    scan(project.path_local, 0);
+
+    const mailMarkerRe = /api\.brevo\.com|\/jmap\/(session|upload)|stalwart-mail:8080|email-client[\\/]|smtp-relay\.brevo\.com|nodemailer.*createTransport/i;
+
+    const sample = mailFiles.slice(0, 800).map(f => {
+      try { return { path: f, txt: readFileSync(f, 'utf8') }; } catch { return { path: f, txt: '' }; }
+    });
+    const matched = sample.filter(s => mailMarkerRe.test(s.txt));
+    if (matched.length === 0) return SKIP('kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)');
+
+    const findings = [];
+    let critical = false;
+
+    // Aggregierter Code-Text (für nachfolgende Patterns)
+    const allTxt = matched.map(s => s.txt).join('\n');
+    const edgeTxt = edgeFunctionFiles
+      .map(f => sample.find(s => s.path === f)?.txt ?? '')
+      .join('\n');
+
+    // 2. Regel 20 — Pre-Flight Brevo-Domain-Auth Pflicht wenn Brevo-Send vorhanden
+    const hasBrevoSend = /api\.brevo\.com\/v3\/smtp\/email/i.test(allTxt);
+    if (hasBrevoSend) {
+      const hasPreFlight = /ensureBrevoDomainAuthenticated|\[regel20\]|\/v3\/senders\/domains/i.test(allTxt);
+      if (!hasPreFlight) {
+        findings.push('Regel 20 verletzt — Brevo-Send ohne Domain-Pre-Flight (Vorfall 2026-04-10: 1 Mail still verloren)');
+        critical = true;
+      }
+    }
+
+    // 3. Regel 19 — uploadUrl darf {accountId}-Template nicht weg-strippen
+    if (/uploadUrl\s*\.\s*split\s*\(\s*['"`]\{/.test(allTxt)) {
+      findings.push('Regel 19 verletzt — uploadUrl.split("{") strippt {accountId}-Template (Sent-Blackhole-Risiko)');
+      critical = true;
+    }
+
+    // 4. Regel 4 — Health-Check ohne Fake-Auth gegen Stalwart
+    if (/Basic[\s'"`+]+.{0,30}healthcheck/i.test(allTxt)
+        || /btoa\s*\(\s*['"`]healthcheck:[^'"`]+['"`]\s*\)/i.test(allTxt)) {
+      findings.push('Regel 4 verletzt — Health-Check mit Fake-Auth-Header (Self-Ban nach 2 Calls, Vorfall 2026-04-05)');
+      critical = true;
+    }
+
+    // Helper: testet Pattern nur in Code-Zeilen (ignoriert // …, /* … */, # …,
+    // und Strings, die nach Kommentar-Markern stehen). Vermeidet False-Positives
+    // wenn die Bibel-Lehren oder Hint-Strings die Anti-Patterns *erwähnen*.
+    function matchInCode(text, regex) {
+      const lines = text.split('\n');
+      let inBlockComment = false;
+      for (const lineRaw of lines) {
+        let line = lineRaw;
+        if (inBlockComment) {
+          const end = line.indexOf('*/');
+          if (end === -1) continue;
+          line = line.slice(end + 2);
+          inBlockComment = false;
+        }
+        // Block-Kommentar Start
+        const blockStart = line.indexOf('/*');
+        if (blockStart !== -1) {
+          const blockEnd = line.indexOf('*/', blockStart + 2);
+          if (blockEnd === -1) {
+            line = line.slice(0, blockStart);
+            inBlockComment = true;
+          } else {
+            line = line.slice(0, blockStart) + line.slice(blockEnd + 2);
+          }
+        }
+        // Line-Kommentare (// und #) — alles ab Marker abschneiden
+        const lineCommentIdx = line.search(/(^|\s)\/\//);
+        if (lineCommentIdx !== -1) line = line.slice(0, lineCommentIdx);
+        const hashIdx = line.search(/(^|\s)#(?!!)/);
+        if (hashIdx !== -1) line = line.slice(0, hashIdx);
+        if (regex.test(line)) return true;
+      }
+      return false;
+    }
+
+    // 5. Regel 14 — /.well-known/jmap statt /jmap/session — nur flaggen wenn
+    //    die URL als HTTP-Request-Ziel benutzt wird (fetch/axios/got/URL),
+    //    nicht wenn sie nur als Hint-String/Doc-Kommentar erwähnt wird.
+    const wellKnownAsRequest =
+      /\b(fetch|axios\.[a-z]+|got\.[a-z]+|new\s+URL|new\s+Request)\s*\([^)]*\.well-known\/jmap/i;
+    if (matchInCode(edgeTxt || allTxt, wellKnownAsRequest)) {
+      findings.push('Regel 14 verletzt — /.well-known/jmap (307-Redirect) als Request-Ziel, /jmap/session direkt nutzen');
+    }
+
+    // 6. Regel 15 — Edge-Functions sollten internen Hostname nutzen — gleiche
+    //    Logik: nur wenn Public-URL als Request-Ziel auftaucht
+    const publicHostAsRequest =
+      /\b(fetch|axios\.[a-z]+|got\.[a-z]+|new\s+URL|new\s+Request)\s*\([^)]*https?:\/\/mail\.maxone\.(one|studio)/i;
+    if (edgeTxt && matchInCode(edgeTxt, publicHostAsRequest)) {
+      findings.push('Regel 15 verletzt — Edge-Function fetcht Public-URL mail.maxone.* statt stalwart-mail:8080');
+    }
+
+    // 7. DB-Status — wenn sent_emails-Schema existiert, muss rejected_unauthenticated_domain
+    //    als möglicher Status vorkommen (Brevo-Bounce-Watchdog-Hook)
+    const schemaSamples = sample.filter(s => /sent_emails|email_accounts/i.test(s.txt));
+    if (hasBrevoSend && schemaSamples.length) {
+      const allSchema = schemaSamples.map(s => s.txt).join('\n');
+      if (!/rejected_unauthenticated_domain/i.test(allSchema)) {
+        findings.push('DB-Status `rejected_unauthenticated_domain` fehlt im sent_emails-Schema (Brevo-Bounce-Watchdog-Hook)');
+      }
+    }
+
+    if (critical) return FAIL(findings.join('; '));
+    if (findings.length) return WARN(findings.join('; '));
+    return PASS(`Mail-Architektur konform (${matched.length} Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)`);
+  },
   '024-code-health-budget': (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (project.code_health === 'exempt') return SKIP('code_health=exempt');

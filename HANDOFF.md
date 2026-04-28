@@ -1,18 +1,18 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + Bibel-Integration)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 29 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
+**Status:** 30 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für inzwischen **29 Standards**
-(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung) über die
+`maxone-standards` ist das Governance-Repo für inzwischen **30 Standards**
+(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung, Mail) über die
 11 Max-Projekte. Es enthält:
 
-- `standards/` — Standard-Dokumente 001–029 + `VULN-CATALOG.md`
+- `standards/` — Standard-Dokumente 001–030 + `VULN-CATALOG.md`
 - `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator
@@ -88,22 +88,26 @@ separat geführt).
 ### Empfohlene nächste Schritte (priorisiert)
 
 Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
-2026-04-28-github-similar-projects.md` Sektion „Top-Empfehlungen":
+2026-04-28-github-similar-projects.md` Sektion „Top-Empfehlungen".
 
+**Sprint 2026-04-28 abgeschlossen:**
+- ✅ Standard 029 (Indirect-Prompt-Injection-Test) — committed `2c6b323`
+- ✅ `registry/exceptions.yml` formalisiert (`expires_until` Pflicht,
+  6-Monats-Default, 3 Initial-Einträge) — committed `ce02a85`
+- ✅ Audit-Score 0–10 pro Standard (Scorecard-Pattern, SKIP excluded) —
+  committed `0a09e25`
+- ✅ `audit.mjs --emit=issues` (Allstar-Pattern, JSON+MD, gh-CLI-Input,
+  dedupliziert) — committed `b7edebe`
+- ✅ Standard 030 (Mail-Architektur Outbound=Brevo / Inbound+Sent=Stalwart,
+  destilliert aus 20 Bibel-Regeln + 4 Vorfällen) — committed in dieser
+  Session
+
+**Noch offen (touch Prod-State, brauchen explizite User-Freigabe):**
 1. **028-Findings adressieren**: stadtlahnflow + katchi `build:`-Block
    nachreichen oder als bewusste Ausnahme dokumentieren; vanfree von
    `ghcr.io:latest`-Pull auf SHA/Versions-Tag oder maxone-CI-Pattern
    migrieren; plansey `minio/minio` auf SHA pinnen
-2. **Standard 029 — Indirect-Prompt-Injection-Test** für RAG/Telegram/
-   Web-Chat (greshake/Giskard-Payloads als Pflicht-Seed)
-3. **`registry/exceptions.yml`** formalisieren (`granted_at` /
-   `expires_until` → Audit promotet abgelaufene Ausnahmen automatisch
-   zurück zu FAIL)
-4. **Audit-Score 0–10 pro Standard** (Scorecard-Pattern) → erlaubt
-   Trend-Diffs in Baseline-Vergleich
-5. **`audit.mjs --emit=issues`** (Allstar-Pattern) → Findings als
-   GH-Issues statt Text-Diff
-6. **VECTOR-Prompt** mit dem 025-Härtungs-Snippet aktualisieren (live)
+2. **VECTOR-Prompt** mit dem 025-Härtungs-Snippet aktualisieren (live)
 
 ---
 
