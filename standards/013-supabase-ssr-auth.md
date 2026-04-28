@@ -11,13 +11,18 @@ In jedem Next.js-Projekt mit Supabase-Auth läuft die Auth-Middleware auf
 `/dashboard`, `/admin` etc. begrenzen.
 
 ```ts
-// src/middleware.ts
+// src/middleware.ts (Next 15) oder proxy.ts (Next 16+)
 export const config = {
   matcher: [
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map)$).*)",
   ],
 };
 ```
+
+> **Next.js 16 Rename:** Ab Next 16 heißt die Datei `proxy.ts` und exportiert
+> eine Funktion `proxy(request)` statt `middleware(request)`. Funktional
+> identisch — alles aus diesem Standard gilt 1:1. Wenn beide Dateien existieren,
+> bricht der Build ab (`Both middleware file and proxy file are detected`).
 
 In der Middleware **immer**: `supabase.auth.getUser()` aufrufen, refreshte
 Cookies via `setAll` an Request UND Response weiterreichen, und bei Redirects
@@ -137,15 +142,15 @@ Initial-Audit 2026-04-28 (manuell, noch kein Audit-Skript):
 |---|---|---|---|
 | stadt-lahn-flow | Next.js + `@supabase/ssr` | ✅ broad matcher | gefixt 2026-04-28 (Commit `f7b5f6b`); vorher selektiv `/dashboard,/admin,/login,/claim,/auth` |
 | vanfree | Next.js 14 + `@supabase/ssr` | ✅ broad matcher | `middleware.ts` (root) ruft `updateSession` aus `lib/supabase/middleware.ts` auf |
-| voltfair.de | Next.js 16 + `@supabase/ssr` | ❌ **keine middleware.ts** | echter Treffer — Server Components rufen `auth.getUser()` ohne Refresh-Pfad auf. Fix offen (2026-04-28). |
+| voltfair.de | Next.js 16 + `@supabase/ssr` | ✅ broad matcher | nutzt `proxy.ts` (Next 16-Rename), broad matcher + `auth.getUser()` korrekt |
 | maxone.one | SvelteKit | – nicht betroffen | anderer Auth-Flow (SvelteKit Hooks) |
 | plansey-next | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
 | katchi, getsnapflow, solarproof | Vite/React | – nicht betroffen | kein `@supabase/ssr` |
 | snapflow, repivot, plansey, kitchen-station | unklar | ❓ | kein `package.json` an Root (Monorepo / leer) — bei nächstem Touch prüfen |
 
-**Fazit (2026-04-28):** Audit deckt **2 PASS, 1 FAIL** auf. voltfair.de braucht
-eine Standard-013-konforme Middleware. Die anderen sind entweder konform oder
-nicht im Scope.
+**Fazit (2026-04-28):** Audit deckt **3 PASS, 0 FAIL** auf. Alle aktiven Next.js
++ Supabase-SSR-Projekte sind konform. Die Regel bleibt aktiv als Schutz vor
+Refactoring-Regressionen.
 
 → Audit reproduzierbar via `node scripts/audit.mjs --standard=013 --local-only`.
 

@@ -194,14 +194,18 @@ const localChecks = {
     const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
     if (!deps['@supabase/ssr']) return SKIP('kein @supabase/ssr');
     if (!deps['next']) return SKIP('kein Next.js (Regel gilt nur für Next App Router)');
+    // Next.js 16 renamed middleware.ts → proxy.ts; both work depending on the
+    // installed Next version. Either is acceptable for Standard 013.
     const candidates = [
+      join(project.path_local, 'proxy.ts'),
+      join(project.path_local, 'src', 'proxy.ts'),
       join(project.path_local, 'src', 'middleware.ts'),
       join(project.path_local, 'middleware.ts'),
       join(project.path_local, 'src', 'middleware.js'),
       join(project.path_local, 'middleware.js'),
     ];
     const file = candidates.find(p => existsSync(p));
-    if (!file) return FAIL('middleware.ts fehlt — Refresh-Cookies werden nirgends geschrieben');
+    if (!file) return FAIL('keine middleware.ts/proxy.ts — Refresh-Cookies werden nirgends geschrieben');
     let text = readFileSync(file, 'utf8');
     // Many projects extract the cookie/getUser logic into lib/supabase/middleware.ts
     // and just call updateSession(request) from the entry middleware. Concatenate
