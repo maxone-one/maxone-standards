@@ -218,6 +218,11 @@ const localChecks = {
     const widgetOld = grepRepo(project.path_local, /agent\.maxone\.studio\/widget/, 1);
     if (widgetNew.length) return PASS(`eingebunden in ${widgetNew[0]}`);
     if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
+    // Some projects (z.B. SLF) beziehen die Widget-URL aus einer env-Variable, um
+    // Infrastruktur-Kopplung zu vermeiden. Akzeptiere Web-Component-Tag oder
+    // NEXT_PUBLIC_VECTOR_WIDGET_URL als gleichwertige Einbindung.
+    const widgetEnv = grepRepo(project.path_local, /<vector-chat\s|NEXT_PUBLIC_VECTOR_WIDGET_URL/, 1);
+    if (widgetEnv.length) return PASS(`eingebunden via env in ${widgetEnv[0]}`);
     return FAIL('Widget nicht eingebunden');
   },
   '022-secret-scan': (project) => {
@@ -1288,6 +1293,52 @@ const localChecks = {
     }
     // heartbeats.length > 0 && keine ide-Marker
     return PASS(`Heartbeat-Plattform vorhanden: ${heartbeats.slice(0, 3).join(', ')}${heartbeats.length > 3 ? ` (+${heartbeats.length - 3})` : ''}`);
+  },
+  // Standard 032 — Supabase SSR Auth Middleware-Matcher umfasst alle Routes.
+  // Selektive Matcher (z.B. nur /dashboard, /admin) lassen Sessions nach
+  // ~1h Idle oder bei Deploys still sterben, weil die Middleware der einzige
+  // Ort ist, an dem refreshte Auth-Cookies geschrieben werden.
+  '032-ssr-auth': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    if (!existsSync(project.path_local)) return SKIP('Pfad fehlt lokal');
+    const pkgPath = join(project.path_local, 'package.json');
+    if (!existsSync(pkgPath)) return SKIP('keine package.json');
+    let pkg;
+    try { pkg = JSON.parse(readFileSync(pkgPath, 'utf8')); }
+    catch { return WARN('package.json nicht parsebar'); }
+    const deps = { ...(pkg.dependencies ?? {}), ...(pkg.devDependencies ?? {}) };
+    if (!deps['@supabase/ssr']) return SKIP('kein @supabase/ssr');
+    if (!deps['next']) return SKIP('kein Next.js (Regel gilt nur für Next App Router)');
+    // Next.js 16 renamed middleware.ts → proxy.ts; both work depending on the
+    // installed Next version. Either is acceptable for Standard 032.
+    const candidates = [
+      join(project.path_local, 'proxy.ts'),
+      join(project.path_local, 'src', 'proxy.ts'),
+      join(project.path_local, 'src', 'middleware.ts'),
+      join(project.path_local, 'middleware.ts'),
+      join(project.path_local, 'src', 'middleware.js'),
+      join(project.path_local, 'middleware.js'),
+    ];
+    const file = candidates.find(p => existsSync(p));
+    if (!file) return FAIL('keine middleware.ts/proxy.ts — Refresh-Cookies werden nirgends geschrieben');
+    let text = readFileSync(file, 'utf8');
+    // Many projects extract the cookie/getUser logic into lib/supabase/middleware.ts
+    // and just call updateSession(request) from the entry middleware. Concatenate
+    // those helper files so the auth.getUser() check sees them too.
+    for (const helper of [
+      join(project.path_local, 'lib', 'supabase', 'middleware.ts'),
+      join(project.path_local, 'src', 'lib', 'supabase', 'middleware.ts'),
+      join(project.path_local, 'utils', 'supabase', 'middleware.ts'),
+      join(project.path_local, 'src', 'utils', 'supabase', 'middleware.ts'),
+    ]) {
+      if (existsSync(helper)) text += '\n' + readFileSync(helper, 'utf8');
+    }
+    const broadMatcher = /\(\?\!_next\/static/.test(text);
+    const hasGetUser = /auth\.getUser\(\)/.test(text);
+    const rel = file.slice(project.path_local.length + 1).replace(/\\/g, '/');
+    if (!broadMatcher) return FAIL(`${rel}: Matcher nicht broad (Negative-Lookahead fehlt) — Sessions verlieren bei Deploys`);
+    if (!hasGetUser) return WARN(`${rel}: kein auth.getUser()-Call gefunden (Token wird nicht refreshed)`);
+    return PASS(`${rel}: broad matcher + auth.getUser()`);
   },
   '024-code-health-budget': (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
