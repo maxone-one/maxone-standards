@@ -108,6 +108,83 @@ Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
    `ghcr.io:latest`-Pull auf SHA/Versions-Tag oder maxone-CI-Pattern
    migrieren; plansey `minio/minio` auf SHA pinnen
 2. **VECTOR-Prompt** mit dem 025-Härtungs-Snippet aktualisieren (live)
+3. **031-Findings adressieren** (siehe nächster Block)
+
+---
+
+## Session-Update 2026-04-28b — Standard 031 + Routine-Sweep
+
+### Standard 031 — Routine-Platform live (commit `e415274`)
+
+- `standards/031-routine-platform.md` — Heartbeat ODER 24/7-Agent;
+  niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig
+- Audit-Check `031-routine-platform` in `audit.mjs` (~115 Zeilen,
+  scannt `.github/workflows/*.yml` für `schedule:`/`cron:`,
+  systemd-Files, `pg_cron`, `vector-agent`, plus IDE-Trigger-
+  Anti-Patterns wie `Register-ScheduledTask`/`schtasks /create`/
+  `wsl crontab`/`*audit*.cmd`)
+- `.github/workflows/scheduled-audit.yml` — monatliche `schedule:`
+  am 11. um 08:00 UTC auf `voltfair-server` Self-Hosted Runner.
+  Ersetzt obsolete HANDOFF-Optionen A/B/C/D
+- `scripts/scheduled-audit.cmd` — bleibt als manueller Notfall-
+  Trigger, im File-Header als Fallback markiert
+- VULN-CATALOG: G4 + Coverage-Matrix-Row + Roadmap-Row;
+  hart abgedeckte Lücken jetzt 24
+
+**Audit-Score 031 über alle 11 Projekte: 8 PASS / 3 SKIP / 0 FAIL/WARN.**
+
+### Routine-Sweep über alle Projekte + 4 Server (Explore-Agent 2026-04-28)
+
+**Heartbeat-konforme Routinen (PASS, nichts zu tun):**
+- 8× GH-Actions `schedule:` — maxone-standards (audit), SLF (news,
+  booking-reminders), voltfair (news, emails, mailbox-AI 15min,
+  crawlers, enricher 30min)
+- 5× systemd-Timer auf maxone-prod + voltfair-cli — VECTOR
+  Local-Watchdog (60s), Zentinel-Watchdog (2min),
+  Edge-Function-Watchdog (5min), Manifest-Drift (täglich 04:00),
+  Vector-Chat-Integrity (täglich 04:30), Brevo-Bounce-Watchdog
+  (stündlich)
+- 6× maxone-prod root-crontab — Stalwart Cert-Renew (täglich 03:00),
+  VECTOR Backup→GDrive (täglich 04:00), Cloudprinter-Reminder
+  (täglich 09:00), Paperclip Claude-Auth-Sync (alle 15min),
+  SLF News-AI-Summarize (täglich 05:03), Swap-Guard (alle 5min)
+- 1× pg_cron-Extension auf snapflow Supabase aktiviert (keine Jobs
+  via SQL-Migration; evtl. via Studio konfiguriert — nachprüfen)
+
+**Findings, die User-Freigabe brauchen:**
+
+1. **🔴 voltfair-cli root-crontab — Doppel-Fire + Plaintext-Secret**
+   Vier crontab-Einträge feuern dieselben Endpunkte wie
+   `voltfair.de/.github/workflows/cron-emails.yml` GH-Action:
+   `/api/cron/lead-reminders` (cron alle 6h vs GH täglich 06:00),
+   `/api/cron/customer-feedback` (cron 10:00 vs GH 06:00),
+   `/api/cron/email-sequences` (cron 6×/Tag vs GH täglich),
+   `/api/cron/provider-stats` (cron täglich 01:00 vs GH monatlich
+   am 1.). **Bearer-Token `17726561...` steht plaintext in `crontab -l`.**
+
+   Standard-031-konform ist beides (Server-Cron = Heartbeat), aber:
+   - Doppel-Execution = zusätzliche Mails an Leads
+   - Plaintext-Secret = Standard-022/003-Verstoß
+   - GH-Action-Form nutzt bereits `secrets.CRON_SECRET` (sauberer Pfad)
+
+   **Vorschlag:** crontab löschen, GH-Actions als Single Source.
+   Wenn Doppel-Cadence absichtlich (mehr Volumen), dann
+   GH-Schedule erweitern statt crontab parallel halten. Token
+   trotzdem rotieren (war im Plaintext-File).
+
+2. **⚠️ maxone-prod root-crontab → systemd-Timer (optional)**
+   Sechs Einträge funktionieren, sind 031-konform, aber systemd-Timer
+   bietet bessere Observability (`systemctl list-timers`,
+   `journalctl -u`, `OnFailure=`). Niedrige Priorität.
+
+3. **ℹ️ snapflow pg_cron-Extension** — Extension aktiv, aber keine
+   `cron.schedule()`-Calls in den SQL-Migrations. Entweder
+   ungenutzt (löschen) oder via Supabase Studio konfiguriert
+   (in Migration nachreichen für Reproduzierbarkeit).
+
+**Keine Aktion nötig:**
+- `scripts/scheduled-audit.cmd` (jetzt als Fallback dokumentiert)
+- `vector/local-watchdog/*.timer` (lokale Devbox-Kopie der prod-systemd-Files)
 
 ---
 
