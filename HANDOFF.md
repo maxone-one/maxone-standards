@@ -151,26 +151,34 @@ Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
 - 1× pg_cron-Extension auf snapflow Supabase aktiviert (keine Jobs
   via SQL-Migration; evtl. via Studio konfiguriert — nachprüfen)
 
-**Findings, die User-Freigabe brauchen:**
+**Findings, abgearbeitet 2026-04-28:**
 
-1. **🔴 voltfair-cli root-crontab — Doppel-Fire + Plaintext-Secret**
-   Vier crontab-Einträge feuern dieselben Endpunkte wie
-   `voltfair.de/.github/workflows/cron-emails.yml` GH-Action:
-   `/api/cron/lead-reminders` (cron alle 6h vs GH täglich 06:00),
-   `/api/cron/customer-feedback` (cron 10:00 vs GH 06:00),
-   `/api/cron/email-sequences` (cron 6×/Tag vs GH täglich),
-   `/api/cron/provider-stats` (cron täglich 01:00 vs GH monatlich
-   am 1.). **Bearer-Token `17726561...` steht plaintext in `crontab -l`.**
+1. **✅ voltfair-cli root-crontab — migriert auf GH-Action (commit voltfair `0fc432f`)**
+   Vier crontab-Einträge fired dieselben Endpunkte wie
+   `voltfair.de/.github/workflows/cron-emails.yml` GH-Action mit
+   höherer Cadence (lead-reminders alle 6h, email-sequences 6×/Tag,
+   customer-feedback täglich 10:00, provider-stats täglich 01:00).
+   Plus: Bearer-Token plaintext in `crontab -l`.
 
-   Standard-031-konform ist beides (Server-Cron = Heartbeat), aber:
-   - Doppel-Execution = zusätzliche Mails an Leads
-   - Plaintext-Secret = Standard-022/003-Verstoß
-   - GH-Action-Form nutzt bereits `secrets.CRON_SECRET` (sauberer Pfad)
+   Migration-Schritte:
+   - GH-Action `cron-emails.yml` umstrukturiert: separate Job pro
+     Schedule, Cadenzen entsprechen jetzt der Crontab-Wahrheit
+     (die produktive seit 2026-02-20 lief)
+   - Endpunkte sind alle idempotent (Dedup via `reminder_sent_*`-Flags
+     und `email_queue` Upsert) → parallel-firing während Cutover
+     ungefährlich
+   - Crontab-Backup: `/root/cron-backups/root-crontab-2026-04-28-pre-031-migration.bak`
+     (md5 `02a1a70d404d39118f10dba44dea6889`) auf voltfair-cli
+   - `crontab -l` jetzt comment-only mit Hinweis auf neuen GH-Workflow
+   - Smoke-Test: `gh workflow run cron-emails.yml --field job=lead-reminders`
+     → SUCCESS (run `25049799268` 2026-04-28 11:19 UTC), CRON_SECRET
+     authentifiziert wie erwartet
 
-   **Vorschlag:** crontab löschen, GH-Actions als Single Source.
-   Wenn Doppel-Cadence absichtlich (mehr Volumen), dann
-   GH-Schedule erweitern statt crontab parallel halten. Token
-   trotzdem rotieren (war im Plaintext-File).
+   **Folge-Hygiene (offen, kein 031-Block):** `CRON_SECRET` rotieren.
+   Plaintext-Token war nur SSH-root-sichtbar, neue Standorte sind
+   GH-Org-Secret (encrypted) + voltfair.de prod-env (root-only).
+   Rotation per CLAUDE.md-Protokoll: Store → .env → Container restart
+   → Endpoint-Test → Drive-Backup → VECTOR informieren.
 
 2. **⚠️ maxone-prod root-crontab → systemd-Timer (optional)**
    Sechs Einträge funktionieren, sind 031-konform, aber systemd-Timer
