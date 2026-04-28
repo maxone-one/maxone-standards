@@ -26,7 +26,10 @@ jobs:
     permissions:
       contents: write  # noetig fuer commit-back von audits/ (siehe Step "Commit audit results")
     steps:
-      - uses: actions/checkout@v4
+      # checkout@v5 nutzt Node.js 24. v4 wird ab 2026-06-02 zwangs-migriert,
+      # v5 bringt das proaktiv. v6 aendert credential-persistence — fuer
+      # unseren GITHUB_TOKEN-basierten commit-back nicht risikoneutral.
+      - uses: actions/checkout@v5
         with:
           # Vollstaendige History fuer push-back. fetch-depth=0 ist kein
           # Performance-Problem (Repo ist klein, < 5 MB).
