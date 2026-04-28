@@ -899,6 +899,122 @@ const localChecks = {
     if (infoNotes.length) return PASS('Härtung + Tests vorhanden ' + `(info: ${infoNotes.join(', ')})`);
     return PASS('Härtung + Tools-Schema + Tests + Logging vollständig');
   },
+  // Standard 029 — Indirect-Prompt-Injection-Test: gilt für LLM-Apps,
+  // die externe Inhalte ingestieren (Telegram, Email-Inbound, RAG,
+  // Web-Scraping, File-Upload + LLM). Pflicht: Test-Suite mit ≥10
+  // Indirect-Injection-Payloads, mind. 1 Quelle dokumentiert.
+  '029-indirect-prompt-injection-test': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    const tags = project.tags ?? '';
+    const tagStr = Array.isArray(tags) ? tags.join(' ') : String(tags);
+    const isTagged = /llm-app|llm|agent/i.test(tagStr);
+
+    const llmMarkers = [
+      /@anthropic-ai\/sdk/, /openai/i, /langchain/i, /llamaindex/i, /ollama/i,
+      /messages\.create\s*\(/, /claude\s+-p\s/, /CLAUDE_CODE_OAUTH_TOKEN/,
+    ];
+    const ingestionMarkers = [
+      // Telegram
+      /telegraf|grammy|node-telegram-bot-api/i,
+      /bot\.on\s*\(\s*['"`]\s*(message|text)/i,
+      // Email-Inbound
+      /\bimap\b|jmap-client|mail-listener|brevo.*inbound/i,
+      // RAG / Vector-Search
+      /pgvector|@supabase\/vector|vector\s+similarity|embeddings?\.create|cosine_similarity/i,
+      // Web-Scraping (nur wenn LLM-Marker im selben Repo)
+      /\bcheerio\b|puppeteer|playwright/i,
+      // File-Upload + LLM-Vision
+      /multer|formidable|formData.*\.append.*image|vision.*\.create/i,
+    ];
+
+    const codeFiles = [];
+    const testFiles = [];
+    function scan(dir, depth) {
+      if (depth > 5) return;
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+      for (const e of entries) {
+        const full = join(dir, e.name);
+        if (e.isDirectory()) {
+          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv|__pycache__)/.test(e.name)) continue;
+          scan(full, depth + 1);
+        } else if (/\.(js|ts|tsx|jsx|mjs|cjs|py)$/i.test(e.name)) {
+          codeFiles.push(full);
+          if (/indirect[-_]?injection|prompt[-_]?injection/i.test(e.name)) testFiles.push(full);
+          if (codeFiles.length > 600) return;
+        } else if (/package\.json$/.test(e.name) || /requirements.*\.txt$/.test(e.name) || /promptfooconfig\.ya?ml$/i.test(e.name)) {
+          codeFiles.push(full);
+          if (/promptfooconfig\.ya?ml$/i.test(e.name)) testFiles.push(full);
+        }
+      }
+    }
+    scan(project.path_local, 0);
+    const sample = codeFiles.slice(0, 600).map(f => {
+      try { return readFileSync(f, 'utf8'); } catch { return ''; }
+    }).join('\n');
+
+    const hasLlmMarker = llmMarkers.some(re => re.test(sample));
+    if (!isTagged && !hasLlmMarker) return SKIP('keine LLM-App (weder Tag noch Code-Marker)');
+
+    const hasIngestion = ingestionMarkers.some(re => re.test(sample));
+    if (!hasIngestion) return SKIP('LLM-App ohne externe Content-Ingestion (kein Telegram/Email/RAG/Web/Upload-Marker)');
+
+    // Promptfoo-Äquivalent
+    const promptfooFile = testFiles.find(f => /promptfooconfig\.ya?ml$/i.test(f));
+    if (promptfooFile) {
+      let pf;
+      try { pf = readFileSync(promptfooFile, 'utf8'); } catch { pf = ''; }
+      if (/strategies\s*:[\s\S]*indirect[-_]?prompt[-_]?injection/i.test(pf)) {
+        return PASS(`promptfooconfig.yaml mit indirect-prompt-injection-Strategie`);
+      }
+    }
+
+    // Test-Datei suchen (Pfad-Filter, kein promptfoo)
+    const injectionTestFiles = testFiles.filter(f => !/promptfooconfig/i.test(f));
+
+    // Opt-Out-Marker
+    for (const f of injectionTestFiles.length ? injectionTestFiles : codeFiles.slice(0, 200)) {
+      let txt;
+      try { txt = readFileSync(f, 'utf8'); } catch { continue; }
+      if (/\/\/\s*audit:\s*no-external-content|#\s*audit:\s*no-external-content/i.test(txt)) {
+        return SKIP(`# audit: no-external-content in ${f.slice(project.path_local.length + 1).replace(/\\/g, '/')}`);
+      }
+    }
+
+    if (injectionTestFiles.length === 0) {
+      return FAIL('LLM-App mit External-Ingestion, aber keine Indirect-Injection-Test-Datei (tests/indirect-injection.* oder promptfoo)');
+    }
+
+    // Payload-Count + Quellen-Check
+    let totalPayloads = 0;
+    const sources = new Set();
+    for (const f of injectionTestFiles) {
+      let txt;
+      try { txt = readFileSync(f, 'utf8'); } catch { continue; }
+      // Test-Cases zählen
+      const testCases = (txt.match(/\b(test|it)\s*\(/g) ?? []).length
+                      + (txt.match(/\bdef\s+test_/g) ?? []).length;
+      // Payload-Array-Einträge zählen (Heuristik: Objekte mit content/payload-Property)
+      const payloadObjs = (txt.match(/\{\s*[^{}]*?(content|payload|input|prompt)\s*:/g) ?? []).length;
+      totalPayloads += Math.max(testCases, payloadObjs);
+      // Quellen-Marker
+      for (const src of ['greshake', 'giskard', 'garak', 'owasp', 'promptfoo']) {
+        if (new RegExp(src, 'i').test(txt)) sources.add(src);
+      }
+    }
+
+    if (totalPayloads === 0) return FAIL(`Test-Datei vorhanden, aber 0 Payloads erkannt (${injectionTestFiles.length} Datei(en))`);
+    const sourcesList = sources.size ? `Quellen: ${[...sources].join(', ')}` : 'KEINE Quelle dokumentiert';
+
+    if (totalPayloads < 10) {
+      return WARN(`nur ${totalPayloads} Payloads (< 10 Pflicht), ${sourcesList}`);
+    }
+    if (sources.size === 0) {
+      return WARN(`${totalPayloads} Payloads, aber keine Quellen-Marker (greshake/giskard/garak/owasp/promptfoo)`);
+    }
+    return PASS(`${totalPayloads} Payloads, ${sourcesList}`);
+  },
   '024-code-health-budget': (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (project.code_health === 'exempt') return SKIP('code_health=exempt');

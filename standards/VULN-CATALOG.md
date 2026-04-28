@@ -420,7 +420,8 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
 | DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
-| LLM01:2025 | Prompt Injection | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite (garak-Probes empfohlen) | ✅ hart (seit 025) |
+| LLM01:2025 | Prompt Injection (direct) | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite (garak-Probes empfohlen) | ✅ hart (seit 025) |
+| LLM01:2025 | Prompt Injection (indirect, RAG/Telegram/Email) | — | 029 | Pflicht-Test-Suite mit ≥10 Payloads aus greshake/Giskard/garak | ✅ hart (seit 029) |
 | LLM05:2025 | Insecure Output (formerly LLM02) | — | 025 | DOMPurify + Tool-Schema-Pflicht | ✅ hart (seit 025) |
 | LLM07:2025 | System-Prompt-Leakage (formerly LLM06) | — | 025 | Direktive 2 im Prompt + Test-Suite | ✅ hart (seit 025) |
 | LLM08:2025 | Excessive Agency (Replit-Klasse) | E | 025 | Approval-Queue-Pflicht für Schreib-Tools | ✅ hart (seit 025) |
@@ -442,7 +443,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 21 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection LLM01 via 025, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028)
+**Aktuell abgedeckt (hart):** 22 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection direct LLM01 via 025, Indirect Prompt Injection LLM01 via 029, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028)
 **Teilweise abgedeckt:** 4 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell, Cascading-Hallucination ASI02-03 teilweise via 025)
 **Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
 **Aktuell offen:** 3 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5, Agentic Memory Poisoning ASI01 — alle nur Tool-Empfehlung oder TODO, kein eigener Standard)
@@ -466,6 +467,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**024** Code-Health-Budget~~ | Refactoring-Anteil (G2), Duplikation (G3), Datei-/Funktions-Längen | mittel — strukturelle Erosion langfristig | ✅ **erledigt 2026-04-28** |
 | ~~**025** LLM-App-Spezial~~ | Prompt Injection (D1–D3), Excessive Agency (D4) | hoch — VECTOR + Vector-Chat + Zentinel + SolarProof betroffen | ✅ **erledigt 2026-04-28** |
 | ~~**028** Container-Misconfig-Audit~~ | B6 (Container-Layer): privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/` | hoch — schließt 002+004-Compose-Blindspot, hat live FAILs an stadtlahnflow + katchi (CI-Pattern unvollständig) und vanfree (`ghcr.io/...:latest`-Pull) gefunden | ✅ **erledigt 2026-04-28** |
+| ~~**029** Indirect-Prompt-Injection-Test~~ | LLM01:2025 (indirect via RAG/Telegram/Email/Web/Upload) | hoch — schließt die größte ungetestete LLM-Klasse (Bing/Copilot/ChatGPT-Memory-Klasse), hat live FAILs an vector + voltfair + stadtlahnflow gefunden | ✅ **erledigt 2026-04-28** |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern

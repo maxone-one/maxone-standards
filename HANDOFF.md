@@ -1,18 +1,18 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 28 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
+**Status:** 29 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für inzwischen **28 Standards**
+`maxone-standards` ist das Governance-Repo für inzwischen **29 Standards**
 (Architektur, Deploy, Security, UI, Compliance, LLM-Härtung) über die
 11 Max-Projekte. Es enthält:
 
-- `standards/` — Standard-Dokumente 001–028 + `VULN-CATALOG.md`
+- `standards/` — Standard-Dokumente 001–029 + `VULN-CATALOG.md`
 - `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator

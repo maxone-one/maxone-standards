@@ -45,7 +45,8 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [026-self-hosted-first.md](026-self-hosted-first.md) — Self-Hosted-First, keine Abos (Ausnahmen: Domain-Registrar, TLS-CA, VPS-Hosting, Payment)
 - [027-deploy-pipeline.md](027-deploy-pipeline.md) — CI-Build → Image-Transfer → Health-Check → Traefik-Swap (formaler Pfad zu 001 + 002)
 - [028-container-misconfig.md](028-container-misconfig.md) — Container-Misconfig-Audit: 7 Pflicht-Klassen pro `docker-compose.yml` (privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/`); schließt 002+004-Compose-Blindspot
-- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025/028); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
+- [029-indirect-prompt-injection-test.md](029-indirect-prompt-injection-test.md) — Pflicht-Test-Suite mit ≥10 Indirect-Injection-Payloads (greshake/Giskard/garak) für LLM-Apps mit externer Content-Ingestion (Telegram/Email/RAG/Web/Upload)
+- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025/028/029); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
 
 **Externe Recherche / Vergleichsprojekte:**
 - [`../research/2026-04-28-github-similar-projects.md`](../research/2026-04-28-github-similar-projects.md) — Recherche zu ähnlichen GitHub-Projekten (ossf/scorecard, garak, promptfoo, trivy, OWASP-Top-10-LLM/Agentic) + priorisierte Anreicherungs-Vorschläge
