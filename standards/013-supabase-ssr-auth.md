@@ -133,18 +133,24 @@ Issue (Middleware läuft an der Edge, vor Page-Cache). Mehrwert: Sessions
 
 Initial-Audit 2026-04-28 (manuell, noch kein Audit-Skript):
 
-| Projekt | Matcher umfasst alle Routes? | Notizen |
-|---|---|---|
-| stadt-lahn-flow | ✅ (gefixt 2026-04-28, Commit f7b5f6b) | vorher: `/dashboard,/admin,/login,/claim,/auth` |
-| maxone.one | ❓ | bei nächstem Touch prüfen |
-| snapflow.one | ❓ | bei nächstem Touch prüfen |
-| vanfree | ❓ | bei nächstem Touch prüfen |
-| repivot.me | ❓ | bei nächstem Touch prüfen |
-| plansey | ❓ | bei nächstem Touch prüfen |
-| katchi | ❓ | bei nächstem Touch prüfen |
+| Projekt | Stack | Matcher-Status | Notizen |
+|---|---|---|---|
+| stadt-lahn-flow | Next.js + `@supabase/ssr` | ✅ broad matcher | gefixt 2026-04-28 (Commit `f7b5f6b`); vorher selektiv `/dashboard,/admin,/login,/claim,/auth` |
+| vanfree | Next.js 14 + `@supabase/ssr` | ✅ broad matcher | `middleware.ts` (root) ruft `updateSession` auf, Negative-Lookahead-Matcher vorhanden |
+| plansey-next | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
+| maxone.one | SvelteKit | – nicht betroffen | anderer Auth-Flow (SvelteKit Hooks) |
+| katchi | Vite/React | – nicht betroffen | keine Next-Middleware |
+| getsnapflow | Vite/React | – nicht betroffen | keine Next-Middleware |
+| snapflow.one, repivot.me, repivot, pivotin, plansey, snapflow | unklar | ❓ | kein `package.json` an Root sichtbar (Monorepo / leer) — bei nächstem Touch prüfen |
 
-→ Bei nächstem Deploy/Touch eines Projekts: `src/middleware.ts` öffnen,
-Matcher-Pattern verifizieren, ggf. nach SLF-Vorbild umbauen.
+**Fazit:** Aktuell (2026-04-28) gibt es **keinen weiteren Treffer** für den
+SLF-Bug. Die Regel bleibt aber gültig — sie greift, sobald ein neues Projekt
+mit Next.js + `@supabase/ssr` aufgesetzt wird, und schützt vor versehentlich
+selektiven Matchern beim Refactoring.
+
+→ Bei nächstem Deploy/Touch eines unklaren Projekts: prüfen ob `@supabase/ssr`
+in `package.json`, und falls ja `src/middleware.ts` / `middleware.ts`
+verifizieren.
 
 ## Audit
 
