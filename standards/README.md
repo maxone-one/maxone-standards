@@ -35,6 +35,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [018-bundle-drift-audit.md](018-bundle-drift-audit.md) — Live-Bundle ohne veraltete Hosts, Source-Maps, Plattform-Watermarks
 - [019-cert-dns-reality.md](019-cert-dns-reality.md) — DNS auf eigenen Server + TLS-Cert gültig + LE-Issuer
 - [020-pentest-light.md](020-pentest-light.md) — defensive Außensicht: exposed Files / Admin-Routen / Header-Hygiene (SPA-Catch-All-erkennend)
+- [021-re-review-reminder.md](021-re-review-reminder.md) — alle 180 Tage Re-Audit pro Live-Projekt (Drift-Schutz)
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
 

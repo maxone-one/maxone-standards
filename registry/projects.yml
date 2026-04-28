@@ -24,6 +24,12 @@
 #   deploy_pipeline         — (optional, Standard 027) "manual" für Projekte ohne
 #                             GitHub-Actions-Pipeline (interne Tools). Default = audit
 #                             erwartet .github/workflows/deploy.yml.
+#   last_review_date        — (Pflicht für status: live, Standard 021) YYYY-MM-DD,
+#                             Datum des letzten Gate-3-(Re-)Reviews. Audit warnt bei
+#                             > 180 Tagen, fail bei > 270 Tagen.
+#   review_postponed_to     — (optional, Standard 021) YYYY-MM-DD, Verschiebung des
+#                             nächsten Re-Reviews (max. +30 Tage), mit Begründung im
+#                             Kommentar.
 
 projects:
   - name: maxone.one

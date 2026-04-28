@@ -438,7 +438,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**019** Cert + DNS-Realität~~ | DNS-Drift (F1), Cert (F3) | hoch — hat plansey (Cloudflare-IPs) und vanfree (TLS-Handshake-FAIL) live nachgewiesen | ✅ **erledigt 2026-04-27** |
 | ~~**020** Pen-Test-Light~~ | BOLA (B1, außen), SSRF (außen), PII-Exposure (C7, außen), Header-Hygiene | hoch — Enrichlead-Klasse außen-automatisiert; SPA-Catch-All-erkennend | ✅ **erledigt 2026-04-28** |
 | ~~**014** Sunset~~ | Datenfriedhöfe, AVV-Hygiene, Sunset-Drift | mittel — vanfree/plansey sind aktuelle Anwendungsfälle | ✅ **erledigt 2026-04-28** |
-| **021** Re-Review-Reminder | Drift schleichend | niedrig (kostet nichts) | offen |
+| ~~**021** Re-Review-Reminder~~ | Drift schleichend | niedrig (kostet nichts) — Cron-Reminder + last_review_date in Registry | ✅ **erledigt 2026-04-28** |
 | **024** Code-Health-Budget | Refactoring-Anteil (G2), Duplikation (G3) | mittel — strukturelle Erosion langfristig | offen |
 | **025** LLM-App-Spezial | Prompt Injection (D1–D3) | hoch wenn LLM-Apps gebaut werden | offen |
 

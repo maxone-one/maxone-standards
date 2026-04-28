@@ -818,6 +818,27 @@ const localChecks = {
     if (allWarnings.length) return WARN(allWarnings.join('; '));
     return PASS('keine Abo-/SaaS-Marker, external_subscriptions sauber');
   },
+  '021-re-review-reminder': (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    const last = project.last_review_date;
+    if (!last) return FAIL('last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert');
+    const lastDate = new Date(last + 'T00:00:00Z');
+    if (isNaN(lastDate.getTime())) return FAIL(`last_review_date ungültig: ${last}`);
+    const today = new Date();
+    const ageDays = Math.floor((today - lastDate) / 86400000);
+    const postponed = project.review_postponed_to;
+    if (postponed) {
+      const postDate = new Date(postponed + 'T00:00:00Z');
+      if (!isNaN(postDate.getTime()) && postDate > today) {
+        const daysUntil = Math.ceil((postDate - today) / 86400000);
+        return WARN(`Re-Review verschoben auf ${postponed} (${daysUntil} Tage), letzter Review vor ${ageDays} Tagen`);
+      }
+    }
+    if (ageDays >= 270) return FAIL(`Re-Review kritisch überfällig: ${ageDays} Tage seit ${last} (Limit 270)`);
+    if (ageDays >= 180) return WARN(`Re-Review fällig: ${ageDays} Tage seit ${last} (Schwelle 180)`);
+    if (ageDays >= 166) return WARN(`Re-Review fällig in ${180 - ageDays} Tagen (letzter: ${last})`);
+    return PASS(`letzter Review vor ${ageDays} Tagen (${last})`);
+  },
   '027-deploy-pipeline': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.deploy_pipeline === 'manual') return SKIP('deploy_pipeline=manual (Ausnahme)');
