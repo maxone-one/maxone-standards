@@ -38,6 +38,8 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [021-re-review-reminder.md](021-re-review-reminder.md) — alle 180 Tage Re-Audit pro Live-Projekt (Drift-Schutz)
 - [022-secret-scan.md](022-secret-scan.md) — gitleaks-Pflicht vor `live`
 - [023-static-analysis.md](023-static-analysis.md) — semgrep OWASP-Top-10 vor `live`
+- [024-code-health-budget.md](024-code-health-budget.md) — Refactor-Anteil ≥ 15 %, Datei < 500 Zeilen, Funktion < 100 Zeilen
+- [025-llm-app-spezial.md](025-llm-app-spezial.md) — Prompt-Härtung, Tool-Schema, Approval-Queue, Injection-Tests für LLM-Apps
 
 **Philosophie & Pipeline:**
 - [026-self-hosted-first.md](026-self-hosted-first.md) — Self-Hosted-First, keine Abos (Ausnahmen: Domain-Registrar, TLS-CA, VPS-Hosting, Payment)

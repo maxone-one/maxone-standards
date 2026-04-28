@@ -398,10 +398,10 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
 | DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
-| LLM | Prompt Injection | — | — | — | 🔴 **TODO** |
-| LLM | Insecure Output | — | — | — | 🔴 **TODO** |
-| LLM | Sensitive Disclosure | — | — | — | 🔴 **TODO** |
-| LLM | Excessive Agency (Replit) | E | — | manuell | ⚠️ manuell |
+| LLM | Prompt Injection | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite | ✅ hart (seit 025) |
+| LLM | Insecure Output | — | 025 | DOMPurify + Tool-Schema-Pflicht | ✅ hart (seit 025) |
+| LLM | Sensitive Disclosure | — | 025 | Direktive 2 im Prompt + Test-Suite | ✅ hart (seit 025) |
+| LLM | Excessive Agency (Replit) | E | 025 | Approval-Queue-Pflicht für Schreib-Tools | ✅ hart (seit 025) |
 | Platform | Lovable/Bolt/v0 | J8 | 016 | Marker + Lockfile-Scan | ✅ hart (seit 016) |
 | Supply | Bösartige npm | — | — | Socket.dev empfohlen | 🔴 **TODO** |
 | Supply | Packaging-Leak (E4) | F | — | manuell | ⚠️ manuell, 018 erweiterbar |
@@ -410,18 +410,18 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | Drift | Cert-Ablauf (F3) | — | 019 | tls.connect + Restlaufzeit-Check | ✅ hart (seit 019) |
 | Drift | Source-Maps (F4) | F | 018 | Live-Asset-Scan auf sourceMappingURL | ✅ hart (seit 018) |
 | Struktur | KI-Findings 2,74× (G1) | A | — | Black-Box-% in 013-A | ⚠️ manuell |
-| Struktur | Refactoring-Anteil (G2) | — | — | — | 🔴 **TODO** |
-| Struktur | Duplikation 4× (G3) | — | — | jscpd / SonarQube | 🔴 **TODO** |
+| Struktur | Refactoring-Anteil (G2) | — | 024 | git log + Pattern-Match | ✅ hart (seit 024) |
+| Struktur | Duplikation 4× (G3) | — | 024 (manuell jscpd) | jscpd in Audit-Cron + Datei-/Funktions-Längen | ⚠️ teilweise (Längen hart, jscpd manuell) |
 
 **Legende:**
 - ✅ hart = automatisch erzwungen, Audit blockiert bei Verstoß
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 15 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014)
-**Teilweise abgedeckt (außen hart, innen manuell):** 2 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen)
-**Aktuell manuell:** 13 Lücken
-**Aktuell offen:** 6 Lücken (großteils geplant in Standards 021, 024, 025)
+**Aktuell abgedeckt (hart):** 20 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection via 025, Insecure LLM-Output via 025, LLM Sensitive Disclosure via 025, LLM Excessive Agency via 025)
+**Teilweise abgedeckt:** 3 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell)
+**Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
+**Aktuell offen:** 2 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5 — beide nur via Tool-Empfehlung, kein eigener Standard)
 
 ---
 
@@ -439,8 +439,8 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**020** Pen-Test-Light~~ | BOLA (B1, außen), SSRF (außen), PII-Exposure (C7, außen), Header-Hygiene | hoch — Enrichlead-Klasse außen-automatisiert; SPA-Catch-All-erkennend | ✅ **erledigt 2026-04-28** |
 | ~~**014** Sunset~~ | Datenfriedhöfe, AVV-Hygiene, Sunset-Drift | mittel — vanfree/plansey sind aktuelle Anwendungsfälle | ✅ **erledigt 2026-04-28** |
 | ~~**021** Re-Review-Reminder~~ | Drift schleichend | niedrig (kostet nichts) — Cron-Reminder + last_review_date in Registry | ✅ **erledigt 2026-04-28** |
-| **024** Code-Health-Budget | Refactoring-Anteil (G2), Duplikation (G3) | mittel — strukturelle Erosion langfristig | offen |
-| **025** LLM-App-Spezial | Prompt Injection (D1–D3) | hoch wenn LLM-Apps gebaut werden | offen |
+| ~~**024** Code-Health-Budget~~ | Refactoring-Anteil (G2), Duplikation (G3), Datei-/Funktions-Längen | mittel — strukturelle Erosion langfristig | ✅ **erledigt 2026-04-28** |
+| ~~**025** LLM-App-Spezial~~ | Prompt Injection (D1–D3), Excessive Agency (D4) | hoch — VECTOR + Vector-Chat + Zentinel + SolarProof betroffen | ✅ **erledigt 2026-04-28** |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern

@@ -818,6 +818,144 @@ const localChecks = {
     if (allWarnings.length) return WARN(allWarnings.join('; '));
     return PASS('keine Abo-/SaaS-Marker, external_subscriptions sauber');
   },
+  '025-llm-app-spezial': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    // Detect: ist das eine LLM-App?
+    const tags = project.tags ?? '';
+    const tagStr = Array.isArray(tags) ? tags.join(' ') : String(tags);
+    const isTagged = /llm-app|llm|agent/i.test(tagStr);
+
+    const llmMarkers = [
+      /@anthropic-ai\/sdk/,
+      /openai/i,
+      /langchain/i,
+      /llamaindex/i,
+      /ollama/i,
+      /messages\.create\s*\(/,
+      /claude\s+-p\s/,
+      /CLAUDE_CODE_OAUTH_TOKEN/,
+    ];
+    const codeFiles = [];
+    function scan(dir, depth) {
+      if (depth > 4) return;
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+      for (const e of entries) {
+        const full = join(dir, e.name);
+        if (e.isDirectory()) {
+          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv)/.test(e.name)) continue;
+          scan(full, depth + 1);
+        } else if (/\.(js|ts|tsx|jsx|mjs|py)$/i.test(e.name)) {
+          codeFiles.push(full);
+          if (codeFiles.length > 400) return;
+        } else if (/package\.json$/.test(e.name) || /requirements.*\.txt$/.test(e.name)) {
+          codeFiles.push(full);
+        }
+      }
+    }
+    scan(project.path_local, 0);
+    const sample = codeFiles.slice(0, 400).map(f => {
+      try { return readFileSync(f, 'utf8'); } catch { return ''; }
+    }).join('\n');
+    const hasLlmMarker = llmMarkers.some(re => re.test(sample));
+
+    if (!isTagged && !hasLlmMarker) return SKIP('keine LLM-App (weder Tag noch Code-Marker)');
+
+    const findings = [];
+    let critical = false;
+
+    // System-Prompt-Härtung
+    const promptHardening = {
+      dataNotInstructions: /(daten,?\s+nicht\s+(als\s+)?instruktionen|data,?\s+not\s+instructions|treat\s+.*\s+as\s+data)/i.test(sample),
+      noPromptLeak: /(niemals\s+(diesen?\s+)?system[- ]prompt|never\s+(reveal|disclose|share)\s+.*system\s+prompt|don'?t\s+(reveal|leak)\s+.*prompt)/i.test(sample),
+      suspiciousAbort: /(verdächtig(e|er)?\s+instruktion|suspicious\s+instruction|abort\s+and\s+(report|notify))/i.test(sample),
+    };
+    const missingHardening = Object.entries(promptHardening).filter(([_, ok]) => !ok).map(([k]) => k);
+    if (missingHardening.length === 3) { findings.push('System-Prompt-Härtung komplett fehlt'); critical = true; }
+    else if (missingHardening.length) findings.push(`Härtung fehlt: ${missingHardening.join(', ')}`);
+
+    // Approval-Queue-Marker bei Schreib-Tools
+    const writeToolMarkers = /(db_write|send_email|delete_\w+|payment_\w+|drop_table|truncate_)/i.test(sample);
+    const queueMarkers = /(ops_tasks|approval_queue|pending_approval|approval_required)/i.test(sample);
+    if (writeToolMarkers && !queueMarkers) { findings.push('Schreib-Tool ohne Approval-Queue-Pattern'); critical = true; }
+
+    // Tool-Use-Schema (best-effort)
+    const hasToolDef = /tools\s*[=:]\s*\[/.test(sample);
+    const hasInputSchema = /input_schema|inputSchema|parameters\s*:\s*\{/.test(sample);
+    if (hasToolDef && !hasInputSchema) findings.push('Tool-Use ohne JSON-Schema');
+
+    // Test-Suite-Existenz
+    const hasInjectionTests = codeFiles.some(f => /llm[-_]?injection|prompt[-_]?injection/i.test(f));
+    if (!hasInjectionTests) findings.push('keine LLM-Injection-Test-Suite');
+
+    // Logging-Marker (INFO, kein WARN)
+    const hasLogging = /(llm_calls|llm_log|prompt_hash)/i.test(sample);
+    const infoNotes = [];
+    if (!hasLogging) infoNotes.push('LLM-Logging-Tabelle nicht erkannt');
+
+    if (critical) return FAIL(findings.join('; '));
+    if (findings.length) return WARN(findings.join('; ') + (infoNotes.length ? ` (info: ${infoNotes.join(', ')})` : ''));
+    if (infoNotes.length) return PASS('Härtung + Tests vorhanden ' + `(info: ${infoNotes.join(', ')})`);
+    return PASS('Härtung + Tools-Schema + Tests + Logging vollständig');
+  },
+  '024-code-health-budget': (project) => {
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (project.code_health === 'exempt') return SKIP('code_health=exempt');
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    const findings = [];
+    let critical = false;
+
+    // 1. Refactoring-Anteil letztes Quartal
+    try {
+      const since = '3 months ago';
+      const total = execFileSync('git', ['log', `--since=${since}`, '--pretty=format:%s'], {
+        cwd: project.path_local, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim().split('\n').filter(Boolean);
+      const refactor = total.filter(s => /^(refactor|test|chore.*rename)(\(|:)/i.test(s));
+      if (total.length >= 5) {
+        const pct = Math.round((refactor.length / total.length) * 100);
+        if (pct < 8) { findings.push(`Refactor-Anteil ${pct}% (< 8%)`); critical = true; }
+        else if (pct < 15) findings.push(`Refactor-Anteil ${pct}% (< 15%)`);
+      }
+    } catch { /* nicht-Git oder leer — überspringen */ }
+
+    // 2. Datei-Längen-Scan
+    const scanDirs = ['src', 'lib', 'app', 'pages', 'routes'].map(d => join(project.path_local, d)).filter(existsSync);
+    const roots = scanDirs.length ? scanDirs : [project.path_local];
+    const ignoreDir = /(^|[\\/])(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv|__pycache__|vendor|third[-_]party|generated)([\\/]|$)/;
+    const codeExt = /\.(js|jsx|ts|tsx|mjs|cjs|svelte|vue|py)$/i;
+    const ignoreFile = /(^|[\\/])(supabase[\\/]types\.ts|database\.types\.ts|generated\.ts|handlebars(\.min)?\.js|typeahead.*\.js|jquery.*\.js|bootstrap.*\.js)$/i;
+    const longFiles = [];
+    const veryLongFiles = [];
+    function walk(dir) {
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+      for (const e of entries) {
+        const full = join(dir, e.name);
+        if (e.isDirectory()) {
+          if (ignoreDir.test(full)) continue;
+          walk(full);
+        } else if (codeExt.test(e.name)) {
+          if (ignoreFile.test(full)) continue;
+          let text;
+          try { text = readFileSync(full, 'utf8'); } catch { continue; }
+          if (/@generated|This file is auto-generated/i.test(text.slice(0, 500))) continue;
+          const eff = text.split('\n').filter(l => l.trim() && !/^\s*(\/\/|#|\/\*|\*)/.test(l)).length;
+          if (eff > 1000) veryLongFiles.push(`${full.replace(project.path_local, '').replace(/^[\\/]/, '')}:${eff}`);
+          else if (eff > 500) longFiles.push(`${full.replace(project.path_local, '').replace(/^[\\/]/, '')}:${eff}`);
+        }
+      }
+    }
+    for (const r of roots) walk(r);
+    if (veryLongFiles.length) { findings.push(`> 1000-Zeilen-Datei(en): ${veryLongFiles.slice(0, 3).join(', ')}${veryLongFiles.length > 3 ? ` (+${veryLongFiles.length - 3})` : ''}`); critical = true; }
+    if (longFiles.length) findings.push(`> 500-Zeilen-Datei(en): ${longFiles.slice(0, 3).join(', ')}${longFiles.length > 3 ? ` (+${longFiles.length - 3})` : ''}`);
+
+    if (critical) return FAIL(findings.join('; '));
+    if (findings.length) return WARN(findings.join('; '));
+    return PASS('Refactor-Anteil + Datei-Längen im Budget');
+  },
   '021-re-review-reminder': (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     const last = project.last_review_date;
