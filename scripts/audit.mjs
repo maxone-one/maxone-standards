@@ -1391,6 +1391,11 @@ async function runChecks(checks, projects, filterStandard, kind, exceptions = []
   const warnings = [];
   const exceptionsApplied = [];
   const removalCandidates = [];
+  const perStandard = new Map(); // id -> { pass, warn, fail, skip }
+  function bump(id, key) {
+    if (!perStandard.has(id)) perStandard.set(id, { pass: 0, warn: 0, fail: 0, skip: 0 });
+    perStandard.get(id)[key]++;
+  }
   for (const project of projects) {
     let printedHeader = false;
     for (const [id, fn] of Object.entries(checks)) {
@@ -1418,13 +1423,26 @@ async function runChecks(checks, projects, filterStandard, kind, exceptions = []
       }
 
       if (!printedHeader) { console.log(`\n=== ${project.name} (${kind}) ===`); printedHeader = true; }
-      if (r.skip) { results.skip++; console.log(`  [skip] ${id} — ${r.msg}`); }
-      else if (r.warn) { results.warn++; warnings.push({ project: project.name, id, msg: r.msg }); console.log(`  [WARN] ${id} — ${r.msg}`); }
-      else if (r.ok) { results.pass++; console.log(`  [OK]   ${id}${r.msg ? ' — ' + r.msg : ''}`); }
-      else { results.fail++; failures.push({ project: project.name, id, msg: r.msg }); console.log(`  [FAIL] ${id} — ${r.msg}`); }
+      if (r.skip) { results.skip++; bump(id, 'skip'); console.log(`  [skip] ${id} — ${r.msg}`); }
+      else if (r.warn) { results.warn++; bump(id, 'warn'); warnings.push({ project: project.name, id, msg: r.msg }); console.log(`  [WARN] ${id} — ${r.msg}`); }
+      else if (r.ok) { results.pass++; bump(id, 'pass'); console.log(`  [OK]   ${id}${r.msg ? ' — ' + r.msg : ''}`); }
+      else { results.fail++; bump(id, 'fail'); failures.push({ project: project.name, id, msg: r.msg }); console.log(`  [FAIL] ${id} — ${r.msg}`); }
     }
   }
-  return { results, failures, warnings, exceptionsApplied, removalCandidates };
+  return { results, failures, warnings, exceptionsApplied, removalCandidates, perStandard };
+}
+
+// Score 0-10 pro Standard. PASS = 10, WARN = 5, FAIL = 0; SKIP zählt nicht.
+// Bei N=0 (nur Skips) → null = N/A.
+function computeScore(stats) {
+  const n = stats.pass + stats.warn + stats.fail;
+  if (n === 0) return null;
+  return (10 * stats.pass + 5 * stats.warn) / n;
+}
+
+function formatScore(score) {
+  if (score === null) return ' N/A';
+  return score.toFixed(1).padStart(4, ' ');
 }
 
 async function main() {
@@ -1494,6 +1512,36 @@ async function main() {
     console.log('\n--- Ausnahmen laufen in <30 Tagen ab ---');
     for (const e of expiringSoon) {
       console.log(`  ${e.project.padEnd(20)} ${String(e.standard).padEnd(36)} läuft am ${e.expires_until} ab`);
+    }
+  }
+
+  // Score 0-10 pro Standard (Scorecard-Pattern; SKIP zählt nicht im Nenner)
+  const merged = new Map();
+  for (const m of [local.perStandard ?? new Map(), ssh.perStandard ?? new Map()]) {
+    for (const [id, s] of m) {
+      if (!merged.has(id)) merged.set(id, { pass: 0, warn: 0, fail: 0, skip: 0 });
+      const t = merged.get(id);
+      t.pass += s.pass; t.warn += s.warn; t.fail += s.fail; t.skip += s.skip;
+    }
+  }
+  if (merged.size) {
+    console.log('\n--- Score 0-10 pro Standard (PASS=10, WARN=5, FAIL=0; SKIP excluded) ---');
+    const sortedIds = [...merged.keys()].sort();
+    let totalNum = 0, totalDen = 0;
+    for (const id of sortedIds) {
+      const s = merged.get(id);
+      const score = computeScore(s);
+      const breakdown = `(${s.pass} PASS, ${s.warn} WARN, ${s.fail} FAIL, ${s.skip} SKIP)`;
+      console.log(`  ${id.padEnd(38)} ${formatScore(score)}   ${breakdown}`);
+      if (score !== null) {
+        const n = s.pass + s.warn + s.fail;
+        totalNum += score * n;
+        totalDen += n;
+      }
+    }
+    if (totalDen > 0) {
+      const overall = totalNum / totalDen;
+      console.log(`  ${'OVERALL'.padEnd(38)} ${formatScore(overall)}   (gewichtet, ohne SKIPs)`);
     }
   }
 
