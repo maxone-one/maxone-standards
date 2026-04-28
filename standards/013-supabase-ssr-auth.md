@@ -136,21 +136,18 @@ Initial-Audit 2026-04-28 (manuell, noch kein Audit-Skript):
 | Projekt | Stack | Matcher-Status | Notizen |
 |---|---|---|---|
 | stadt-lahn-flow | Next.js + `@supabase/ssr` | ✅ broad matcher | gefixt 2026-04-28 (Commit `f7b5f6b`); vorher selektiv `/dashboard,/admin,/login,/claim,/auth` |
-| vanfree | Next.js 14 + `@supabase/ssr` | ✅ broad matcher | `middleware.ts` (root) ruft `updateSession` auf, Negative-Lookahead-Matcher vorhanden |
-| plansey-next | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
+| vanfree | Next.js 14 + `@supabase/ssr` | ✅ broad matcher | `middleware.ts` (root) ruft `updateSession` aus `lib/supabase/middleware.ts` auf |
+| voltfair.de | Next.js 16 + `@supabase/ssr` | ❌ **keine middleware.ts** | echter Treffer — Server Components rufen `auth.getUser()` ohne Refresh-Pfad auf. Fix offen (2026-04-28). |
 | maxone.one | SvelteKit | – nicht betroffen | anderer Auth-Flow (SvelteKit Hooks) |
-| katchi | Vite/React | – nicht betroffen | keine Next-Middleware |
-| getsnapflow | Vite/React | – nicht betroffen | keine Next-Middleware |
-| snapflow.one, repivot.me, repivot, pivotin, plansey, snapflow | unklar | ❓ | kein `package.json` an Root sichtbar (Monorepo / leer) — bei nächstem Touch prüfen |
+| plansey-next | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
+| katchi, getsnapflow, solarproof | Vite/React | – nicht betroffen | kein `@supabase/ssr` |
+| snapflow, repivot, plansey, kitchen-station | unklar | ❓ | kein `package.json` an Root (Monorepo / leer) — bei nächstem Touch prüfen |
 
-**Fazit:** Aktuell (2026-04-28) gibt es **keinen weiteren Treffer** für den
-SLF-Bug. Die Regel bleibt aber gültig — sie greift, sobald ein neues Projekt
-mit Next.js + `@supabase/ssr` aufgesetzt wird, und schützt vor versehentlich
-selektiven Matchern beim Refactoring.
+**Fazit (2026-04-28):** Audit deckt **2 PASS, 1 FAIL** auf. voltfair.de braucht
+eine Standard-013-konforme Middleware. Die anderen sind entweder konform oder
+nicht im Scope.
 
-→ Bei nächstem Deploy/Touch eines unklaren Projekts: prüfen ob `@supabase/ssr`
-in `package.json`, und falls ja `src/middleware.ts` / `middleware.ts`
-verifizieren.
+→ Audit reproduzierbar via `node scripts/audit.mjs --standard=013 --local-only`.
 
 ## Audit
 
