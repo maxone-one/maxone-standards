@@ -179,7 +179,7 @@ maxone-standards audit — 11 Projekt(e)
   [WARN] 018-bundle-drift — HTTP 404 — Bundle-Audit nicht möglich
   [skip] 014-sunset — status=live
   [WARN] 020-pentest-light — X-Frame-Options + frame-ancestors fehlen beide
-  [WARN] 019-cert-dns — DNS zeigt nicht auf eigene Server: 104.21.11.40, 172.67.165.34; Issuer "Google Trust Services" — Standard 004 verlangt Let's Encrypt
+  [WARN] 019-cert-dns — DNS zeigt nicht auf eigene Server: 172.67.165.34, 104.21.11.40; Issuer "Google Trust Services" — Standard 004 verlangt Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — Footer fehlt: impressum, datenschutz, attribution
   [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
