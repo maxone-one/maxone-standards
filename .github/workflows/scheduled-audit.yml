@@ -36,6 +36,9 @@ jobs:
       - name: Detect Node
         run: node --version
 
+      - name: Install deps
+        run: npm ci --omit=dev --no-audit --no-fund
+
       - name: Run audit
         id: audit
         run: |
@@ -45,8 +48,16 @@ jobs:
           # --root=/opt schaltet path_local-Lookup auf server-residente
           # Projekt-Verzeichnisse um (siehe Migration in HANDOFF.md).
           node scripts/audit.mjs --root=/opt > "audits/audit-${DATE}.txt" 2>&1
-          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          AUDIT_EXIT=$?
+          echo "exit=${AUDIT_EXIT}" >> "$GITHUB_OUTPUT"
           echo "date=${DATE}" >> "$GITHUB_OUTPUT"
+          # Audit-Findings sind kein Fehler; ein Skript-Crash schon.
+          # Heuristik: Output enthaelt keinen Summary-Block -> Crash.
+          if ! grep -q '^--- Summary ---' "audits/audit-${DATE}.txt"; then
+            echo "::error::audit.mjs lieferte keinen Summary-Block (vermutlich Crash). Exit ${AUDIT_EXIT}."
+            tail -30 "audits/audit-${DATE}.txt"
+            exit 1
+          fi
 
       - name: Emit GH-Issue payloads
         if: ${{ inputs.emit_issues != 'false' }}
