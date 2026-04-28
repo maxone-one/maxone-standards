@@ -181,6 +181,11 @@ const localChecks = {
     const widgetOld = grepRepo(project.path_local, /agent\.maxone\.studio\/widget/, 1);
     if (widgetNew.length) return PASS(`eingebunden in ${widgetNew[0]}`);
     if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
+    // Some projects (z.B. SLF) beziehen die Widget-URL aus einer env-Variable, um
+    // Infrastruktur-Kopplung zu vermeiden. Akzeptiere Web-Component-Tag oder
+    // NEXT_PUBLIC_VECTOR_WIDGET_URL als gleichwertige Einbindung.
+    const widgetEnv = grepRepo(project.path_local, /<vector-chat\s|NEXT_PUBLIC_VECTOR_WIDGET_URL/, 1);
+    if (widgetEnv.length) return PASS(`eingebunden via env in ${widgetEnv[0]}`);
     return FAIL('Widget nicht eingebunden');
   },
   '013-ssr-auth': (project) => {
