@@ -1,0 +1,99 @@
+# Traefik Security-Headers Middleware
+#
+# Operationalisiert Standard 020 (Pen-Test-Light) — Sektion D, Header-Hygiene.
+#
+# Drop-in für /opt/traefik/dynamic/security-headers.yml auf maxone-prod.
+# Ergänzt Traefik-Routern via Label:
+#   traefik.http.routers.<projekt>.middlewares=security-headers@file
+#
+# Ein einziger File-Loader-Eintrag fixt die Header-WARNs aus dem 020-Audit
+# für ALLE Projekte gleichzeitig — nicht pro Projekt im Code.
+#
+# Bezug: 020-pentest-light.md, Sektion D
+# Live-Verify-Stand 2026-04-28: 8 von 8 Domains hatten WARN für mindestens
+#   einen dieser Header — diese Middleware fixt alle in einem Schlag.
+
+http:
+  middlewares:
+
+    security-headers:
+      headers:
+        # HSTS — Browser merkt sich HTTPS-Pflicht für 2 Jahre, inkl. Subdomains
+        # Preload erst aktivieren, wenn alle Subdomains HTTPS-only sind
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+
+        # X-Content-Type-Options — verhindert MIME-Sniffing-Angriffe
+        contentTypeNosniff: true
+
+        # X-Frame-Options — Clickjacking-Schutz
+        # SAMEORIGIN erlaubt eigene Iframes (z.B. Vector-Chat-Widget)
+        frameDeny: false
+        customFrameOptionsValue: SAMEORIGIN
+
+        # Referrer-Policy — verhindert Daten-Leak via Referer-Header
+        referrerPolicy: strict-origin-when-cross-origin
+
+        # Permissions-Policy — minimaler Default; Projekte können das
+        # via eigene Middleware überschreiben wenn z.B. Camera nötig
+        permissionsPolicy: "camera=(), microphone=(), geolocation=(), payment=()"
+
+        # Cross-Origin-Opener-Policy — Spectre/Meltdown-Schutz im Browser
+        customResponseHeaders:
+          Cross-Origin-Opener-Policy: "same-origin"
+          # Server-Banner strippen (Standard 020 Sektion D)
+          Server: ""
+          X-Powered-By: ""
+
+    # Variante für reine API-Domains (kein HTML, aber CORS-Awareness)
+    api-security-headers:
+      headers:
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        referrerPolicy: no-referrer
+        customResponseHeaders:
+          Server: ""
+          X-Powered-By: ""
+
+    # Variante für eingebettete Widgets (z.B. Vector-Chat-Widget)
+    # — erlaubt Embed in fremde Origins
+    embed-security-headers:
+      headers:
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        contentTypeNosniff: true
+        # KEIN X-Frame-Options — Widget wird in fremde Sites eingebettet
+        # Dafür CSP frame-ancestors auf vertrauenswürdige Origins
+        contentSecurityPolicy: "frame-ancestors 'self' https://*.maxone.one https://*.voltfair.de https://stadtlahnflow.de;"
+        referrerPolicy: strict-origin-when-cross-origin
+        customResponseHeaders:
+          Server: ""
+          X-Powered-By: ""
+
+# Anwendung pro Projekt-Router (in dessen docker-compose.yml als Label):
+#
+# services:
+#   app:
+#     labels:
+#       - "traefik.enable=true"
+#       - "traefik.http.routers.<projekt>.rule=Host(`<domain>`)"
+#       - "traefik.http.routers.<projekt>.tls.certresolver=letsencrypt"
+#       - "traefik.http.routers.<projekt>.middlewares=security-headers@file"
+#
+# Verifikation nach Deploy:
+#   curl -sI https://<domain>/ | grep -iE 'strict-transport|x-content-type|x-frame|server|x-powered'
+#
+# Erwartung:
+#   strict-transport-security: max-age=63072000; includeSubDomains; preload
+#   x-content-type-options: nosniff
+#   x-frame-options: SAMEORIGIN
+#   server:                              (leer)
+#   (kein x-powered-by)
+#
+# Re-Audit:
+#   node scripts/audit.mjs --standard=020
+# Erwartung: alle WARNs verschwunden.
