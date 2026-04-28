@@ -6,8 +6,8 @@
 
 ## Was dieses Repo ist
 
-Governance-Repo für die 31 maxone-Standards (Architektur/Deploy/Security/UI/
-LLM-Härtung/Mail/Ops) über 11 Projekte. Nicht der Code der Projekte selbst —
+Governance-Repo für die 32 maxone-Standards (Architektur/Deploy/Security/UI/
+LLM-Härtung/Mail/Ops/Auth) über 11 Projekte. Nicht der Code der Projekte selbst —
 nur die Regeln, das Audit-Script und die Templates.
 
 ## Wichtige Eigenheiten

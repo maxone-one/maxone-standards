@@ -1,18 +1,18 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration + Parallel-Session-Merge mit Standard 032)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 31 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
+**Status:** 32 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für inzwischen **31 Standards**
-(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung, Mail, Ops) über die
+`maxone-standards` ist das Governance-Repo für inzwischen **32 Standards**
+(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung, Mail, Ops, Auth) über die
 11 Max-Projekte. Es enthält:
 
-- `standards/` — Standard-Dokumente 001–031 + `VULN-CATALOG.md`
+- `standards/` — Standard-Dokumente 001–032 + `VULN-CATALOG.md`
 - `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator
@@ -195,6 +195,51 @@ Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
 **Keine Aktion nötig:**
 - `scripts/scheduled-audit.cmd` (jetzt als Fallback dokumentiert)
 - `vector/local-watchdog/*.timer` (lokale Devbox-Kopie der prod-systemd-Files)
+
+---
+
+## Session-Update 2026-04-28c — Standard 032 + Parallel-Session-Merge
+
+Während dieser Session lief eine **parallele Sitzung** in einem anderen Fenster, die
+unabhängig 5 Commits für „Standard 013 = Supabase SSR Auth Middleware-Matcher"
+gepusht hat. Lokal war 013 aber bereits durch „Launch-Gate Review" belegt mit
+~50 Cross-References in 014–031, daher Renumber der parallelen Arbeit auf **032**:
+
+- `standards/032-supabase-ssr-auth.md` (Inhalt 1:1 von b9bc523..a8423b2 übernommen,
+  Standard-Nummer im Titel + zwei interne 013-Referenzen → 032 ersetzt)
+- Audit-Check `032-ssr-auth` (Logik identisch zur Remote-`013-ssr-auth`-Variante,
+  inkl. lib/supabase/middleware.ts-Helper-Konkatenation und proxy.ts-Erkennung
+  für Next.js 16). Smoke: 3 PASS (stadtlahnflow, vanfree, voltfair), Rest SKIP.
+- Lokale `standards/013-launch-gate-review.md` bleibt unverändert auf 013.
+
+**Bonus aus Remote-Session übernommen** (nicht von dieser Sitzung erfunden):
+- 011-Check erweitert um env-basierte Widget-Einbindung (`<vector-chat>` +
+  `NEXT_PUBLIC_VECTOR_WIDGET_URL`) → SLF von FAIL → PASS, 011-Score jetzt 10/10
+- 009-Check erweitert um `impressum_local_intentional`-Registry-Flag → SLF
+  bekommt PASS statt WARN (legitime Infra-Unabhängigkeits-Ausnahme dokumentiert)
+
+**Bonus aus dieser Sitzung:**
+- `scripts/audit.mjs --root=<dir>` swappt für jedes Projekt `path_local` durch
+  `path_server` (mit Fallback `<root>/<name>`). Nötig damit `scheduled-audit.yml`
+  am 11.05. auf `voltfair-server`-Linux-Runner gegen `/opt/<projekt>/` prüft
+  und nicht ins Leere greift.
+
+**Git-Topologie nach Merge** (commits `bfb2f51` + `b8627ad`):
+```
+*   b8627ad merge: 009-fix von Remote
+|\
+| * 4a2bec0 009: registry override
+* | bfb2f51 merge: parallel-session 013 → 032
+|\|
+| * 5e0b330..b9bc523 (5 Remote-Commits)
+* | 3fb0622 feat(032): renumber
+* | 39ce283 feat(audit): --root flag
+```
+
+**Lehre für die Zukunft:** Bei `git pull` zu Sitzungsbeginn nicht voraussetzen,
+dass der lokale Stand der einzige ist. Die Sandbox erlaubt parallele Sessions
+am selben Repo, ohne dass eine die andere sieht. Nummern-Kollisionen können
+auftreten — bei Standards-Renumber: derjenige mit weniger Cross-Refs muss weichen.
 
 ---
 
