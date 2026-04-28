@@ -1,18 +1,18 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 27 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
+**Status:** 28 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für inzwischen **27 Standards**
+`maxone-standards` ist das Governance-Repo für inzwischen **28 Standards**
 (Architektur, Deploy, Security, UI, Compliance, LLM-Härtung) über die
 11 Max-Projekte. Es enthält:
 
-- `standards/` — Standard-Dokumente 001–027 + `VULN-CATALOG.md`
+- `standards/` — Standard-Dokumente 001–028 + `VULN-CATALOG.md`
 - `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator
@@ -64,17 +64,36 @@ ein erstes Inspirations-Repo-Sweep gemacht.
 - VULN-CATALOG AI-Code-spezifisch-Tabelle um garak / promptfoo /
   llm-guard / agentic-radar / agent-governance-toolkit erweitert
 
-**Coverage-Stand jetzt:** 20 hart / 4 teilweise / 11 manuell / 3 offen
-(neu offen: ASI01 Memory Poisoning, separat geführt).
+**Coverage-Stand jetzt:** 21 hart / 4 teilweise / 11 manuell / 3 offen
+(neu hart: B6 Container-Misconfig via 028; neu offen: ASI01 Memory Poisoning,
+separat geführt).
+
+**Neu in der Session: Standard 028 — Container-Misconfig-Audit**
+- `standards/028-container-misconfig.md` — 7 Pflicht-Klassen pro Compose:
+  3 FAIL (privileged ohne `# audit:`-Kommentar, inline-secrets, `:latest`-
+  Pull) + 4 WARN (mem_limit, restart, docker.sock, env_file aus
+  `/opt/secrets/`)
+- Audit-Check als `analyzeCompose()`-Helper in `scripts/audit.mjs`,
+  doppelt registriert: `028-container-misconfig-local` (Repo-Root-Fallback)
+  und `028-container-misconfig` (SSH-authoritativ gegen
+  `/opt/<projekt>/docker-compose.yml`)
+- **Maxone-CI-Build-Pattern explizit als Ausnahme:** `image: <name>:latest`
+  + `build:`-Block bleibt PASS (Image entsteht im CI/lokal, wird via
+  `docker save | docker load` transferiert — kein Registry-Pull)
+- Live-Verify-Findings: stadtlahnflow + katchi haben `image: <name>:latest`
+  ohne `build:`-Block (CLAUDE.md global rule violation), vanfree pulled
+  `ghcr.io/maxone-studio-org/planexo.io:latest` (echter Registry-Pull),
+  plansey nutzt `minio/minio:latest` (3rd-party, sollte SHA-pinned sein)
 
 ### Empfohlene nächste Schritte (priorisiert)
 
 Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
 2026-04-28-github-similar-projects.md` Sektion „Top-Empfehlungen":
 
-1. **Standard 028 — Container-Misconfig-Audit** via `trivy config` /
-   `checkov` (schließt den dokumentierten 002+004-Compose-Blindspot,
-   siehe MEMORY)
+1. **028-Findings adressieren**: stadtlahnflow + katchi `build:`-Block
+   nachreichen oder als bewusste Ausnahme dokumentieren; vanfree von
+   `ghcr.io:latest`-Pull auf SHA/Versions-Tag oder maxone-CI-Pattern
+   migrieren; plansey `minio/minio` auf SHA pinnen
 2. **Standard 029 — Indirect-Prompt-Injection-Test** für RAG/Telegram/
    Web-Chat (greshake/Giskard-Payloads als Pflicht-Seed)
 3. **`registry/exceptions.yml`** formalisieren (`granted_at` /

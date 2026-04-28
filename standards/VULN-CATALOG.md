@@ -229,6 +229,7 @@ Jeder Eintrag mit:
 - **Vorfall:** **Moltbook Januar 2026** — 1,5 Mio API-Tokens, 35.000 E-Mails, private Nachrichten öffentlich (Supabase ohne RLS, von Wiz nach 3 Tagen entdeckt)
 - **CVE:** **CVE-2025-48757** — 170+ Lovable-Apps ohne RLS, Source-Code + DB-Credentials 48 Tage exposed
 - **Coverage:** ✅ Standard 013 Section C (RLS-Pflicht, Anon-Key-Test, Supabase-Linter manuell), 🔄 Continue CLI + Supabase MCP als daily Cron empfohlen (siehe Tools-Tabelle)
+- **Coverage Container-Layer:** ✅ Standard 028 (Container-Misconfig-Audit) — 7 Pflicht-Klassen pro `docker-compose.yml`: privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/`. SSH-first mit Local-Fallback, schließt den dokumentierten 002+004-Compose-Blindspot.
 
 #### B7 — Vulnerable & Outdated Components
 - **OWASP:** A06
@@ -406,7 +407,8 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | OWASP | Crypto Failures | — | teilweise via 023 | semgrep | 🔴 **TODO** |
 | OWASP | SQL/Command Injection | — | 023 | semgrep | ✅ hart |
 | OWASP | Insecure Design | — | 015 | CONCEPT.md-Audit | ✅ hart (seit 015) |
-| OWASP | RLS-Misconfig (B6) | C | — | curl + Supabase Linter + Continue MCP | ⚠️ manuell, daily Cron empfohlen |
+| OWASP | RLS-Misconfig (B6, DB-Layer) | C | — | curl + Supabase Linter + Continue MCP | ⚠️ manuell, daily Cron empfohlen |
+| OWASP | Container-Misconfig (B6, Container-Layer) | — | 028 | js-yaml-Parse + 7 Pflicht-Klassen, SSH-first | ✅ hart (seit 028) |
 | OWASP | Vuln Components | A | — | npm audit | ✅ |
 | OWASP | Auth-Failures | B | — | manuell | ⚠️ manuell |
 | OWASP | Webhook-Sig | G | — | manuell | ⚠️ manuell |
@@ -440,7 +442,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 20 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection LLM01 via 025, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025)
+**Aktuell abgedeckt (hart):** 21 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection LLM01 via 025, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028)
 **Teilweise abgedeckt:** 4 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell, Cascading-Hallucination ASI02-03 teilweise via 025)
 **Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
 **Aktuell offen:** 3 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5, Agentic Memory Poisoning ASI01 — alle nur Tool-Empfehlung oder TODO, kein eigener Standard)
@@ -463,6 +465,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**021** Re-Review-Reminder~~ | Drift schleichend | niedrig (kostet nichts) — Cron-Reminder + last_review_date in Registry | ✅ **erledigt 2026-04-28** |
 | ~~**024** Code-Health-Budget~~ | Refactoring-Anteil (G2), Duplikation (G3), Datei-/Funktions-Längen | mittel — strukturelle Erosion langfristig | ✅ **erledigt 2026-04-28** |
 | ~~**025** LLM-App-Spezial~~ | Prompt Injection (D1–D3), Excessive Agency (D4) | hoch — VECTOR + Vector-Chat + Zentinel + SolarProof betroffen | ✅ **erledigt 2026-04-28** |
+| ~~**028** Container-Misconfig-Audit~~ | B6 (Container-Layer): privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/` | hoch — schließt 002+004-Compose-Blindspot, hat live FAILs an stadtlahnflow + katchi (CI-Pattern unvollständig) und vanfree (`ghcr.io/...:latest`-Pull) gefunden | ✅ **erledigt 2026-04-28** |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern
@@ -566,6 +569,9 @@ einem Standard erzwungen, sondern bewusst diskutiert.
 | 16 | Fraunhofer IESE — Verantwortungsstatement 2026 | Standard-013-Begründung |
 | 17 | Kaspersky — Replit-Agent-Incident-Analyse 2025 | D4 |
 | 18 | Eigene Vorfälle: Enrichlead, Tea-App, Moltbook, Replit-Agent, Base44, Lovable | B1, B6, D4, E1 |
+| 19 | aquasecurity/trivy — `trivy config` Compose-Ruleset (AVD-DS-XXXX) | B6 (Container-Layer) |
+| 20 | bridgecrewio/checkov — `CKV_DOCKER_*` Compose-Ruleset | B6 (Container-Layer) |
+| 21 | Stalwart-Orphan-Vorfall 2026-03-24 (CLAUDE.md) — `docker run` ohne `restart:` → Brevo-Key-Exposure, Mail-Downtime | B6 (Standard 028 Begründung) |
 
 **Pflege:** Bei jedem neuen Vorfall (eigene Nachrichten oder LinkedIn/HN/Newsletter)
 einen Eintrag ergänzen — Datum, Quelle, betroffene Klasse, Coverage-Status.

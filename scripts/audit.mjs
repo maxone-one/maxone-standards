@@ -1025,7 +1025,134 @@ const localChecks = {
     if (composeWarn.length) return WARN(`compose: ${composeWarn.join(', ')}`);
     return PASS(`${wfFiles[0]} + compose erfüllt Pipeline-Pflichten`);
   },
+  // Standard 028 — Local-Fallback: nur prüfen, wenn Compose im Repo liegt.
+  // Echte Wahrheit liefert sshChecks['028-container-misconfig'].
+  '028-container-misconfig-local': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const candidates = [composeFile, 'compose.yml', 'compose.yaml'];
+    let found = null;
+    for (const c of candidates) {
+      const p = join(project.path_local, c);
+      if (existsSync(p)) { found = p; break; }
+    }
+    if (!found) return SKIP(`kein Compose lokal (Server-Pfad authoritativ)`);
+    const text = readFileSync(found, 'utf8');
+    const secretsDir = project.secrets_dir ?? project.name;
+    const { fails, warns } = analyzeCompose(text, secretsDir, found.split(/[\\/]/).pop());
+    if (fails.length) return FAIL(fails.join('; ') + (warns.length ? ` (+ ${warns.length} WARN)` : ''));
+    if (warns.length) return WARN(warns.join('; '));
+    return PASS(`${found.split(/[\\/]/).pop()}: 7 Pflicht-Klassen sauber`);
+  },
 };
+
+// Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
+// Wird sowohl von SSH-Check (Server-Compose) als auch Local-Fallback
+// (path_local-Compose) genutzt.
+//
+// Regeln:
+//   FAIL: privileged ohne audit-comment, inline-secrets, :latest oder kein Tag
+//   WARN: kein mem_limit, kein restart, docker.sock ohne audit-comment,
+//         env_file zeigt nicht auf /opt/secrets/<dir>/keys.env
+const INLINE_SECRET_KEY = /(PASSWORD|SECRET|TOKEN|API[_-]?KEY|PRIVATE[_-]?KEY)/i;
+const VAR_REF = /^\$\{?[A-Z_][A-Z0-9_]*(:-[^}]*)?\}?$/i;
+
+function analyzeCompose(rawText, secretsDir, sourceLabel) {
+  let doc;
+  try { doc = yaml.load(rawText); }
+  catch (e) { return { fails: [`Parse-Fehler in ${sourceLabel}: ${e.message.slice(0, 60)}`], warns: [] }; }
+  const services = doc?.services;
+  if (!services || typeof services !== 'object') {
+    return { fails: [`${sourceLabel}: keine services:-Sektion`], warns: [] };
+  }
+  const fails = [];
+  const warns = [];
+  // Linien-Index für # audit:-Kommentar-Lookup
+  const lines = rawText.split('\n');
+  const expectedSecretsPath = `/opt/secrets/${secretsDir}/keys.env`;
+
+  for (const [name, svc] of Object.entries(services)) {
+    if (!svc || typeof svc !== 'object') continue;
+
+    // image: :latest oder kein Tag
+    // maxone-Pattern (CLAUDE.md): image: <name>:latest + build: ist OK,
+    // weil das Image via CI gebaut + via `docker save | docker load`
+    // transferiert wird (Standard 027), kein Registry-Pull. FAIL nur,
+    // wenn das Image gepulled würde (Registry-Pfad mit Slash, kein build).
+    if (svc.image && typeof svc.image === 'string') {
+      const img = svc.image;
+      const lastSlash = img.lastIndexOf('/');
+      const tagPart = img.slice(lastSlash + 1);
+      const colonIdx = tagPart.indexOf(':');
+      const hasRegistry = lastSlash !== -1;
+      const hasBuild = !!svc.build;
+      const isUntagged = colonIdx === -1;
+      const isLatest = !isUntagged && tagPart.slice(colonIdx + 1) === 'latest';
+      if (isUntagged || isLatest) {
+        if (hasRegistry && !hasBuild) {
+          fails.push(`${name}: image: ${img} — Registry-Pull mit ${isUntagged ? 'fehlendem Tag' : ':latest'} → silent drift`);
+        } else if (!hasBuild) {
+          if (isUntagged) {
+            fails.push(`${name}: image: ${img} ohne :tag und ohne build: → keine Quelle definiert`);
+          } else {
+            fails.push(`${name}: image: ${img} (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin)`);
+          }
+        }
+        // else: maxone-CI-Build-Pattern (image:<name>:latest + build:), OK
+      }
+    }
+
+    // privileged: true ohne audit-comment
+    if (svc.privileged === true) {
+      const ok = lines.some(l => /#\s*audit:\s*privileged-required/i.test(l));
+      if (!ok) fails.push(`${name}: privileged: true ohne # audit: privileged-required`);
+    }
+
+    // inline secrets in environment:
+    const env = svc.environment;
+    if (env) {
+      const entries = Array.isArray(env)
+        ? env.map(e => { const i = String(e).indexOf('='); return i === -1 ? [e, ''] : [String(e).slice(0, i), String(e).slice(i + 1)]; })
+        : Object.entries(env);
+      for (const [k, v] of entries) {
+        if (!INLINE_SECRET_KEY.test(k)) continue;
+        const val = String(v ?? '');
+        if (!val) continue;
+        if (VAR_REF.test(val.trim())) continue;
+        if (val.length >= 12 && /[A-Za-z0-9+/_-]{12,}/.test(val)) {
+          fails.push(`${name}: inline secret in environment: ${k} (Klartext)`);
+        }
+      }
+    }
+
+    // mem_limit
+    if (svc.mem_limit === undefined && svc.deploy?.resources?.limits?.memory === undefined) {
+      warns.push(`${name}: kein mem_limit:`);
+    }
+    // restart
+    if (!svc.restart) warns.push(`${name}: kein restart:`);
+
+    // docker.sock bind-mount
+    const vols = svc.volumes;
+    if (vols && Array.isArray(vols)) {
+      const sockHit = vols.some(v => typeof v === 'string' && v.includes('/var/run/docker.sock'));
+      if (sockHit) {
+        const ok = lines.some(l => /#\s*audit:\s*docker-socket-required/i.test(l));
+        if (!ok) warns.push(`${name}: docker.sock-Mount ohne # audit: docker-socket-required`);
+      }
+    }
+
+    // env_file: muss auf /opt/secrets/<dir>/keys.env zeigen
+    if (svc.env_file !== undefined) {
+      const refs = Array.isArray(svc.env_file) ? svc.env_file : [svc.env_file];
+      const hasStoreRef = refs.some(r => typeof r === 'string' && r.includes(`/opt/secrets/${secretsDir}/`));
+      if (!hasStoreRef) {
+        warns.push(`${name}: env_file: zeigt nicht auf ${expectedSecretsPath}`);
+      }
+    }
+  }
+  return { fails, warns };
+}
 
 // --- SSH Checks ---
 
@@ -1069,6 +1196,28 @@ const sshChecks = {
     } catch (e) {
       return WARN(`SSH-Fehler: ${e.message.slice(0, 80)}`);
     }
+  },
+  // Standard 028 — Container-Misconfig: zieht /opt/<projekt>/docker-compose.yml
+  // vom Server und prüft die 7 Pflicht-Klassen. Authoritativ; localChecks-
+  // Variante ist nur Fallback wenn Compose im Repo-Root liegt.
+  '028-container-misconfig': (project) => {
+    if (!project.server || !project.path_server) return SKIP('kein Server');
+    if (project.status === 'sunset') return SKIP(`status=sunset`);
+    const composeFile = project.compose_file ?? 'docker-compose.yml';
+    const remote = `${project.path_server}/${composeFile}`;
+    let text;
+    try {
+      // -f: Pfad existieren UND lesbar; sonst probieren wir die Alternativ-Namen
+      text = ssh(project.server, `cat ${remote} 2>/dev/null || cat ${project.path_server}/compose.yml 2>/dev/null || cat ${project.path_server}/compose.yaml 2>/dev/null`);
+    } catch (e) {
+      return WARN(`SSH-Fehler: ${e.message.slice(0, 80)}`);
+    }
+    if (!text || !text.trim()) return WARN(`Keine Compose-Datei unter ${project.path_server}/`);
+    const secretsDir = project.secrets_dir ?? project.name;
+    const { fails, warns } = analyzeCompose(text, secretsDir, `${project.server}:${remote}`);
+    if (fails.length) return FAIL(fails.join('; ') + (warns.length ? ` (+ ${warns.length} WARN)` : ''));
+    if (warns.length) return WARN(warns.join('; '));
+    return PASS(`${composeFile}@${project.server}: 7 Pflicht-Klassen sauber`);
   },
   '007-container-running': (project) => {
     if (!project.server || !project.container) return SKIP('kein Container');
