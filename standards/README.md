@@ -44,7 +44,10 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 **Philosophie & Pipeline:**
 - [026-self-hosted-first.md](026-self-hosted-first.md) — Self-Hosted-First, keine Abos (Ausnahmen: Domain-Registrar, TLS-CA, VPS-Hosting, Payment)
 - [027-deploy-pipeline.md](027-deploy-pipeline.md) — CI-Build → Image-Transfer → Health-Check → Traefik-Swap (formaler Pfad zu 001 + 002)
-- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023)
+- [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
+
+**Externe Recherche / Vergleichsprojekte:**
+- [`../research/2026-04-28-github-similar-projects.md`](../research/2026-04-28-github-similar-projects.md) — Recherche zu ähnlichen GitHub-Projekten (ossf/scorecard, garak, promptfoo, trivy, OWASP-Top-10-LLM/Agentic) + priorisierte Anreicherungs-Vorschläge
 
 ## Format einer Regel
 

@@ -215,6 +215,49 @@ for (const payload of INJECTION_PAYLOADS) {
 }
 ```
 
+### F.2 Empfohlene Payload-Quellen (statt selbst-pflegen)
+
+Statt die 10+ Payloads selbst zu kuratieren, kann das Pflicht-Test-Set aus
+diesen drei Quellen geseedet werden — alle OSS, Apache 2.0 / MIT, EU-OK:
+
+1. **NVIDIA/garak** (Probe-Module-Namen direkt referenzierbar):
+   - `promptinject.HijackHateHumans` — LLM01 Direct Prompt Injection
+   - `promptinject.HijackKillHumans` — LLM01 Variante
+   - `dan.DanInTheWild` + `dan.AntiDAN` — Jailbreak / Persona-Bypass
+   - `leakreplay.SystemPrompts` — LLM07 System-Prompt-Leakage
+   - `xss.ColabAIMDExfil` — LLM05 Insecure Output (Markdown-Image-Exfil)
+   - `malwaregen.Evasion` — Tool-Misuse, falls `request_approval`-Flow
+2. **promptfoo Red-Team-Preset** als CI-Job (eine Zeile YAML):
+   ```yaml
+   # promptfooconfig.yaml
+   redteam:
+     plugins: ['owasp:llm']
+     strategies: ['jailbreak', 'prompt-injection']
+     numTests: 50
+   ```
+   Lauf via `npx promptfoo redteam run`. Ersetzt das selbst-gepflegte vitest-
+   Set und aktualisiert sich mit OWASP-Updates automatisch.
+3. **greshake/llm-security** + **Giskard-AI/prompt-injections** — kuratiert
+   Indirect-Injection-Payloads (RAG-vergiftete Dokumente, Telegram-Messages,
+   Email-Inhalte). **Pflicht für VECTOR + Vector-Chat + Zentinel email-client**,
+   die alle indirect-Channels haben.
+
+### F.3 OWASP Agentic Top 10 (2026) — VECTOR-spezifischer Layer
+
+Für **agentische** LLM-Apps (VECTOR ist der einzige reine Agent in maxone)
+gilt zusätzlich die OWASP Top 10 für Agentic Apps 2026. Die für maxone
+relevanten Threats:
+
+| ASI-ID | Threat | Mitigation in maxone |
+|---|---|---|
+| **ASI01** | Memory Poisoning | Memory-Validierung vor jedem Restore (TODO für VECTOR) |
+| **ASI02** | Cascading Hallucination | Output-Sanity-Check zwischen Tool-Hops (TODO) |
+| **ASI03** | Goal Manipulation | System-Prompt-Direktiven D1-D3 + Approval-Queue |
+| **ASI06** | Tool Misuse | Tool-Schema mit `enum`-Whitelists + minimal Berechtigungen |
+| **ASI07** | Privilege Compromise | `ops_tasks`-Approval-Queue für alle Schreib-Aktionen |
+| **ASI09** | HITL-Bypass | menschlicher Operator MUSS `ops_tasks` approven, kein Auto-Approve |
+| **ASI10** | Unexpected Code Execution | KEIN `eval`/`Function`/Shell-Spawn aus LLM-Output (Standard 023) |
+
 ## Was diese Regel NICHT erzwingt
 
 - **Kein bestimmtes Modell** — Claude (CLI), GPT, Llama, Mistral —
@@ -259,9 +302,23 @@ Approval-Queue.
 ## Cross-Reference
 
 - 013 Section E — Test/Prod-Trennung (allgemeiner)
-- VULN-CATALOG D1–D4 — Studienlage zu LLM-Risiken
+- VULN-CATALOG D1–D6 — Studienlage zu LLM- und Agentic-Risiken
 - CLAUDE.md — „immer Claude CLI, niemals Anthropic API" gilt parallel
 - 003 Secrets Store — LLM-Tool-Aufrufe nutzen Keys aus Store, nie
   hardcoded
 - VECTOR `IDENTITY.md` (auf maxone-prod) — die Implementierung dieser
   Regel im realen Ops-Agent
+- `templates/llm-system-prompt.md` — Drop-in Härtungs-Snippet, Input-
+  Wrapping-Code und Test-Suite-Skelett
+- `research/2026-04-28-github-similar-projects.md` — Recherche zu
+  Tool-Quellen (garak, promptfoo, llm-guard, agentic-radar)
+
+## Externe Quellen
+
+- OWASP Top 10 for LLM Apps **2025** — github.com/OWASP/www-project-top-10-for-large-language-model-applications
+- OWASP Top 10 for **Agentic Apps 2026** — genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/
+- NVIDIA garak (Probe-Suite) — github.com/NVIDIA/garak
+- promptfoo (`owasp:llm`-Preset) — github.com/promptfoo/promptfoo
+- protectai/llm-guard (Runtime-Guard) — github.com/protectai/llm-guard
+- greshake/llm-security (Indirect-Injection-PoCs) — github.com/greshake/llm-security
+- Giskard-AI/prompt-injections (Corpus) — github.com/Giskard-AI/prompt-injections

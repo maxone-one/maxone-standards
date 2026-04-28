@@ -1,26 +1,90 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-27
-**Übergeben von:** Vorgänger-Session (nuc-optimizer Projektfenster)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** offene Aufgabe — Audit-Vergleich am 2026-05-11 vorbereitet, aber Trigger noch nicht scharf
+**Status:** 27 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für alle 12 Standards (Architektur,
-Deploy, Security, UI) über die 11 Max-Projekte. Es enthält:
+`maxone-standards` ist das Governance-Repo für inzwischen **27 Standards**
+(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung) über die
+11 Max-Projekte. Es enthält:
 
-- `standards/` — die 12 Standard-Dokumente (001–012)
-- `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status)
+- `standards/` — Standard-Dokumente 001–027 + `VULN-CATALOG.md`
+- `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator
-- `templates/`, `checklists/`, `texts/` — Boilerplate
+- `templates/` — Boilerplate inkl. `traefik-security-headers.yml` (Standard 020) und `llm-system-prompt.md` (Standard 025)
+- `checklists/`, `texts/` — Boilerplate
+- `research/` — externe Inspirations-/Vergleichsrecherche (z.B. `2026-04-28-github-similar-projects.md`)
 
 Letzter Stand der Sitzung: User hat per `/schedule` einen einmaligen
 Audit-Lauf am **2026-05-11 um 10:00 Europe/Berlin** angefordert, um Drift
 gegen die heutige Baseline zu prüfen.
+
+---
+
+## Session-Update 2026-04-28 — Standards-Sprint + GitHub-Recherche
+
+Diese Session hat die Roadmap aus `VULN-CATALOG.md` Teil 4 abgeschlossen und
+ein erstes Inspirations-Repo-Sweep gemacht.
+
+**Neue Standards** (alle ✅ live, im Audit, im README):
+
+- **020** Pen-Test-Light (defensive Außensicht: exposed Files / Admin-Routen
+  / Header-Hygiene, mit SPA-Catch-All-Erkennung)
+- **021** Re-Review-Reminder (alle 180 Tage, FAIL bei 270+, optional
+  `review_postponed_to` max +30 Tage)
+- **024** Code-Health-Budget (Refactor ≥15 % / Quartal, Datei <500 LOC,
+  Funktion <100 LOC, `// HEALTH-EXEMPT:`-Opt-Out)
+- **025** LLM-App-Spezial (6 Pflicht-Schichten, Approval-Queue über
+  `ops_tasks`, Pflicht-Test-Suite mit ≥10 Payloads — jetzt mit konkreten
+  garak-/promptfoo-Quellen + OWASP Agentic Top 10 Sub-Section)
+- **026** Self-Hosted-First (kein SaaS-Abo außer Registrar/CA/VPS/Payment)
+- **027** Deploy-Pipeline (formaler CI-Build → Image-Transfer → Health-Check
+  → Traefik-Swap-Pfad, operationalisiert 001+002)
+
+**Neue Templates** (committed):
+- `templates/traefik-security-headers.yml` — Drop-in für
+  `/opt/traefik/dynamic/`, fixt alle 020-WARN-Header für ALLE Projekte
+  in einem File (Variants: default / api / embed)
+- `templates/llm-system-prompt.md` — Härtungs-Snippet, TS-Wrapper,
+  Supabase `ops_tasks` + `llm_calls` SQL, vitest-Skelett
+
+**Anreicherung 2026-04-28** (basierend auf
+`research/2026-04-28-github-similar-projects.md`):
+- VULN-CATALOG D-Block mit OWASP **LLM01..LLM10:2025** + Agentic
+  **ASI01..ASI10:2026** IDs verknüpft (Industrie-Anschlussfähigkeit)
+- Coverage-Matrix LLM-Zeilen führen jetzt OWASP-IDs als Schlüssel
+- Standard 025 nennt konkrete garak-Probes (`promptinject.HijackHateHumans`,
+  `dan.AntiDAN`, `leakreplay.SystemPrompts`) und das promptfoo
+  `owasp:llm`-Preset als CI-Job-Alternative
+- VULN-CATALOG AI-Code-spezifisch-Tabelle um garak / promptfoo /
+  llm-guard / agentic-radar / agent-governance-toolkit erweitert
+
+**Coverage-Stand jetzt:** 20 hart / 4 teilweise / 11 manuell / 3 offen
+(neu offen: ASI01 Memory Poisoning, separat geführt).
+
+### Empfohlene nächste Schritte (priorisiert)
+
+Aus der Recherche, sortiert nach Impact/Aufwand — siehe `research/
+2026-04-28-github-similar-projects.md` Sektion „Top-Empfehlungen":
+
+1. **Standard 028 — Container-Misconfig-Audit** via `trivy config` /
+   `checkov` (schließt den dokumentierten 002+004-Compose-Blindspot,
+   siehe MEMORY)
+2. **Standard 029 — Indirect-Prompt-Injection-Test** für RAG/Telegram/
+   Web-Chat (greshake/Giskard-Payloads als Pflicht-Seed)
+3. **`registry/exceptions.yml`** formalisieren (`granted_at` /
+   `expires_until` → Audit promotet abgelaufene Ausnahmen automatisch
+   zurück zu FAIL)
+4. **Audit-Score 0–10 pro Standard** (Scorecard-Pattern) → erlaubt
+   Trend-Diffs in Baseline-Vergleich
+5. **`audit.mjs --emit=issues`** (Allstar-Pattern) → Findings als
+   GH-Issues statt Text-Diff
+6. **VECTOR-Prompt** mit dem 025-Härtungs-Snippet aktualisieren (live)
 
 ---
 

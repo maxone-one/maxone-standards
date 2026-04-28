@@ -109,6 +109,11 @@ Dritte den Code sehen).
 | **PromptArmor** | paid | ⚠️ US | LLM-Sec, Prompt-Injection | optional bei LLM-Apps |
 | **Tenzai Security** | paid | ⚠️ US | AI-Code-Audit-Service | optional |
 | **Georgia Tech "Vibe Security Radar"** | Forschung | — | öffentliche CVE-Daten zu AI-Tools | als Quelle nutzen |
+| **NVIDIA/garak** | OSS Apache 2.0 | ✅ self-host | LLM-Vuln-Scanner: 37+ Probes (DAN, promptinject, leakreplay, xss, malwaregen) | **empfohlen für 025-Test-Set** (Probes als JSONL-Seed, wöchentlicher Cron via VECTOR) |
+| **promptfoo** | OSS MIT | ✅ self-host | YAML-deklaratives LLM-Eval + Red-Team mit `owasp:llm`-Preset; läuft als GH-Action | **empfohlen** als CI-Job statt selbst-gepflegtem vitest |
+| **protectai/llm-guard** | OSS MIT | ✅ self-host | Runtime-Guard: Anonymize, BanSubstrings, PromptInjection, NoRefusal | **empfohlen** als Wrapper für VECTOR + email-client Edge Function |
+| **splx-ai/agentic-radar** | OSS | ✅ self-host | Static-Analyzer für agentische Workflows (LangGraph, CrewAI, MCP-Server-Inventory) | optional für VECTOR-Tool-Drift |
+| **microsoft/agent-governance-toolkit** | OSS | ✅ self-host | Zero-Trust Agent-Identity, Policy-Enforcement, Exec-Sandboxing | als Pattern-Quelle für VECTOR↔Supabase |
 
 ### Pen-Testing as a Service
 
@@ -277,24 +282,39 @@ Jeder Eintrag mit:
 - **Vorfall:** Escape.tech-Scan März 2026 — **175 PII-Leaks** in 5.600 Vibe-Coded Apps, inklusive Medical Records und Payment Data, in Produktion (nicht Test)
 - **Coverage:** ✅ Standard 013 Section C (RLS) + Section J Punkt 6 (Unauth-Routes-Liste) + ✅ Standard 020 (Pen-Test-Light: prüft `.env`/`.git/`/`backup.sql` exposed — am 2026-04-28 lief der Audit live über alle 8 Domains, 0 Critical-Treffer). Vollständiger Endpunkt-Scan auf personenbezogene Felder bleibt manuell.
 
-### D. AI-Agent-spezifische Risiken (OWASP LLM Top 10, 2025)
+### D. AI-Agent-spezifische Risiken (OWASP LLM Top 10, 2025 + Agentic 2026)
 
-#### D1 — Prompt Injection (LLM01)
+> Externe Auditoren mappen über diese Spalten direkt auf die offizielle
+> OWASP-Taxonomie. Quelle: `OWASP/www-project-top-10-for-large-language-
+> model-applications` (LLM01..LLM10:2025) + `genai.owasp.org/resource/
+> owasp-top-10-for-agentic-applications-for-2026/` (ASI01..ASI10:2026).
+
+#### D1 — Prompt Injection (OWASP **LLM01:2025**)
 - **Beschreibung:** User-Input wird als Instruktion vom LLM interpretiert, Schutz wird umgangen
-- **Coverage:** teilweise in WIRED-Agent-Prompts (Sicherheits-Block), ⚠️ **kein Standard, TODO**
+- **Coverage:** ✅ Standard 025 (3-Direktiven-Härtung + `<user_message>`-Wrapping + Pflicht-Test-Suite mit ≥10 Payloads)
+- **Empfohlene Test-Quelle:** garak `promptinject.HijackHateHumans`, `dan.DanInTheWild`, `dan.AntiDAN`, sowie greshake/llm-security `chat_completion_steering` für indirect-injection (RAG/Telegram/Web-Chat)
 
-#### D2 — Insecure Output Handling (LLM02)
+#### D2 — Insecure Output Handling (OWASP **LLM02:2025**, jetzt **LLM05:2025** „Improper Output Handling")
 - **Beschreibung:** LLM-Output wird ungeprüft als Code/HTML/SQL ausgeführt
-- **Coverage:** ⚠️ TODO, fällt ggf. unter A1 (XSS) wenn LLM-Output in HTML rendert
+- **Coverage:** ✅ Standard 025 (DOMPurify-Pflicht + Tool-Use-Schema mit `enum`-Whitelists statt Freitext-Aktionen)
 
-#### D3 — Sensitive Information Disclosure (LLM06)
+#### D3 — Sensitive Information Disclosure (OWASP **LLM06:2025**, jetzt teils **LLM07:2025** „System Prompt Leakage")
 - **Beschreibung:** LLM gibt System-Prompt, andere User-Daten oder Trainingsdaten preis
-- **Coverage:** teilweise in WIRED-Prompts, ⚠️ **kein Standard, TODO**
+- **Coverage:** ✅ Standard 025 (Direktive 2: explizites Verbot der Prompt-Preisgabe inkl. ROT13/Base64/Translation-Bypass)
+- **Empfohlene Test-Quelle:** garak `leakreplay.SystemPrompts`
 
-#### D4 — Excessive Agency (LLM08) — die Replit-Klasse
+#### D4 — Excessive Agency (OWASP **LLM08:2025**, plus Agentic **ASI06:2026** „Tool Misuse" + **ASI07:2026** „Privilege Compromise") — die Replit-Klasse
 - **Beschreibung:** AI-Agent hat zu viele Rechte / zu wenig Genehmigungs-Gates für irreversible Aktionen
 - **Vorfall:** **Replit-Agent 2025** — autonomer Agent löschte Prod-DB trotz Anweisung "keine Änderungen". Ursache: keine technische Test/Prod-Trennung
-- **Coverage:** ✅ Standard 013 Section E (Test/Prod-Trennung, keine Agent-Tools auf Prod-DB)
+- **Coverage:** ✅ Standard 013 Section E (Test/Prod-Trennung) + ✅ Standard 025 (Approval-Queue über `ops_tasks` für Schreib-Tools)
+
+#### D5 — Agentic Memory Poisoning (Agentic **ASI01:2026**) — VECTOR-spezifisch
+- **Beschreibung:** Persistenter Agent-Speicher wird durch eine eingeschleuste Instruktion vergiftet, sodass spätere Sessions die Manipulation reproduzieren
+- **Coverage:** ⚠️ teilweise via Standard 025 (Indirect-Input-Wrapping); 🔴 **TODO:** dedizierte Memory-Validierung vor jedem Restore in VECTOR
+
+#### D6 — Cascading Hallucination / Goal Manipulation (Agentic **ASI02:2026** + **ASI03:2026**)
+- **Beschreibung:** Halluzinierter Tool-Output wird zur Eingabe der nächsten Agent-Stufe → Fehler kaskadiert; Goal-Override durch geschickte Eingaben
+- **Coverage:** ⚠️ teilweise via Standard 025 (Approval-Queue + Whitelists); 🔴 **TODO:** Output-Sanity-Checks zwischen Agent-Hops
 
 ### E. Plattform- & Supply-Chain-Lücken
 
@@ -398,10 +418,12 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
 | DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
-| LLM | Prompt Injection | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite | ✅ hart (seit 025) |
-| LLM | Insecure Output | — | 025 | DOMPurify + Tool-Schema-Pflicht | ✅ hart (seit 025) |
-| LLM | Sensitive Disclosure | — | 025 | Direktive 2 im Prompt + Test-Suite | ✅ hart (seit 025) |
-| LLM | Excessive Agency (Replit) | E | 025 | Approval-Queue-Pflicht für Schreib-Tools | ✅ hart (seit 025) |
+| LLM01:2025 | Prompt Injection | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite (garak-Probes empfohlen) | ✅ hart (seit 025) |
+| LLM05:2025 | Insecure Output (formerly LLM02) | — | 025 | DOMPurify + Tool-Schema-Pflicht | ✅ hart (seit 025) |
+| LLM07:2025 | System-Prompt-Leakage (formerly LLM06) | — | 025 | Direktive 2 im Prompt + Test-Suite | ✅ hart (seit 025) |
+| LLM08:2025 | Excessive Agency (Replit-Klasse) | E | 025 | Approval-Queue-Pflicht für Schreib-Tools | ✅ hart (seit 025) |
+| ASI01:2026 | Agentic Memory Poisoning | — | — | Memory-Validierung vor Restore | 🔴 **TODO** (VECTOR-spezifisch) |
+| ASI02-03:2026 | Cascading Hallucination / Goal Manipulation | — | 025 (teilweise) | Approval-Queue + Output-Sanity zwischen Hops | ⚠️ teilweise |
 | Platform | Lovable/Bolt/v0 | J8 | 016 | Marker + Lockfile-Scan | ✅ hart (seit 016) |
 | Supply | Bösartige npm | — | — | Socket.dev empfohlen | 🔴 **TODO** |
 | Supply | Packaging-Leak (E4) | F | — | manuell | ⚠️ manuell, 018 erweiterbar |
@@ -418,10 +440,10 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 20 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection via 025, Insecure LLM-Output via 025, LLM Sensitive Disclosure via 025, LLM Excessive Agency via 025)
-**Teilweise abgedeckt:** 3 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell)
+**Aktuell abgedeckt (hart):** 20 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection LLM01 via 025, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025)
+**Teilweise abgedeckt:** 4 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell, Cascading-Hallucination ASI02-03 teilweise via 025)
 **Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
-**Aktuell offen:** 2 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5 — beide nur via Tool-Empfehlung, kein eigener Standard)
+**Aktuell offen:** 3 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5, Agentic Memory Poisoning ASI01 — alle nur Tool-Empfehlung oder TODO, kein eigener Standard)
 
 ---
 
@@ -535,7 +557,11 @@ einem Standard erzwungen, sondern bewusst diskutiert.
 | 11 | Anthropic — Claude Code CLI Source-Map-Leak 31.03.2026 | E4 (Packaging) |
 | 12 | LG München I, Az. 3 O 17493/20 | C2 Google Fonts |
 | 13 | OWASP Top 10 2021 | B-Block |
-| 14 | OWASP Top 10 for LLM Applications v1.0 (2023) + v1.1 (2024) | D-Block |
+| 14 | OWASP Top 10 for LLM Applications **v2.0 (2025)** — github.com/OWASP/www-project-top-10-for-large-language-model-applications | D1–D4 (LLM01..LLM10) |
+| 14b | OWASP Top 10 for **Agentic Apps 2026** — genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/ | D5–D6 (ASI01..ASI10) |
+| 14c | NVIDIA garak (github.com/NVIDIA/garak) — Probe-Suite | D1, D3 Test-Set |
+| 14d | promptfoo (github.com/promptfoo/promptfoo) — `owasp:llm`-Preset | D1–D4 CI-Job |
+| 14e | greshake/llm-security + Giskard-AI/prompt-injections | Indirect-Injection-Payloads |
 | 15 | TTDSG, DSGVO Art. 4/9/28/32/33/35/83, BDSG | C-Block |
 | 16 | Fraunhofer IESE — Verantwortungsstatement 2026 | Standard-013-Begründung |
 | 17 | Kaspersky — Replit-Agent-Incident-Analyse 2025 | D4 |
