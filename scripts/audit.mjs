@@ -1174,6 +1174,116 @@ const localChecks = {
     if (findings.length) return WARN(findings.join('; '));
     return PASS(`Mail-Architektur konform (${matched.length} Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)`);
   },
+  // Standard 031 — Routine-Platform: keine wiederkehrenden Routinen auf
+  // User-NUC / IDE / Claude-Sitzung. Pflicht-Plattformen: GH-Actions
+  // schedule, systemd-Timer, pg_cron, VECTOR. Verboten: Register-
+  // ScheduledTask, schtasks, WSL-crontab als Setup-Schritt.
+  '031-routine-platform': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    // Heartbeat-Marker (positiv)
+    const heartbeats = [];
+    // 1. .github/workflows/*.yml mit schedule:
+    const ghWorkflowDir = join(project.path_local, '.github', 'workflows');
+    if (existsSync(ghWorkflowDir)) {
+      try {
+        for (const f of readdirSync(ghWorkflowDir)) {
+          if (!/\.ya?ml$/i.test(f)) continue;
+          let txt;
+          try { txt = readFileSync(join(ghWorkflowDir, f), 'utf8'); } catch { continue; }
+          if (/^\s*schedule\s*:/m.test(txt) || /\bcron\s*:\s*['"]/.test(txt)) {
+            heartbeats.push(`gh-actions:${f}`);
+          }
+        }
+      } catch { /* skip */ }
+    }
+
+    // 2. systemd-Timer / -Service oder pg_cron / VECTOR-Marker im Repo
+    const routineCodeMarkers = [
+      { label: 'systemd-timer',     re: /\.timer\b/ },
+      { label: 'systemd-service',   re: /systemd[\\/].*\.service/i },
+      { label: 'pg_cron',           re: /\bpg_cron\b|cron\.schedule\s*\(/ },
+      { label: 'vector-agent',      re: /vector-blue|vector-green|\/opt\/vector|ops_tasks/i },
+      { label: 'maxone-watchdog',   re: /brevo-bounce-watchdog|zentinel-watchdog|zync-healthcheck/i },
+    ];
+
+    const codeFiles = [];
+    function scan(dir, depth) {
+      if (depth > 4) return;
+      let entries;
+      try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
+      for (const e of entries) {
+        const full = join(dir, e.name);
+        if (e.isDirectory()) {
+          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|\.venv|__pycache__)/.test(e.name)) continue;
+          scan(full, depth + 1);
+        } else if (/\.(md|ya?ml|sh|sql|service|timer|js|ts|mjs|py)$/i.test(e.name)
+                   && !/[\\/]audits[\\/]issues-/.test(full)) {
+          codeFiles.push(full);
+          if (codeFiles.length > 800) return;
+        } else if (/\.(cmd|bat|ps1)$/i.test(e.name)) {
+          codeFiles.push(full);
+        }
+      }
+    }
+    scan(project.path_local, 0);
+
+    const sample = codeFiles.slice(0, 800).map(f => {
+      try { return { path: f, txt: readFileSync(f, 'utf8') }; } catch { return { path: f, txt: '' }; }
+    });
+    const aggregated = sample.map(s => s.txt).join('\n');
+
+    for (const m of routineCodeMarkers) {
+      if (m.re.test(aggregated)) heartbeats.push(m.label);
+    }
+
+    // IDE-/User-Trigger-Marker (negativ)
+    const ideFails = [];
+    const ideWarns = [];
+
+    // FAIL-Marker: Register-ScheduledTask / schtasks /create / wsl crontab
+    if (/Register-ScheduledTask\b/i.test(aggregated)) {
+      ideFails.push('Register-ScheduledTask in Doku/Skript (User-NUC-Trigger)');
+    }
+    if (/\bschtasks\s+\/create\b/i.test(aggregated)) {
+      ideFails.push('schtasks /create (User-NUC-Trigger)');
+    }
+    if (/\bwsl\s+crontab\b/i.test(aggregated)) {
+      ideFails.push('wsl crontab als Setup-Schritt (NUC-/WSL-abhängig)');
+    }
+
+    // WARN-Marker: *.cmd/*.bat/*.ps1 mit cron-/audit-/backup-Pattern
+    const ideTriggerFiles = sample.filter(s =>
+      /\.(cmd|bat|ps1)$/i.test(s.path)
+      && /(audit|scheduled|cron|backup)/i.test(s.path),
+    );
+    for (const f of ideTriggerFiles) {
+      const rel = f.path.slice(project.path_local.length + 1).replace(/\\/g, '/');
+      ideWarns.push(`${rel} (Manueller Doppelklick statt Heartbeat)`);
+    }
+
+    // WARN-Marker: /schedule … alle X Tage / wöchentlich in Doku
+    if (/\/schedule\b[^\n]*?\b(alle|every)\s+\d+\s*(tage|days|wochen|weeks|monate|months)/i.test(aggregated)
+        || /\/schedule\b[^\n]*?\b(daily|weekly|monthly|wöchentlich|täglich|monatlich)\b/i.test(aggregated)) {
+      ideWarns.push('Claude /schedule mit wiederkehrender Cadence als alleinige Trigger-Quelle (Doku-Hinweis)');
+    }
+
+    // Klassifikation
+    const hasRoutine = heartbeats.length > 0 || ideFails.length > 0 || ideWarns.length > 0;
+    if (!hasRoutine) return SKIP('keine wiederkehrende Routine erkannt');
+
+    if (ideFails.length && !heartbeats.length) {
+      return FAIL(`Routine läuft auf User-Maschine: ${ideFails.join('; ')} — auf GH Actions / systemd / VECTOR migrieren`);
+    }
+    if ((ideFails.length || ideWarns.length) && heartbeats.length) {
+      return WARN(`IDE-Trigger-Reste neben Heartbeat (${heartbeats.length} HB): ${[...ideFails, ...ideWarns].join('; ')} — alten Pfad entfernen`);
+    }
+    if (ideWarns.length && !heartbeats.length) {
+      return WARN(`Wahrscheinlich IDE-/User-getriggert (${ideWarns.join('; ')}) — Heartbeat-Plattform fehlt`);
+    }
+    // heartbeats.length > 0 && keine ide-Marker
+    return PASS(`Heartbeat-Plattform vorhanden: ${heartbeats.slice(0, 3).join(', ')}${heartbeats.length > 3 ? ` (+${heartbeats.length - 3})` : ''}`);
+  },
   '024-code-health-budget': (project) => {
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (project.code_health === 'exempt') return SKIP('code_health=exempt');

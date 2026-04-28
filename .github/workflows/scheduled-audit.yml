@@ -1,0 +1,53 @@
+name: Scheduled Audit
+
+# Standard 031 — Routine-Platform: Heartbeat statt User-NUC.
+# Runs on `voltfair-server` (self-hosted Org-Runner auf maxone-prod, hat
+# SSH-Keys zu allen 4 Servern). Ersetzt die ursprünglichen Optionen
+# A/B/C/D aus HANDOFF.md (alle vier waren NUC-/IDE-/Sitzungs-abhängig).
+
+on:
+  schedule:
+    # 2026-05-11 10:00 Europe/Berlin = 08:00 UTC (DST aktiv).
+    # Plus monatlich am 11. um 08:00 UTC als Drift-Schutz für Standard 021.
+    - cron: '0 8 11 * *'
+  workflow_dispatch:
+    inputs:
+      emit_issues:
+        description: 'Auch GH-Issues erzeugen?'
+        required: false
+        default: 'true'
+        type: choice
+        options: ['true', 'false']
+
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect Node
+        run: node --version
+
+      - name: Run audit
+        id: audit
+        run: |
+          set +e
+          DATE=$(date -u +%Y-%m-%d)
+          mkdir -p audits
+          # --root=/opt schaltet path_local-Lookup auf server-residente
+          # Projekt-Verzeichnisse um (siehe Migration in HANDOFF.md).
+          node scripts/audit.mjs --root=/opt > "audits/audit-${DATE}.txt" 2>&1
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+          echo "date=${DATE}" >> "$GITHUB_OUTPUT"
+
+      - name: Emit GH-Issue payloads
+        if: ${{ inputs.emit_issues != 'false' }}
+        run: node scripts/audit.mjs --root=/opt --emit=issues || true
+
+      - name: Upload audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-${{ steps.audit.outputs.date }}
+          path: audits/
+          retention-days: 90

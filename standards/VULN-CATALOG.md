@@ -397,6 +397,22 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - **Coverage:** ⚠️ teilweise via SonarQube/jscpd, kein eigener Standard.
   🔴 **TODO** — pre-commit Duplikations-Check evaluieren.
 
+#### G4 — IDE-/Sitzungs-abhängige Routinen (Single Point of Failure)
+- **Beschreibung:** Wiederkehrende Routinen (Audits, Backups, Watchdogs,
+  Reminders) hängen an einer User-IDE-Sitzung, einer Claude-Code-Session
+  oder einem Windows-Task-Scheduler-Eintrag auf dem User-NUC. Sterben
+  sobald der User offline ist, das OS Updates fährt, oder die IDE
+  wechselt. Failure ist unsichtbar — keine Logs, kein Alarm.
+- **Vorfall:** **2026-04-27** — `maxone-standards` Audit-Trigger für
+  2026-05-11 hatte vier Optionen, alle vier vom User-NUC abhängig
+  (Windows Task Scheduler / WSL crontab / Doppelklick / „läuft eh bei
+  Session-Start"). Genau das war Drift-Erzeugung statt Drift-Schutz.
+- **Coverage:** ✅ Standard 031 (Routine-Platform) — Audit FAILt bei
+  `Register-ScheduledTask`/`schtasks /create`/`wsl crontab` als
+  Setup-Anleitung; WARNt bei `*audit*.cmd`/`*scheduled*.cmd` ohne
+  Heartbeat-Begleitfile; PASS verlangt Heartbeat-Marker
+  (GH-Actions-`schedule:`, systemd-Timer, `pg_cron`, VECTOR-Container).
+
 ---
 
 ## Teil 3: Coverage-Matrix
@@ -443,6 +459,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | Drift | Cert-Ablauf (F3) | — | 019 | tls.connect + Restlaufzeit-Check | ✅ hart (seit 019) |
 | Drift | Source-Maps (F4) | F | 018 | Live-Asset-Scan auf sourceMappingURL | ✅ hart (seit 018) |
 | Drift | Mail-Architektur-Drift (F5) | — | 030 | Mail-Marker-Scan + Pre-Flight-Pflicht + Anti-Pattern-Scan (Regel 4/14/15/19/20) | ✅ hart (seit 030) |
+| Reliability | IDE-/Sitzungs-Drift (G4) | — | 031 | Heartbeat-Marker-Scan + IDE-Trigger-Anti-Pattern-Scan | ✅ hart (seit 031) |
 | Struktur | KI-Findings 2,74× (G1) | A | — | Black-Box-% in 013-A | ⚠️ manuell |
 | Struktur | Refactoring-Anteil (G2) | — | 024 | git log + Pattern-Match | ✅ hart (seit 024) |
 | Struktur | Duplikation 4× (G3) | — | 024 (manuell jscpd) | jscpd in Audit-Cron + Datei-/Funktions-Längen | ⚠️ teilweise (Längen hart, jscpd manuell) |
@@ -452,7 +469,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - ⚠️ manuell = in der Checkliste, aber kein Audit-Check
 - 🔴 TODO = überhaupt nicht abgedeckt, neuer Standard nötig
 
-**Aktuell abgedeckt (hart):** 23 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection direct LLM01 via 025, Indirect Prompt Injection LLM01 via 029, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028, Mail-Architektur-Drift F5 via 030)
+**Aktuell abgedeckt (hart):** 24 Lücken (XSS, Log-Inj, SSRF, Hardcoded Secrets, Insecure Design via 015, SQL-Inj, Vuln Components, Plattform-Lock-in via 016, Tracker-Consent via 017, Google Fonts via 017, Bundle-Drift via 018, Source-Maps via 018, DNS-Drift via 019, Cert-Ablauf via 019, Sunset-Drift via 014, Refactoring-Anteil via 024, Prompt Injection direct LLM01 via 025, Indirect Prompt Injection LLM01 via 029, Insecure LLM-Output LLM05 via 025, LLM-Sensitive-Disclosure LLM07 via 025, LLM-Excessive-Agency LLM08 via 025, Container-Misconfig B6 via 028, Mail-Architektur-Drift F5 via 030, IDE-/Sitzungs-Drift G4 via 031)
 **Teilweise abgedeckt:** 4 Lücken (BOLA via 020 außen, PII-Exposure via 020 außen, Code-Duplikation via 024 — Längen hart, jscpd manuell, Cascading-Hallucination ASI02-03 teilweise via 025)
 **Aktuell manuell:** 11 Lücken (Privilege Escalation, Crypto Failures, RLS-Misconfig, Auth-Failures, Webhook-Sig, Logging, AVV/DPA, EU-Region, PII in Logs, Packaging-Leak, KI-Findings 2,74×)
 **Aktuell offen:** 3 Lücken (Crypto Failures B3, Bösartige npm E2 / Slopsquatting A5, Agentic Memory Poisoning ASI01 — alle nur Tool-Empfehlung oder TODO, kein eigener Standard)
@@ -478,6 +495,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**028** Container-Misconfig-Audit~~ | B6 (Container-Layer): privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/` | hoch — schließt 002+004-Compose-Blindspot, hat live FAILs an stadtlahnflow + katchi (CI-Pattern unvollständig) und vanfree (`ghcr.io/...:latest`-Pull) gefunden | ✅ **erledigt 2026-04-28** |
 | ~~**029** Indirect-Prompt-Injection-Test~~ | LLM01:2025 (indirect via RAG/Telegram/Email/Web/Upload) | hoch — schließt die größte ungetestete LLM-Klasse (Bing/Copilot/ChatGPT-Memory-Klasse), hat live FAILs an vector + voltfair + stadtlahnflow gefunden | ✅ **erledigt 2026-04-28** |
 | ~~**030** Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart)~~ | F5 (Mail-Architektur-Drift): Pre-Flight-Pflicht für Brevo-Domain-Auth, JMAP-Template-Erhaltung, Health-Check-Anti-Patterns, interner vs. Public-Hostname | hoch — destilliert 20 Bibel-Regeln aus 4 realen Vorfällen (03-24/04-05/04-10/04-27) in Audit-Checks; verhindert Sent-Blackholes, Self-Bans, Silent-Brevo-Rejections | ✅ **erledigt 2026-04-28** |
+| ~~**031** Routine-Platform~~ | G4 (IDE-/Sitzungs-Drift): Cron/Reminder/Watchdog-Routinen NUR auf Heartbeat-Plattform (GH Actions schedule, systemd-Timer, pg_cron) oder via 24/7-Agent (VECTOR) — niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig | hoch — verhindert Single-Point-of-Failure für alle Drift-Detection-Routinen (021/019/020/030); ausgelöst durch eigenen Vorfall 2026-04-27 mit 4 NUC-abhängigen Optionen | ✅ **erledigt 2026-04-28** |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern

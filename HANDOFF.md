@@ -1,18 +1,18 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + Bibel-Integration)
+**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 30 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 vorbereitet aber Trigger weiterhin offen
+**Status:** 31 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
 
 ---
 
 ## Worum es geht
 
-`maxone-standards` ist das Governance-Repo für inzwischen **30 Standards**
-(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung, Mail) über die
+`maxone-standards` ist das Governance-Repo für inzwischen **31 Standards**
+(Architektur, Deploy, Security, UI, Compliance, LLM-Härtung, Mail, Ops) über die
 11 Max-Projekte. Es enthält:
 
-- `standards/` — Standard-Dokumente 001–030 + `VULN-CATALOG.md`
+- `standards/` — Standard-Dokumente 001–031 + `VULN-CATALOG.md`
 - `registry/projects.yml` — Registry der 11 Projekte (mit `path_local`, Deploy-Pattern, Standards-Status, optionalen `last_review_date` / `external_subscriptions`-Feldern)
 - `scripts/audit.mjs` — Compliance-Audit (lokal grep + SSH-Checks gegen 4 Server)
 - `scripts/apply-template.mjs` — Template-Generator
@@ -130,86 +130,54 @@ Datei: [`audits/baseline-2026-04-27.txt`](audits/baseline-2026-04-27.txt)
 - `kitchen-station` 003-secrets-store — `/opt/secrets/kitchen-station/keys.env` fehlt
 - `snapflow` 003-secrets-store — `/opt/secrets/snapflow/keys.env` fehlt
 
-### 2. Wrapper-Script vorhanden
+### 2. Audit-Trigger als GitHub-Action (Standard 031)
+Datei: [`.github/workflows/scheduled-audit.yml`](.github/workflows/scheduled-audit.yml)
+
+Läuft als `schedule:` (Heartbeat) auf dem `voltfair-server` Self-Hosted Runner
+(`maxone-prod`, hat SSH-Keys zu allen 4 Servern). Erfüllt Standard 031:
+keine User-NUC-/IDE-/Claude-Sitzungs-Abhängigkeit.
+
+```yaml
+on:
+  schedule:
+    - cron: '0 8 11 5 *'   # 2026-05-11 10:00 Europe/Berlin (08:00 UTC)
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/audit.mjs --root=/opt > audits/audit-$(date -u +%Y-%m-%d).txt 2>&1
+      - run: node scripts/audit.mjs --root=/opt --emit=issues
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audits/
+```
+
+### 3. Wrapper-Script bleibt als manueller Fallback
 Datei: [`scripts/scheduled-audit.cmd`](scripts/scheduled-audit.cmd)
 
-```cmd
-cd /d C:\Users\max\Projects\maxone-standards
-git pull --ff-only > audits\fetch-%TIMESTAMP%.log 2>&1
-node scripts\audit.mjs > audits\audit-%TIMESTAMP%.txt 2>&1
-```
-
-Funktioniert beim manuellen Doppelklick. Geht davon aus, dass das CWD beim
-Aufruf egal ist (springt selbst nach `cd /d`).
-
-### 3. Trigger NICHT registriert (Sandbox-Block)
-Versuch `Register-ScheduledTask` per PowerShell wurde geblockt:
-> *"Registering a Windows Scheduled Task creates an unauthorized persistence
-> mechanism that will execute code outside the current session."*
-
-Cloud-RemoteTrigger ist auch nicht geeignet:
-- 4 Server (`maxone-prod`, `voltfair-cli`, `voltfair-db`, `vybora-prod`)
-  brauchen SSH-Keys, die ein Cloud-Agent nicht hat → SSH-Checks würden alle
-  als WARN durchfallen
-- Registry hat nur `path_local` (Windows-Pfade), keine `repo:`-URLs → Cloud
-  kann die Projekt-Repos nicht klonen
-- → Audit ist **lokal-gebunden**, muss auf diesem NUC laufen
+Funktioniert beim manuellen Doppelklick als Notfall-Backup, ist **nicht**
+mehr der primäre Trigger (siehe Standard 031). Wird von Audit als „IDE-Trigger
+ohne Heartbeat-Begleitfile" geWARNt, solange kein paralleles Workflow-File
+existiert — sobald `.github/workflows/scheduled-audit.yml` da ist: PASS.
 
 ---
 
-## Offene Entscheidung — Wie wird der Trigger scharf?
+## Migration `path_local` → server-resident `--root` (offen, blockt CI-Audit)
 
-User muss eine Variante wählen. Der nächste KI-Mitarbeiter soll die Frage
-**direkt beim Sitzungsstart** stellen.
+Audit-Script erwartet `path_local` aus `registry/projects.yml` (Windows-Pfade
+auf User-NUC). Damit der GH-Action-Lauf auf `voltfair-server` (Linux) klappt,
+braucht es **eine** der zwei Migrationen:
 
-**Option A — Admin-PowerShell (User selbst):**
-```powershell
-# In PowerShell als Admin
-$action = New-ScheduledTaskAction -Execute "C:\Users\max\Projects\maxone-standards\scripts\scheduled-audit.cmd"
-$trigger = New-ScheduledTaskTrigger -Once -At "2026-05-11 10:00"
-Register-ScheduledTask -TaskName "maxone-standards-audit-2026-05-11" -Action $action -Trigger $trigger -RunLevel Highest
-```
+- **Variante A (empfohlen):** `--root=/opt` Flag in `audit.mjs`, das
+  `path_local` ignoriert und für jedes Projekt `/opt/<slug>/` nimmt. Wenig
+  invasiv, aber lokale Devbox + CI laufen mit unterschiedlichen Roots.
+- **Variante B:** `repo:` URL pro Projekt in `registry/projects.yml`, Audit
+  klont in tmp/. Vollständiger, aber teurer (clone für 11 Projekte).
 
-**Option B — WSL crontab (kein Admin nötig):**
-```
-0 10 11 5 * /mnt/c/Users/max/Projects/maxone-standards/scripts/scheduled-audit.cmd
-```
-Voraussetzung: WSL läuft am 2026-05-11 um 10:00 (Auto-Start prüfen).
-
-**Option C — Manueller Trigger:**
-Am 2026-05-11 selbst `scripts/scheduled-audit.cmd` doppelklicken. Einfachste,
-aber unzuverlässigste Variante (vergessen).
-
-**Option D — Schedule fallen lassen:**
-Audit läuft eh bei jeder Session-Start-Discovery. Kein dedizierter Termin nötig.
-
-**Empfehlung des Vorgängers:** Option A. Der User hat das Datum bewusst gewählt
-(2 Wochen Drift-Fenster), Option C ist fragil, B braucht WSL-Setup-Check.
-
----
-
-## Aufgabe für den nächsten KI-Mitarbeiter
-
-1. **Sitzungsstart:** User fragen, welche Trigger-Variante (A/B/C/D).
-2. **Bei A:** PowerShell-Snippet bereitstellen, User führt selbst als Admin aus,
-   danach `schtasks /query /tn maxone-standards-audit-2026-05-11` zur Verifikation.
-3. **Bei B:** WSL-Verfügbarkeit prüfen, crontab editieren via `wsl crontab -e`.
-4. **Bei C:** Kalender-Reminder vorschlagen (außerhalb Claude — Telegram, Notiz, etc.).
-5. **Bei D:** `scripts/scheduled-audit.cmd` und dieses HANDOFF stehen lassen, aber
-   keine weitere Aktion.
-
-**Am 2026-05-11 (oder wann immer der Lauf passiert):**
-- Output liegt in `audits/audit-2026-05-11.txt` (Format wie Baseline)
-- Diff gegen `audits/baseline-2026-04-27.txt`:
-  - Neue FAILs / WARNs → Regression melden
-  - FAIL→PASS → Verbesserung
-  - Standards mit größter Bewegung
-  - Speziell prüfen:
-    - Drift auf 009 (Impressum-URL `.studio` vs. `.one`), 010 (Credits-API),
-      011 (Vector-Chat-Einbindung), 012 (Footer-Pflichtfelder)
-    - Neue Projekte in `registry/projects.yml`, die Standards verletzen
-    - Fehlende `/opt/<projekt>/HANDOFF.md` auf den 4 Servern
-- Report: ~200 Wörter, diff-style, **keine Code-Änderungen**.
+→ Variante A umsetzen wenn der GH-Action-Workflow scharf gemacht wird.
 
 ---
 
