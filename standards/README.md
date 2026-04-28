@@ -26,6 +26,9 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [011-vector-chat-widget.md](011-vector-chat-widget.md) — Vector-Chat-Widget in jedem Projekt
 - [012-footer-standard.md](012-footer-standard.md) — Footer-Struktur über alle Projekte
 
+**Auth & Sessions:**
+- [013-supabase-ssr-auth.md](013-supabase-ssr-auth.md) — Middleware-Matcher umfasst alle Routes (sonst Logout nach Deploys)
+
 ## Format einer Regel
 
 ```markdown
