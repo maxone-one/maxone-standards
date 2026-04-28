@@ -1,0 +1,72 @@
+name: PR Validate Audit Script
+
+# Defense-in-Depth fuer Standard 031: faengt einen kaputten audit.mjs
+# (oder fehlende Dependency) sofort beim Push/PR ab — sonst wuerde es
+# erst beim naechsten scheduled run (bis zu 30 Tage spaeter) sichtbar.
+# Vorfall vom 2026-04-28: js-yaml fehlte im Workflow, Audit crashte
+# 17 Zeilen lang, set +e schluckte den Fehler — Run war "gruen".
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'registry/**'
+      - 'standards/**'
+      - '.github/workflows/pr-validate-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/audit.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'registry/**'
+
+# Lass nur den jeweils neuesten Lauf pro Branch durchgehen.
+concurrency:
+  group: pr-validate-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci --omit=dev --no-audit --no-fund
+
+      - name: Syntax check
+        run: node --check scripts/audit.mjs
+
+      - name: Smoke audit (one project, one standard)
+        run: |
+          set -e
+          OUT=$(node scripts/audit.mjs --local-only --project=maxone.one --standard=001 2>&1)
+          echo "$OUT"
+          # Heuristik wie im scheduled-audit: ohne Summary-Block ist es ein Crash.
+          echo "$OUT" | grep -q '^--- Summary ---' || {
+            echo "::error::audit.mjs lieferte keinen Summary-Block (Smoke-Run)."
+            exit 1
+          }
+
+      - name: Registry parses
+        run: |
+          set -e
+          node --input-type=module -e "
+            import yaml from 'js-yaml';
+            import { readFileSync } from 'node:fs';
+            const projects = yaml.load(readFileSync('registry/projects.yml','utf8'))?.projects ?? [];
+            const exList = yaml.load(readFileSync('registry/exceptions.yml','utf8'))?.exceptions ?? [];
+            if (!Array.isArray(projects) || projects.length === 0) throw new Error('projects.yml: keine projects-Liste');
+            if (!Array.isArray(exList)) throw new Error('exceptions.yml: exceptions ist kein Array');
+            console.log('projects:', projects.length, '— exceptions:', exList.length);
+          "
