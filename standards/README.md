@@ -49,6 +49,10 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [030-mail-architecture.md](030-mail-architecture.md) — Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart JMAP); Pre-Flight Brevo-Domain-Auth; destilliert aus 20 Bibel-Regeln + 4 Vorfällen (03-24/04-05/04-10/04-27)
 - [031-routine-platform.md](031-routine-platform.md) — Routine-Platform: Cron/Reminder/Watchdog-Routinen NUR auf Heartbeat-Plattform (GH Actions schedule, systemd-Timer, pg_cron) oder via 24/7-Agent (VECTOR) — niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig
 - [032-supabase-ssr-auth.md](032-supabase-ssr-auth.md) — Supabase SSR Auth Middleware-Matcher: broad Negative-Lookahead-Pattern, niemals selektive Pfad-Liste — sonst sterben Sessions nach ~1h Idle / bei Deploys (SLF-Vorfall 2026-04-28)
+
+**Marken-Werte & Kommunikation:**
+- [033-signature-truthful.md](033-signature-truthful.md) — Wahrhaftige Unterschrift: es unterzeichnet, wer wirklich verschickt — KI niemals als Max, Bot niemals als Person (Viktoria-From-Vorfall 2026-04-29)
+
 - [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025/028/029/030/031/032); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
 
 **Externe Recherche / Vergleichsprojekte:**
