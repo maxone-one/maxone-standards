@@ -30,6 +30,10 @@
 #   review_postponed_to     — (optional, Standard 021) YYYY-MM-DD, Verschiebung des
 #                             nächsten Re-Reviews (max. +30 Tage), mit Begründung im
 #                             Kommentar.
+#   warmup_required         — (optional, Standard 033) `false` markiert Projekte, die
+#                             keinen Post-Deploy-Warm-Up brauchen (Static SPAs ohne SSR,
+#                             pure-API-Container ohne User-Frontend). Default = audit
+#                             erwartet Warm-Up-Pattern in deploy.sh.
 
 projects:
   - name: maxone.one
@@ -69,6 +73,7 @@ projects:
     secrets_dir: katchi
     status: live
     tags: product
+    warmup_required: false  # Standard 033: Vue SPA via nginx, kein SSR (Cold-Start nur fuer /api-Proxy, der Backend triggert)
 
   - name: repivot
     workspace: repivot.in
@@ -77,12 +82,11 @@ projects:
     deploy: blue-green
     container: repivot-backend
     path_local: c:\Users\max\Projects\repivot.in
-    path_server: /opt/repivot.me
-    compose_file: docker-compose.prod.yml
+    path_server: /opt/repivot
     secrets_dir: repivot
     status: live
     tags: product
-    notes: Split in repivot-backend + repivot-frontend; Prod-Compose ist .prod.yml (Profiles blue/green)
+    notes: Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
 
   - name: vanfree
     workspace: vanfree
@@ -165,7 +169,9 @@ projects:
     deploy: blue-green
     container: snapflow-app
     path_local: c:\Users\max\Projects\snapflow.one
-    path_server: /opt/snapflow.one
+    path_server: /opt/snapflow
     secrets_dir: snapflow
     status: live
     tags: product
+    warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
+    notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).

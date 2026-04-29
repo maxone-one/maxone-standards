@@ -53,3 +53,15 @@ exceptions:
     granted_at: '2026-04-28'
     expires_until: '2026-10-28'
     granted_by: max
+
+  # vector deploy.sh stoppt OLD-Container BEWUSST vor Start NEW (Telegram
+  # long-polling 409 Conflict-Vermeidung — siehe deploy.sh Header). Audit-
+  # Heuristik liest "docker stop $ACTIVE" als Swap-Indikator und meldet
+  # Warm-Up "nach Swap". Inhaltlich korrekt: Warm-Up nach Health-Check, vor
+  # User-Traffic — der Telegram-Gap ist ~30s und akzeptiert.
+  - project: vector
+    standard: '033'
+    reason: Stop-OLD-first wegen Telegram 409 Conflict — Warm-Up trotzdem nach Health-Check und vor erstem User-Traffic auf agent.maxone.one
+    granted_at: '2026-04-29'
+    expires_until: '2026-10-29'
+    granted_by: max

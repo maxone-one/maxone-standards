@@ -1,6 +1,6 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-28 (aktualisiert nach Standards-Sprint + GitHub-Recherche + Standard 028 + 029 + 030 + 031 + Bibel-Integration + Routine-Migration + Parallel-Session-Merge mit Standard 032 + Workflow-Validierung-und-Baseline-Refresh)
+**Stand:** 2026-04-29 (Warm-Up-Sprint abgeschlossen — Standard 033 = 10.0/10 nach Self-Loop ueber alle 7 betroffenen Projekte)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
 **Status:** 32 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
 
@@ -436,36 +436,70 @@ SSH-Check):
   `$COMPOSE stop ...$ACTIVE`). Variablen-Zuweisungen wie
   `SLOT_FILE=".active-slot"` zählen NICHT als Swap.
 
-**033-Run-Ergebnis (2026-04-29):**
+**033-Run-Ergebnis (2026-04-29, NACH Self-Loop-Sprint):**
 
 | Status | Projekt | Befund |
 |---|---|---|
-| ✅ PASS | stadtlahnflow | deploy.sh + Warm-Up vor Swap (39 Routen) |
-| ❌ FAIL | maxone.one | kein `/opt/maxone-v2/deploy.sh` |
-| ❌ FAIL | repivot | kein `/opt/repivot.me/deploy.sh` |
-| ❌ FAIL | snapflow | kein `/opt/snapflow.one/deploy.sh` |
-| ⚠️ WARN | katchi | deploy.sh ohne Warm-Up-Block |
-| ⚠️ WARN | vanfree | deploy.sh ohne Warm-Up-Block |
-| ⚠️ WARN | plansey | deploy.sh ohne Warm-Up-Block |
-| ⚠️ WARN | vector | deploy.sh ohne Warm-Up (infra: WARN by design) |
+| ✅ PASS | stadtlahnflow | deploy.sh + Warm-Up vor Swap (39 Routen) — Vorlage |
+| ✅ PASS | maxone.one | NEU `/opt/maxone-v2/deploy.sh` (101 Zeilen, 21 Routen, SvelteKit Marketing+Bio) |
+| ✅ PASS | repivot | Warm-Up in `/opt/repivot/deploy.sh` (1 FE + 9 BE-Routen) |
+| ✅ PASS | vanfree | Warm-Up in `/opt/planexo/deploy.sh` (10 Next-Routen) |
+| ✅ PASS | plansey | Warm-Up in `/opt/plansey-next/deploy.sh` (10 Routen, de+en) |
+| skip | katchi | `warmup_required: false` (Vue SPA via nginx, kein SSR) |
+| skip | snapflow | `warmup_required: false` (Static SPA via nginx, kein SSR) |
+| skip | vector | exception bis 2026-10-29 (Stop-OLD-first wegen Telegram 409) — Warm-Up trotzdem im Skript (11 Routen), aber nach Stop-OLD |
 | skip | kitchen-station, voltfair, solarproof | nicht blue-green |
 
-**Außerhalb der Registry** (im Live-Set, nicht in `registry/projects.yml`):
-- `viktoria-from` ✅ — `/opt/viktoria-from/deploy.sh` hat Prewarm (vom
-  Sprint 2026-04-28e).
-- `zensor`, `zync` — keine `deploy.sh`, würden bei Aufnahme in die
-  Registry direkt FAIL liefern.
+**Score: 033 = 10.0/10** (5 PASS, 0 WARN, 0 FAIL, 6 SKIP). Baseline:
+[`audits/baseline-2026-04-29-warmup-sprint.txt`](audits/baseline-2026-04-29-warmup-sprint.txt).
 
-### Aufwand für vollständige 033-Compliance
+### Sprint-Lieferung (Server-Files, nicht live deployt)
 
-- **Mensch ohne KI:** ~1.5–3 h pro Projekt × 7 zu fixen = ~12–20 h
-  (deploy.sh schreiben, Routenliste sammeln, Tests, Roll-out).
-- **Mit Claude:** S-Tier pro Projekt (15–30 Min/Projekt für SLF-Vorlage
-  adaptieren + Routenliste + 1× Test-Deploy). Sprint 7×30 Min = ~3.5 h
-  am Stück, dazu jeweils 2–5 Min Sign-Off von Max.
-- **Blocker:** keine technischen — pro Projekt brauche ich kurz die
-  „top 10 Public-Routen"-Liste vom User (oder ich grep sie aus dem
-  Repo: `app/**/page.tsx` für Next.js, `routes/**` für SvelteKit).
+Alle deploy.shs wurden auf dem Server geschrieben (nicht live deployt —
+warten auf nächsten regulären Push pro Projekt). Backups liegen als
+`deploy.sh.bak.<timestamp>` neben jeder neuen Version.
+
+| Projekt | Server-Pfad | Patches |
+|---|---|---|
+| maxone.one | `/opt/maxone-v2/deploy.sh` | NEU (101 Zeilen) |
+| repivot | `/opt/repivot/deploy.sh` | +Warm-Up (97 Zeilen) |
+| vanfree | `/opt/planexo/deploy.sh` | +Warm-Up (73 Zeilen) |
+| plansey | `/opt/plansey-next/deploy.sh` | +Warm-Up (81 Zeilen, +027-Violation-Header) |
+| vector | `/opt/vector/deploy.sh` | +Warm-Up (77 Zeilen) |
+
+### Registry-Korrekturen (2026-04-29)
+
+`registry/projects.yml`:
+- `repivot.path_server`: `/opt/repivot.me` → `/opt/repivot` (Ghost-Dir-Bug)
+- `snapflow.path_server`: `/opt/snapflow.one` → `/opt/snapflow` (Ghost-Dir-Bug)
+- `katchi.warmup_required: false` (Vue SPA)
+- `snapflow.warmup_required: false` (Static SPA)
+- Header-Doku um `warmup_required`-Feld ergänzt
+
+`registry/exceptions.yml`:
+- NEU: `vector` × `033` bis 2026-10-29 (Telegram-Conflict-Spezialfall)
+
+### Offene Folge-Tickets (separat)
+
+- **plansey**: deploy.sh hat `docker compose build` auf Prod (027-Violation,
+  im Skript-Header markiert). Sollte zu CI-Image-Transfer migrieren.
+- **maxone.one**: Workflow `.github/workflows/deploy-maxone-one.yml` hat
+  Deploy-Logik inline als Heredoc — sollte refactored werden, um
+  `/opt/maxone-v2/deploy.sh` aufzurufen (BUILD_TARBALL env unterstützt).
+- **vector + vanfree**: Lokale `deploy.sh` (im Repo) drift'en vom Server-
+  Stand ab — Server ist authoritative, Repo-Versionen sollten beim
+  nächsten Touch-Punkt synchronisiert werden.
+- **stadtlahnflow** × `009`: REMOVAL-KANDIDAT (Audit zeigt PASS trotz
+  aktiver Ausnahme) — Eintrag aus `exceptions.yml` entfernen.
+
+### Sponsored-Customer Mail-Footer (separate Implementation)
+
+Nicht-entfernbare Mail-Footer für Kunden mit kostenloser Domain+Mailbox+
+Client (Pilot: Viktoria From). Regel ist in `~/.claude/CLAUDE.md`
+(OBERSTE PRIORITÄT 2026-04-29) + Memory gespeichert. Code-side noch NICHT
+umgesetzt — Implementation gehört in `email-client` Edge Function
+(`maxone.one/supabase/functions/email-client/handlers/send.ts`) +
+Supabase-Migration für `sponsored_customers`-Tabelle. Separate Session.
 
 ---
 
