@@ -1445,10 +1445,40 @@ const localChecks = {
       try { return readFileSync(join(wfDir, f), 'utf8'); } catch { return ''; }
     }).join('\n');
 
+    // Antipattern: self-hosted Runner (= voltfair-server lebt auf maxone-prod)
+    // führt docker build aus. Sieht harmlos aus, ist aber ein verkappter
+    // Build auf Prod und zog am 2026-04-28 mehrfach 80–180 s RAM/CPU vom
+    // Prod-Server (User-erlebter "Site lädt langsam"-Spike).
+    //
+    // Nur Workflows mit echtem build-Step zaehlen — pr-validate-audit.yml,
+    // scheduled-audit.yml etc. duerfen weiter self-hosted laufen, weil sie
+    // nichts schweres bauen. Wir werten daher pro Workflow-Datei aus.
+    let buildOnProdAntipattern = false;
+    let antipatternFile = '';
+    for (const f of wfFiles) {
+      let text = '';
+      try { text = readFileSync(join(wfDir, f), 'utf8'); } catch { continue; }
+      const sh = /runs-on:\s*\[?\s*self-hosted/i.test(text);
+      // matched: `docker build`, `docker compose build`, `docker-compose build`
+      const db = /\bdocker\s+(compose\s+|-compose\s+)?build\b/i.test(text);
+      if (sh && db) { buildOnProdAntipattern = true; antipatternFile = f; break; }
+    }
+    if (buildOnProdAntipattern) {
+      return FAIL(`Antipattern in ${antipatternFile}: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)`);
+    }
+
+    // Klassisches Antipattern: ssh maxone-prod "...docker build..." vom
+    // Workflow aus. Bleibt FAIL.
+    const explicitSshBuildOnProd = /(ssh\s+(?:-i\s+\S+\s+)?root@(?:maxone-prod|128\.140\.40\.235)|ssh\s+\$\{[^}]*PROD[^}]*\})[^"]*docker\s+(compose\s+)?build/i.test(wfText);
+    if (explicitSshBuildOnProd) {
+      return FAIL('Workflow baut explizit auf Prod-Server via ssh ... docker build (verbotenes Pattern in 002)');
+    }
+
+    // Pflichtkomponenten der Premium-Pipeline
     const checks = {
-      selfHosted: /runs-on:\s*\[?\s*self-hosted/i.test(wfText),
+      ubuntuLatest: /runs-on:\s*\[?\s*ubuntu-(latest|22\.04|24\.04)/i.test(wfText),
       dockerSave: /docker\s+save\b/i.test(wfText),
-      noBuildOnProd: !/(ssh\s+root@maxone-prod|ssh\s+\$\{[^}]*PROD[^}]*\})[^"]*docker\s+(compose\s+)?build/i.test(wfText),
+      sshImageTransfer: /docker\s+save[^\n]*\|[^\n]*ssh[^\n]*docker\s+load|ssh[^\n]*"\s*gunzip\s*\|\s*docker\s+load/i.test(wfText),
     };
     const failed = Object.entries(checks).filter(([_, ok]) => !ok).map(([k]) => k);
 
@@ -1465,10 +1495,9 @@ const localChecks = {
       composeWarn.push(`${composeFile} nicht im Repo-Root`);
     }
 
-    if (failed.includes('noBuildOnProd')) return FAIL('Workflow baut auf Prod-Server (verbotenes Pattern in 002)');
     if (failed.length) return WARN(`Workflow unvollständig: ${failed.join(', ')}` + (composeWarn.length ? ` (+ compose: ${composeWarn.join(', ')})` : ''));
     if (composeWarn.length) return WARN(`compose: ${composeWarn.join(', ')}`);
-    return PASS(`${wfFiles[0]} + compose erfüllt Pipeline-Pflichten`);
+    return PASS(`${wfFiles[0]} + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)`);
   },
   // Standard 028 — Local-Fallback: nur prüfen, wenn Compose im Repo liegt.
   // Echte Wahrheit liefert sshChecks['028-container-misconfig'].
@@ -1663,6 +1692,63 @@ const sshChecks = {
     if (fails.length) return FAIL(fails.join('; ') + (warns.length ? ` (+ ${warns.length} WARN)` : ''));
     if (warns.length) return WARN(warns.join('; '));
     return PASS(`${composeFile}@${project.server}: 7 Pflicht-Klassen sauber`);
+  },
+  // Standard 033 — Post-Deploy Warm-Up: Pre-Hit aller Public-Routes auf
+  // dem neuen Slot bevor Traefik swappt. Verhindert Cold-Start-Spike beim
+  // ersten echten User-Request. Heuristik:
+  //   1. <path_server>/deploy.sh existiert (sonst kein orchestrierter Swap)
+  //   2. Inhalt enthaelt prewarm/warm-up/warmup ODER docker exec ... fetch
+  //      http://localhost in einer Schleife
+  //   3. Warm-Up-Zeile liegt VOR dem Traefik-Swap (traefik.enable, swap.sh,
+  //      .active-slot)
+  '033-post-deploy-warmup': (project) => {
+    if (project.deploy !== 'blue-green') return SKIP(`deploy=${project.deploy ?? 'null'} (Standard 033 nur fuer blue-green)`);
+    if (project.warmup_required === false) return SKIP('warmup_required=false (Static-Site, registry)');
+    if (!project.server || !project.path_server) return SKIP('kein Server');
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+
+    const isInfra = Array.isArray(project.tags) && project.tags.includes('infra');
+
+    let text;
+    try {
+      text = ssh(project.server, `test -f ${project.path_server}/deploy.sh && cat ${project.path_server}/deploy.sh || echo __NO_DEPLOY_SH__`);
+    } catch (e) {
+      return WARN(`SSH-Fehler: ${e.message.slice(0, 80)}`);
+    }
+    if (!text || /__NO_DEPLOY_SH__/.test(text)) {
+      return isInfra
+        ? WARN(`kein deploy.sh auf ${project.server}:${project.path_server}/ (infra: WARN statt FAIL)`)
+        : FAIL(`kein deploy.sh auf ${project.server}:${project.path_server}/ — Blue/Green ohne Skript = kein orchestrierter Warm-Up`);
+    }
+
+    const lines = text.split('\n');
+    const warmupLineIdx = lines.findIndex(l => /(?:^|[^a-z])(prewarm|warm-?up)(?:[^a-z]|$)/i.test(l));
+    const fetchLoopIdx = lines.findIndex(l => /docker\s+exec[^\n]+(fetch|curl|wget)[^\n]+http:\/\/localhost/i.test(l));
+    const hasPattern = warmupLineIdx !== -1 || fetchLoopIdx !== -1;
+    if (!hasPattern) {
+      return isInfra
+        ? WARN(`deploy.sh hat keinen Warm-Up-Block (infra: WARN statt FAIL)`)
+        : WARN(`deploy.sh hat keinen Warm-Up-Block (kein prewarm/warmup/docker-exec-fetch erkennbar)`);
+    }
+
+    // Reihenfolge: Warm-Up vor Traefik-Swap? Nur echte Swap-Aktionen
+    // zaehlen — Variable-Zuweisungen wie SLOT_FILE=".active-slot" nicht.
+    // Echte Swap-Indikatoren: Label-Update, swap.sh-Aufruf, Schreiben in
+    // .active-slot, Stop/Kill des alten Slots.
+    const warmupAt = warmupLineIdx !== -1 ? warmupLineIdx : fetchLoopIdx;
+    const swapIdx = lines.findIndex(l =>
+      /traefik\.enable\s*=\s*true/i.test(l) ||
+      /\.\/swap\.sh\b/.test(l) ||
+      /(echo|printf)\s+\S+\s+>+\s*\S*\.active-slot/i.test(l) ||
+      /docker\s+(stop|kill|rm)\s+[^\n#]*-\$?\{?ACTIVE/i.test(l) ||
+      /\$COMPOSE\s+(stop|rm)\s+[^\n#]*\$\{?ACTIVE/i.test(l) ||
+      /docker\s+label\s+update/i.test(l)
+    );
+    if (swapIdx !== -1 && warmupAt > swapIdx) {
+      return WARN(`Warm-Up steht NACH dem Traefik-Swap (Zeile ${warmupAt + 1} vs Swap Zeile ${swapIdx + 1}) — User sieht Cold-Start`);
+    }
+
+    return PASS(`deploy.sh hat Warm-Up vor Traefik-Swap`);
   },
   '007-container-running': (project) => {
     if (!project.server || !project.container) return SKIP('kein Container');

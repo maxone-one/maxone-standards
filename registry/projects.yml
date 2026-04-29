@@ -120,6 +120,7 @@ projects:
     secrets_dir: kitchen-station
     status: live
     tags: internal
+    deploy_pipeline: manual  # Standard 027 — internes Tool, kein externer Traffic
     notes: Internes Tool, kein Customer-facing-Traffic. Ausnahme von Standards 011 (Vector-Chat) und 012 (Footer).
 
   - name: voltfair

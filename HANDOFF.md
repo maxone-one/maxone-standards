@@ -302,6 +302,173 @@ keinen PR blockt.
 
 ---
 
+## Session-Update 2026-04-28e — Deploy-Downtime-Sprint (Viktoria + SLF)
+
+User hatte beobachtet, dass *Stadtlahnfluss* und *Viktoria From* während Deploys
+manchmal langsam laden / 503 zurückgeben. Sprint-Ziel: Ursachen finden + fixen.
+
+### Viktoria From — fertig
+
+- **Vorher:** kein `deploy.sh`, kein Traefik-Backend-Healthcheck → bei jedem
+  `docker compose up -d --force-recreate` 5-30 s Downtime.
+- **Jetzt:**
+  - [`/opt/viktoria-from/deploy.sh`](https://github.com/maxone-studio-org/viktoria-from/blob/main/deploy.sh)
+    geschrieben (modelliert nach SLF-Vorlage): Slot-Detect → start NEXT →
+    Health-Wait → Prewarm 11 Routen → Traefik-Confirm → stop OLD → save state.
+  - Traefik-Backend-Healthcheck-Labels in `docker-compose.yml` ergänzt:
+    `loadbalancer.healthcheck.path=/`, `interval=5s`, `timeout=3s`.
+  - 2× End-to-End validiert:
+    - Run 1: 184/186 (99.5 %) HTTP 200 während ~90 s Deploy, 1 Timeout (5 s).
+    - Run 2: 157/162 (96.9 %) HTTP 200, 5 schnelle 503s (~30 ms each) im
+      ~2 s Swap-Fenster, **kein Timeout** mehr — die neuen Healthcheck-Labels
+      lassen Traefik schnell auf Status-Änderung reagieren.
+- **„Auto-Recreate-Mystery" geklärt:** keine Mystery. Tracker hat 180 s nach
+  einem sauberen Deploy beobachtet — der gestoppte Slot kommt nicht zurück.
+  Das `local-watchdog.sh` (1× pro Minute) skippt korrekt
+  `state=exited && restart_count==0` (intentionaler Stop). Vorherige Beobachtung
+  war Folge von .active-slot/Container-Mismatch durch ineinander verschachtelte
+  Test-Runs, kein echter Daemon.
+
+### SLF — kein Bypass, dafür systemisches Build-on-Prod
+
+- **Hypothese vorher:** jemand bypassed `/opt/stadtlahnfluss/deploy.sh` mit
+  bare `docker compose up -d`.
+- **Hypothese widerlegt:** `last`-Login zeigt: kein manueller SSH seit März.
+  Alle SLF-Deploys laufen über GH-Actions `deploy.yml`, das deploy.sh korrekt
+  ruft (auch der „Update crawler"-Step ist mit `--no-deps crawler` safe).
+- **Echte Ursache der Deploy-Downtime:** der Build passiert auf dem
+  Prod-Server. Self-hosted Runner `voltfair-server` läuft auf
+  `maxone-prod` selbst — d.h. `docker build --no-cache` für App + Crawler
+  belegt 1-2 GB RAM und CPU für 80-180 s, während Supabase, Traefik und der
+  alte App-Container weiterlaufen müssen. Aktuell freier RAM auf maxone-prod:
+  **1.5 GB von 7.6 GB**. Build-Spike trifft genau die Bottleneck-Zone.
+- **Das ist eine OBERSTE-REGEL-Verletzung** (CLAUDE.md):
+  > „NIEMALS Docker Images auf Produktions-Servern bauen!"
+- **Systemweit:** 13 von 14 Projekten machen das gleiche
+  (`grep 'docker build' .github/workflows/*.yml | grep self-hosted` →
+  getsnapflow, katchi, kitchen-station, planexo.io, stadtlahnfluss, trader,
+  vector, viktoria-from, visual-engine, voltfair, vox, zrow, zync). Nicht
+  ein einzelnes SLF-Problem.
+- **SLF-spezifisch:** im Letzten Build-Run (`Worker_20260428-172541-utc.log`)
+  hat „Build App image" 86 s gebraucht, „Build Crawler image" 41 s. Während
+  dieser ~2 Min hat alles andere auf maxone-prod konkurriert.
+
+### Drei Fix-Optionen (Strategieentscheidung von User nötig)
+
+| Option | Was | Mensch ohne KI | Mit Claude | Blocker |
+|---|---|---|---|---|
+| **A** Build auf GH-hosted Runner + Image-Transfer | matcht CLAUDE.md-Pattern exakt; jeder Workflow von `runs-on: self-hosted` auf `ubuntu-latest` umstellen, am Ende `docker save | gzip | ssh maxone-prod | docker load`. | ~6-8 h pro Projekt × 13 = grosse Migration | M-Tier pro Projekt, ~30 Min Sprint von mir je `deploy.yml`, ~5 Min Sign-Off pro Projekt | GitHub-Hosted-Minutes-Quota (Org-Level prüfen) |
+| **B** Mem-Limit auf prod-Build | quick fix: `docker build --memory=1500m --memory-swap=3g --cpu-shares=512 ...` in jedem Workflow. Build dauert länger, frisst aber nicht mehr alles. | ~2 h gesamt | S-Tier, ~15 Min Sprint von mir + ~2 Min Sign-Off | keine |
+| **C** Separate Runner-VM (Hetzner Cloud, ~5 €/Monat) | Runner runter von maxone-prod, eine kleine Build-VM bei Hetzner; `voltfair-server` Label bleibt, Builds isoliert. | ~4 h | M-Tier, ~30 Min VM-Provision + Runner-Re-Register, ~10 Min Sign-Off | Hetzner-VM-Bestellung (~5 Min Max manuell), läuft gegen Standard 026 (kein Abo? — fällt unter VPS-Hosting-Ausnahme) |
+
+Empfehlung: **B als Sofort-Fix (heute machbar), A als Migration über die nächsten Wochen** (oder direkt zu A, wenn GH-Minutes nicht knapp sind).
+**C** nur falls A teuer wird durch Image-Transfer-Latenz.
+
+### Standard 027 — fällig zu schärfen
+
+Aktuell sagt 027 nur „CI baut, dann Image-Transfer", aber nicht explizit
+„CI darf NICHT auf dem Prod-Server laufen". Beim nächsten Edit von 027:
+- Hartcodieren: „runs-on: self-hosted nur erlaubt, wenn der Runner physisch
+  NICHT auf einem Server mit live-Containern läuft."
+- Audit-Hook: `audit.mjs` parst `.github/workflows/*.yml` und failt, wenn
+  ein Workflow `runs-on: self-hosted` UND `docker build` enthält UND der
+  Self-hosted-Runner laut Registry auf einem Prod-Server läuft.
+
+---
+
+## Session-Update 2026-04-29 — Standard 027 geschärft + Standard 033 (Warm-Up)
+
+User-Direktive: „setze Warm-Up nach einem Blue/Green Deploy als Standard
+in jedem Projekt". Plus die offene Schärfung von 027 aus dem letzten
+Sprint.
+
+### Standard 027 — geschärft
+
+`standards/027-deploy-pipeline.md`:
+- **Pflicht-Eigenschaft 1** explizit erweitert: `runs-on: self-hosted`
+  + `docker build` = Build auf maxone-prod (Runner lebt dort) = FAIL.
+- Beispiel-Workflow auf `runs-on: ubuntu-latest` umgestellt, inkl.
+  Org-Secret `MAXONE_PROD_DEPLOY_SSH_KEY` und vollem `docker save | gzip
+  | ssh ... gunzip | docker load`-Pfad.
+- Audit-Hook (`scripts/audit.mjs`, Funktion `'027-deploy-pipeline'`)
+  - **NEU FAIL:** `runs-on: self-hosted` + `docker build` (oder
+    `docker compose build`) im selben Workflow. Pro Workflow-Datei
+    geprüft — `pr-validate-audit.yml` u.ä. werden NICHT geflaggt,
+    weil sie nichts bauen.
+  - **NEU FAIL:** Klassisches `ssh root@maxone-prod "...docker
+    build..."` (alter manueller Pfad).
+  - **NEU WARN:** Workflow ohne `runs-on: ubuntu-latest`, ohne
+    `docker save`, oder ohne SSH-Image-Transfer-Pipe.
+- `registry/projects.yml`: `kitchen-station` und `vector` haben jetzt
+  `deploy_pipeline: manual` — beide sind im 027-Doku als Ausnahme
+  notiert, aber das Flag fehlte im Registry → false-positive FAIL.
+
+**027-Run-Ergebnis:** 5 echte FAILs (`stadtlahnflow`, `katchi`,
+`voltfair`, `snapflow`, plus `plansey` mit fehlendem Workflow), 4 WARN
+(`maxone.one`, `repivot`, `vanfree`, `solarproof`). Diese sind die
+Migrationsliste für Option A (build auf `ubuntu-latest` + SSH-Image-
+Transfer) — der eigentliche Roll-out wartet auf Org-Secret-Setup
+(`MAXONE_PROD_DEPLOY_SSH_KEY`) und ist im Plan Phase 1+2.
+
+### Standard 033 — Post-Deploy Warm-Up (NEU)
+
+`standards/033-post-deploy-warmup.md`. Regel:
+
+> Zwischen „neuer Slot ist healthy" und „Traefik swappt Traffic" MUSS
+> ein expliziter Warm-Up-Schritt laufen, der die wichtigsten Public-
+> Routen des neuen Containers ein Mal vor-rendert.
+
+Drei Pflichten: vor dem Swap (nicht danach), intern (nicht über die
+Public-Domain via Traefik), vollständige Routenliste.
+
+Drei Patterns dokumentiert:
+1. Bash-Loop in `deploy.sh` (SLF-Vorbild, empfohlen)
+2. Workflow-Step (wenn kein deploy.sh)
+3. Sidecar-Warmer (für Non-Node-Images)
+
+Audit-Hook (`scripts/audit.mjs`, Funktion `'033-post-deploy-warmup'`,
+SSH-Check):
+- Liest `<path_server>/deploy.sh` per SSH.
+- Heuristik: Inhalt enthält `prewarm`/`warm-up`/`warmup` ODER
+  `docker exec ... fetch http://localhost`.
+- Reihenfolge-Check: Warm-Up-Zeile muss VOR echten Swap-Aktionen
+  stehen (Label-Update, `swap.sh`, `echo > .active-slot`,
+  `$COMPOSE stop ...$ACTIVE`). Variablen-Zuweisungen wie
+  `SLOT_FILE=".active-slot"` zählen NICHT als Swap.
+
+**033-Run-Ergebnis (2026-04-29):**
+
+| Status | Projekt | Befund |
+|---|---|---|
+| ✅ PASS | stadtlahnflow | deploy.sh + Warm-Up vor Swap (39 Routen) |
+| ❌ FAIL | maxone.one | kein `/opt/maxone-v2/deploy.sh` |
+| ❌ FAIL | repivot | kein `/opt/repivot.me/deploy.sh` |
+| ❌ FAIL | snapflow | kein `/opt/snapflow.one/deploy.sh` |
+| ⚠️ WARN | katchi | deploy.sh ohne Warm-Up-Block |
+| ⚠️ WARN | vanfree | deploy.sh ohne Warm-Up-Block |
+| ⚠️ WARN | plansey | deploy.sh ohne Warm-Up-Block |
+| ⚠️ WARN | vector | deploy.sh ohne Warm-Up (infra: WARN by design) |
+| skip | kitchen-station, voltfair, solarproof | nicht blue-green |
+
+**Außerhalb der Registry** (im Live-Set, nicht in `registry/projects.yml`):
+- `viktoria-from` ✅ — `/opt/viktoria-from/deploy.sh` hat Prewarm (vom
+  Sprint 2026-04-28e).
+- `zensor`, `zync` — keine `deploy.sh`, würden bei Aufnahme in die
+  Registry direkt FAIL liefern.
+
+### Aufwand für vollständige 033-Compliance
+
+- **Mensch ohne KI:** ~1.5–3 h pro Projekt × 7 zu fixen = ~12–20 h
+  (deploy.sh schreiben, Routenliste sammeln, Tests, Roll-out).
+- **Mit Claude:** S-Tier pro Projekt (15–30 Min/Projekt für SLF-Vorlage
+  adaptieren + Routenliste + 1× Test-Deploy). Sprint 7×30 Min = ~3.5 h
+  am Stück, dazu jeweils 2–5 Min Sign-Off von Max.
+- **Blocker:** keine technischen — pro Projekt brauche ich kurz die
+  „top 10 Public-Routen"-Liste vom User (oder ich grep sie aus dem
+  Repo: `app/**/page.tsx` für Next.js, `routes/**` für SvelteKit).
+
+---
+
 ## Was schon erledigt ist
 
 ### 1. Baseline 2026-04-27 eingefroren

@@ -2,6 +2,8 @@
 
 **Status:** active
 **Seit:** 2026-04-28 (User-Direktive — ergänzt 001 + 002 um den positiven Pfad)
+**Geschärft:** 2026-04-28 (Vorfall SLF/Viktoria From — `runs-on: self-hosted`
++ `docker build` = Build auf maxone-prod, weil der Runner dort lebt)
 **Gilt für:** alle Projekte mit `status: live`
 
 ## Regel
@@ -10,7 +12,7 @@ Deploy folgt einem festen, dokumentierten Pfad. Manuelle SSH-Bauten oder
 Ad-hoc-Rsync sind verboten. Der Pfad ist:
 
 ```
-git push  →  GitHub Actions Runner baut Image  →
+git push  →  GitHub-hosted Runner (ubuntu-latest) baut Image  →
 docker save | gzip | ssh maxone-prod "docker load"  →
 docker compose up -d (ohne --build)  →
 Health-Check  →  Traefik-Swap (Blue/Green)  →
@@ -19,7 +21,10 @@ alter Slot bleibt 5 min als Rollback-Reserve
 
 Vier Pflicht-Eigenschaften:
 
-1. **Build läuft NICHT auf dem Prod-Server.** (siehe 002)
+1. **Build läuft NICHT auf dem Prod-Server.** (siehe 002) — das schließt
+   den self-hosted Runner `voltfair-server` ein, denn der lebt physisch auf
+   maxone-prod (`/opt/github-runner/`). `runs-on: self-hosted` + `docker
+   build` in derselben Pipeline = Build auf Prod = **FAIL**.
 2. **Artefakt ist ein vollständiges Docker-Image** mit `image:`-Tag. Nicht
    nur Code-Pull + Restart.
 3. **Deploy ist Zero-Downtime via Blue/Green** (siehe 001).
@@ -41,6 +46,15 @@ Down-Spikes durch:
   `node_modules` und Server-`node_modules`, npm-native-Modules brachen.
 - **Manuelles `git pull && docker compose up -d --build` per SSH** —
   unreproduzierbar, kein Audit-Trail, kein Rollback.
+- **`runs-on: self-hosted` + `docker build` (SLF, Viktoria From, weitere
+  2026-04-28)** — sah aus wie eine korrekte CI-Pipeline, weil der Build im
+  Workflow lief und nicht per SSH ausgelöst wurde. Tatsächlich lebt unser
+  einziger self-hosted Runner `voltfair-server` aber auf maxone-prod
+  (`/opt/github-runner/`), d.h. jeder `docker build`-Step zog 80–180 s
+  RAM/CPU vom Prod-Server und konkurrierte mit den Live-Containern.
+  User-erlebter Effekt: 8–30 s "Site lädt langsam"-Spike pro Deploy.
+  Lehre → Premium-Pattern erzwingt `runs-on: ubuntu-latest` und
+  Image-Transfer per SSH.
 
 Standard 027 fügt diese Lehren zu **einem festen Pipeline-Pfad** zusammen.
 Wenn der Pfad eingehalten wird, sind 001 + 002 + 003 (Secrets) + 004 (TLS)
@@ -52,10 +66,16 @@ automatisch erfüllt.
 
 - **GitHub Actions Workflow** (`.github/workflows/deploy.yml`) — der
   Orchestrator
-- **Self-hosted Runner** (`voltfair-server`, registriert auf Org-Level
-  `maxone-studio-org`) — baut die Images. Inwx-DNS-Test: hier auch.
+- **GitHub-hosted Runner** (`ubuntu-latest`) — baut die Images.
+  **Nicht** der self-hosted Runner `voltfair-server`, weil der auf
+  maxone-prod lebt (= Build auf Prod = verboten, siehe oben). Der
+  self-hosted Runner darf in Workflows verwendet werden, die nichts
+  Build-Schweres tun (z.B. `pr-validate-audit.yml`, `scheduled-audit.yml`).
 - **Image-Transfer** via SSH (kein Container-Registry-Subscription
   notwendig — siehe Standard 026)
+- **Org-Level GitHub Secret** `MAXONE_PROD_DEPLOY_SSH_KEY` für den SSH-
+  Key, der `ubuntu-latest` → maxone-prod verbindet. Restricted in
+  `~/.ssh/authorized_keys` per `command="docker load"`/`from="…"`.
 - **`docker-compose.yml`** auf dem Server unter `/opt/<projekt>/` —
   hat `image: <projekt>-app:latest` und `build:`-Block für lokale
   Entwicklung
@@ -73,15 +93,26 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    # Pflicht: ubuntu-latest. self-hosted = Build auf maxone-prod.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "${{ secrets.MAXONE_PROD_DEPLOY_SSH_KEY }}" > ~/.ssh/maxone-prod
+          chmod 600 ~/.ssh/maxone-prod
+          ssh-keyscan -H 128.140.40.235 >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Determine inactive slot
         id: slot
         run: |
-          ACTIVE=$(ssh root@maxone-prod \
-            "docker inspect --format '{{.Config.Labels.\"traefik.http.services.<projekt>.loadbalancer.server.port\"}}' <projekt>-app-blue 2>/dev/null && echo blue || echo green")
+          ACTIVE=$(ssh -i ~/.ssh/maxone-prod root@128.140.40.235 \
+            "cat /opt/<projekt>/.active-slot 2>/dev/null || echo blue")
           if [ "$ACTIVE" = "blue" ]; then echo "target=green" >> $GITHUB_OUTPUT; else echo "target=blue" >> $GITHUB_OUTPUT; fi
 
       - name: Build image
@@ -89,21 +120,21 @@ jobs:
           docker build -t <projekt>-app:${{ github.sha }} .
           docker tag <projekt>-app:${{ github.sha }} <projekt>-app:latest
 
-      - name: Transfer image
+      - name: Transfer image to maxone-prod
         run: |
           docker save <projekt>-app:latest | gzip | \
-            ssh root@maxone-prod "gunzip | docker load"
+            ssh -i ~/.ssh/maxone-prod root@128.140.40.235 "gunzip | docker load"
 
-      - name: Deploy inactive slot
+      - name: Deploy inactive slot (no build on prod)
         run: |
-          ssh root@maxone-prod "cd /opt/<projekt> && \
-            docker compose up -d --no-build <projekt>-app-${{ steps.slot.outputs.target }}"
+          ssh -i ~/.ssh/maxone-prod root@128.140.40.235 \
+            "cd /opt/<projekt> && COMPOSE_PROFILES=${{ steps.slot.outputs.target }} docker compose up -d --no-build"
 
       - name: Wait for healthy
         run: |
           for i in {1..30}; do
-            STATUS=$(ssh root@maxone-prod \
-              "docker inspect --format '{{.State.Health.Status}}' <projekt>-app-${{ steps.slot.outputs.target }}")
+            STATUS=$(ssh -i ~/.ssh/maxone-prod root@128.140.40.235 \
+              "docker inspect --format '{{.State.Health.Status}}' <projekt>-app-${{ steps.slot.outputs.target }}" || echo starting)
             [ "$STATUS" = "healthy" ] && exit 0
             sleep 5
           done
@@ -111,13 +142,18 @@ jobs:
 
       - name: Swap Traefik to new slot
         run: |
-          ssh root@maxone-prod "cd /opt/<projekt> && \
-            docker label update <projekt>-app-${{ steps.slot.outputs.target }} traefik.enable=true && \
-            docker label update <projekt>-app-$([[ ${{ steps.slot.outputs.target }} = blue ]] && echo green || echo blue) traefik.enable=false"
+          ssh -i ~/.ssh/maxone-prod root@128.140.40.235 \
+            "cd /opt/<projekt> && ./swap.sh ${{ steps.slot.outputs.target }}"
 
-      - name: Cleanup old image
-        run: ssh root@maxone-prod "docker image prune -f --filter 'until=72h'"
+      - name: Cleanup old image (after 72h)
+        run: |
+          ssh -i ~/.ssh/maxone-prod root@128.140.40.235 \
+            "docker image prune -f --filter 'until=72h'"
 ```
+
+> **Antipattern (zur Abschreckung):** `runs-on: self-hosted` + `docker
+> build`. Sieht harmlos aus, aber jeder Build zieht 80–180 s RAM/CPU vom
+> Prod-Server. Audit (Standard 027) fängt diese Kombination als FAIL.
 
 ### docker-compose.yml Pflichtfelder
 
@@ -182,25 +218,31 @@ Rollback ein Label-Switch ohne neuen Deploy.
 `scripts/audit.mjs` prüft pro Projekt mit `status: live`:
 
 1. **`.github/workflows/deploy.yml` existiert** — FAIL wenn nicht
-2. **Workflow-Inhalt** enthält `runs-on: self-hosted` UND `docker save`
-   UND `--no-build` (oder kein `--build`-Flag) — WARN wenn nicht
-3. **`docker-compose.yml` auf dem Server** (per SSH unter
+2. **Workflow-Antipattern** — FAIL wenn `runs-on: self-hosted` UND
+   `docker build` (oder `docker compose build`) im selben Workflow.
+   Begründung siehe oben: voltfair-server lebt auf maxone-prod, das
+   ist ein verkappter Build auf Prod.
+3. **Workflow-Pflicht** — `runs-on: ubuntu-latest` + `docker save` +
+   SSH-Image-Transfer (`docker load`). Fehlt eines: WARN.
+4. **`docker-compose.yml` auf dem Server** (per SSH unter
    `/opt/<projekt>/docker-compose.yml`) enthält:
    - `image:` Feld (nicht nur `build:`) — FAIL wenn fehlt
    - `healthcheck:`-Block — WARN wenn fehlt
    - `mem_limit:`-Feld — INFO wenn fehlt
    - `env_file:`-Feld zeigt auf `/opt/secrets/<projekt>/keys.env`
      (ergänzt 003) — WARN wenn anders
-4. **Beide Slots existieren** für Blue/Green-Projekte (`<projekt>-app-
+5. **Beide Slots existieren** für Blue/Green-Projekte (`<projekt>-app-
    blue` UND `-green`) — siehe 001-Audit, hier nur Cross-Reference
-5. **Kein Build-Output** in `.gitignore` fehlend (`dist/`, `.next/`,
+6. **Kein Build-Output** in `.gitignore` fehlend (`dist/`, `.next/`,
    `node_modules/`) — INFO wenn fehlt
 
-PASS = Workflow vorhanden + Server-Compose hat `image:` + Health-Check
-+ Build läuft auf Runner.
-WARN = Pipeline existiert aber unvollständig.
-FAIL = Workflow fehlt oder `docker compose up --build` auf Prod
-nachweisbar (z.B. via SSH `docker events`-History oder Workflow-Log).
+PASS = Workflow vorhanden + `ubuntu-latest` + Image-Transfer + Server-
+Compose hat `image:` + Health-Check.
+WARN = Pipeline existiert aber unvollständig (z.B. `docker save` fehlt,
+oder `runs-on:` nicht explizit auf `ubuntu-latest`).
+FAIL = Workflow fehlt **ODER** Antipattern `runs-on: self-hosted` +
+`docker build` **ODER** `ssh maxone-prod ... docker build` (alter
+manueller Pfad).
 
 ## Ausnahmen
 
