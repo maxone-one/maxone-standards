@@ -44,16 +44,6 @@ exceptions:
     expires_until: '2026-10-28'
     granted_by: max
 
-  # SLF hat das Impressum bewusst lokal in lib/impressum-data.ts, weil das
-  # Projekt infra-unabhängig laufen soll (kann ohne maxone.one-API leben).
-  # Siehe Standard 009 Tabelle.
-  - project: stadtlahnflow
-    standard: '009'
-    reason: SLF infra-unabhängig — Impressum lokal in lib/impressum-data.ts
-    granted_at: '2026-04-28'
-    expires_until: '2026-10-28'
-    granted_by: max
-
   # vector deploy.sh stoppt OLD-Container BEWUSST vor Start NEW (Telegram
   # long-polling 409 Conflict-Vermeidung — siehe deploy.sh Header). Audit-
   # Heuristik liest "docker stop $ACTIVE" als Swap-Indikator und meldet

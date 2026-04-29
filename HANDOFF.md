@@ -1,6 +1,6 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-29 (Warm-Up-Sprint abgeschlossen — Standard 033 = 10.0/10 nach Self-Loop ueber alle 7 betroffenen Projekte)
+**Stand:** 2026-04-29 (Warm-Up-Sprint abgeschlossen + Quick-Win-Cleanup: maxone.one-Workflow auf deploy.sh-Aufruf refactored, stadtlahnflow×009-Ausnahme entfernt — Standard 033 = 10.0/10)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
 **Status:** 32 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
 
@@ -483,14 +483,23 @@ warten auf nächsten regulären Push pro Projekt). Backups liegen als
 
 - **plansey**: deploy.sh hat `docker compose build` auf Prod (027-Violation,
   im Skript-Header markiert). Sollte zu CI-Image-Transfer migrieren.
-- **maxone.one**: Workflow `.github/workflows/deploy-maxone-one.yml` hat
-  Deploy-Logik inline als Heredoc — sollte refactored werden, um
-  `/opt/maxone-v2/deploy.sh` aufzurufen (BUILD_TARBALL env unterstützt).
 - **vector + vanfree**: Lokale `deploy.sh` (im Repo) drift'en vom Server-
   Stand ab — Server ist authoritative, Repo-Versionen sollten beim
   nächsten Touch-Punkt synchronisiert werden.
-- **stadtlahnflow** × `009`: REMOVAL-KANDIDAT (Audit zeigt PASS trotz
-  aktiver Ausnahme) — Eintrag aus `exceptions.yml` entfernen.
+- **plansey NextAuth UntrustedHost**: Auth-Routen werfen `UntrustedHost: Host
+  must be trusted. URL was: https://plansey.app/api/auth/session` beim
+  internen Warm-Up — Auth.js versucht die Live-Domain im SSR zu re-fetchen.
+  Routen sind aus PREWARM_PATHS entfernt (5 statt 10), aber Bug bleibt für
+  echte User-Sessions relevant. Separate Session.
+
+### Quick-Win-Cleanup 2026-04-29 (erledigt)
+
+- **maxone.one Workflow refactored**: `.github/workflows/deploy-maxone-one.yml`
+  ruft jetzt `bash /opt/maxone-v2/deploy.sh` mit `BUILD_TARBALL` env auf
+  (Inline-Heredoc raus, Standard 033 Warm-Up jetzt automatisch im Deploy-Pfad).
+- **stadtlahnflow × 009 Ausnahme entfernt**: Audit hatte sie als
+  REMOVAL-KANDIDAT geflaggt (009-Check liefert nativ PASS), Eintrag aus
+  `registry/exceptions.yml` raus. Score 009 jetzt 4 PASS statt 3 PASS+1 SKIP.
 
 ### Sponsored-Customer Mail-Footer (separate Implementation)
 
