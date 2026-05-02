@@ -53,6 +53,9 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 **Marken-Werte & Kommunikation:**
 - [033-signature-truthful.md](033-signature-truthful.md) — Wahrhaftige Unterschrift: es unterzeichnet, wer wirklich verschickt — KI niemals als Max, Bot niemals als Person (Viktoria-From-Vorfall 2026-04-29)
 
+**Kosten & Budget:**
+- [034-cost-caps-and-budget-alerts.md](034-cost-caps-and-budget-alerts.md) — Drei Verteidigungslinien gegen API-Kostenüberraschungen (Provider-Cap + Code-Cap + Wiederholungs-Marker) + Privat-DM-Alert; SLF Places-API-Vorfall 2026-05-02 (715 EUR)
+
 - [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025/028/029/030/031/032); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
 
 **Externe Recherche / Vergleichsprojekte:**
