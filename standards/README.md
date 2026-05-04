@@ -31,6 +31,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [016-stack-whitelist.md](016-stack-whitelist.md) — Stack-Whitelist + Plattform-Blacklist (Lovable/Bolt/Base44/v0/Replit raus)
 - [013-launch-gate-review.md](013-launch-gate-review.md) — Gate 3: Security & Compliance Review mit Sign-Off vor `live`
 - [014-sunset.md](014-sunset.md) — Sunset-Prozess: Daten exportieren, Drittdienste kündigen, Container/DNS abbauen, Repo archivieren
+- [036-spec-archive.md](036-spec-archive.md) — PRD/TODO/DONE-Lifecycle: Drei-Datei-Schema pro Phase + Archiv-Pfad + Mirror-Repo + drei Kategorien für Arbeit ausserhalb Phasen
 - [017-dsgvo-tracker-audit.md](017-dsgvo-tracker-audit.md) — Drittdienste/Tracker (Google Fonts, GA, Pixel, Embeds) erst nach Consent
 - [018-bundle-drift-audit.md](018-bundle-drift-audit.md) — Live-Bundle ohne veraltete Hosts, Source-Maps, Plattform-Watermarks
 - [019-cert-dns-reality.md](019-cert-dns-reality.md) — DNS auf eigenen Server + TLS-Cert gültig + LE-Issuer
