@@ -396,7 +396,7 @@ maxone-standards audit — 11 Projekt(e)
   [FAIL] 003-secrets-store — /opt/secrets/planexo/keys.env fehlt
   [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-studio-org/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-studio-org/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
   [WARN] 033-post-deploy-warmup — deploy.sh hat keinen Warm-Up-Block (kein prewarm/warmup/docker-exec-fetch erkennbar)
   [OK]   007-container-running — 1 Slot aktiv: planexo-app-blue (Blue/Green normal)
 
@@ -525,7 +525,7 @@ maxone-standards audit — 11 Projekt(e)
   katchi               028-container-misconfig      app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
   repivot              033-post-deploy-warmup       kein deploy.sh auf maxone-prod:/opt/repivot.me/ — Blue/Green ohne Skript = kein orchestrierter Warm-Up
   vanfree              003-secrets-store            /opt/secrets/planexo/keys.env fehlt
-  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-studio-org/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-studio-org/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
   kitchen-station      003-secrets-store            /opt/secrets/kitchen-station/keys.env fehlt
   snapflow             003-secrets-store            /opt/secrets/snapflow/keys.env fehlt
   snapflow             033-post-deploy-warmup       kein deploy.sh auf maxone-prod:/opt/snapflow.one/ — Blue/Green ohne Skript = kein orchestrierter Warm-Up

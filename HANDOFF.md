@@ -82,7 +82,7 @@ separat geführt).
   `docker save | docker load` transferiert — kein Registry-Pull)
 - Live-Verify-Findings: stadtlahnflow + katchi haben `image: <name>:latest`
   ohne `build:`-Block (CLAUDE.md global rule violation), vanfree pulled
-  `ghcr.io/maxone-studio-org/planexo.io:latest` (echter Registry-Pull),
+  `ghcr.io/maxone-one/planexo.io:latest` (echter Registry-Pull),
   plansey nutzt `minio/minio:latest` (3rd-party, sollte SHA-pinned sein)
 
 ### Empfohlene nächste Schritte (priorisiert)
@@ -312,7 +312,7 @@ manchmal langsam laden / 503 zurückgeben. Sprint-Ziel: Ursachen finden + fixen.
 - **Vorher:** kein `deploy.sh`, kein Traefik-Backend-Healthcheck → bei jedem
   `docker compose up -d --force-recreate` 5-30 s Downtime.
 - **Jetzt:**
-  - [`/opt/viktoria-from/deploy.sh`](https://github.com/maxone-studio-org/viktoria-from/blob/main/deploy.sh)
+  - [`/opt/viktoria-from/deploy.sh`](https://github.com/maxone-one/viktoria-from/blob/main/deploy.sh)
     geschrieben (modelliert nach SLF-Vorlage): Slot-Detect → start NEXT →
     Health-Wait → Prewarm 11 Routen → Traefik-Confirm → stop OLD → save state.
   - Traefik-Backend-Healthcheck-Labels in `docker-compose.yml` ergänzt:

@@ -151,16 +151,16 @@ Append-only, neueste oben. Jährlich rotieren: am 1. Januar wird `LIVING.md` zu 
 | Nach Phase-Abschluss, >1h Arbeit oder Sign-Off | B (Mini-Phase)           |
 | Nach Phase-Abschluss, <1h, kein Sign-Off       | C (LIVING.md)            |
 
-### 6. Cross-Repo Mirror (`maxone-studio-org/specs-archive`)
+### 6. Cross-Repo Mirror (`maxone-one/specs-archive`)
 
 Damit alle archivierten PRDs an einem Ort durchsuchbar sind, ohne dass die primäre Quelle aus dem Projekt-Repo verschwindet:
 
 - **Primär:** PRDs leben im Projekt-Repo (verhindert Drift, Spec liegt nah am Code)
-- **Mirror:** Read-only Repo `maxone-studio-org/specs-archive` — synct **1:1 live** via systemd-timer auf `maxone-prod` (siehe Standard 031: Routine-Platform). Triggered alle 60 s; bei Phase-Archivierung im Quell-Repo erscheint der Mirror-Eintrag innerhalb von <60 s.
+- **Mirror:** Read-only Repo `maxone-one/specs-archive` — synct **1:1 live** via systemd-timer auf `maxone-prod` (siehe Standard 031: Routine-Platform). Triggered alle 60 s; bei Phase-Archivierung im Quell-Repo erscheint der Mirror-Eintrag innerhalb von <60 s.
 - **Was wird gespiegelt:** `docs/archive/**`, `post-launch/**`, `briefings/archive/**`, `LIVING.md`, `LIVING-*.md` aus jedem Quell-Repo
 - Mirror-Repo hat Top-Level-`INDEX.md`, auto-generiert mit Liste aller archivierten Phasen pro Projekt
 - **Schreibrichtung nur Projekt → Mirror, nie zurück.** Edits am Mirror werden vom nächsten Sync überschrieben.
-- **Implementierung:** `/opt/specs-archive-sync/sync.sh` auf `maxone-prod`, getriggert von `specs-archive-sync.timer` (60 s). Quelle: clone via `gh repo list maxone-studio-org` + `gh repo clone`. Authentifizierung: `gh auth setup-git` mit `tech-frankenstein`-Account (`repo`+`workflow`-Scopes).
+- **Implementierung:** `/opt/specs-archive-sync/sync.sh` auf `maxone-prod`, getriggert von `specs-archive-sync.timer` (60 s). Quelle: clone via `gh repo list maxone-one` + `gh repo clone`. Authentifizierung: `gh auth setup-git` mit `tech-frankenstein`-Account (`repo`+`workflow`-Scopes).
 - **Operativ:** `systemctl status specs-archive-sync.timer` (Status), `tail /opt/specs-archive-sync/sync.log` (letzte Läufe), `systemctl start specs-archive-sync.service` (manueller Trigger).
 
 Mirror ist seit 2026-05-04 09:30 UTC live.

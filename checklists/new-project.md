@@ -9,7 +9,7 @@ kann das Projekt als "live-ready" gelten.
 - [ ] Workspace: `<projekt>.code-workspace`
 - [ ] Eintrag in VS Code Project Manager (`projects.json`)
 - [ ] Eintrag in `maxone-standards/registry/projects.yml`
-- [ ] Git-Repo unter `maxone-studio-org` (private!)
+- [ ] Git-Repo unter `maxone-one` (private!)
 - [ ] `.gitignore` mit allen AI-Umgebungs-Configs (siehe CLAUDE.md "Multi-Umgebung")
 
 ## Server-Vorbereitung

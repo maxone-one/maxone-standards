@@ -1,8 +1,8 @@
 # LAUNCH-REVIEW — <PROJEKTNAME>
 
-> Pflicht-Dokument nach [Standard 013](https://github.com/maxone-studio-org/maxone-standards/blob/main/standards/013-launch-gate-review.md).
+> Pflicht-Dokument nach [Standard 013](https://github.com/maxone-one/maxone-standards/blob/main/standards/013-launch-gate-review.md).
 > Vor `status: live` ausfüllen. Ohne Sign-Off kein Live-Status.
-> Checkliste: [`checklists/013-launch-gate.md`](https://github.com/maxone-studio-org/maxone-standards/blob/main/checklists/013-launch-gate.md)
+> Checkliste: [`checklists/013-launch-gate.md`](https://github.com/maxone-one/maxone-standards/blob/main/checklists/013-launch-gate.md)
 
 ---
 

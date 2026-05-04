@@ -364,7 +364,7 @@ Jeder Eintrag mit:
 - **Vorfall:** **2026-04-05** Self-Inflicted Fail2Ban Loop — `zentinel-health` schickte alle 2min `Basic healthcheck:invalid` → Stalwart bannte Edge-IP → Restart-Loop bis Max die Timer manuell stoppte
 - **Vorfall:** **2026-04-10** Sent-Items-Blackhole + Brevo Silent Rejection — 7 Sent-Kopien als Blob-Orphans in Default-Account verloren (5 Tage); 1 Mail (`max@maxone.one → r.jenau@linagames.de`) von Brevo still rejected weil Domain noch nicht authentifiziert war (Empfänger-Rückfrage 7 Tage später)
 - **Vorfall:** **2026-04-27** Falsch-Negativ-Diagnose — Mail-Status-Frage „hat X meine Mail bekommen?" wurde fälschlich aus Stalwart-Logs beantwortet (zeigten nichts → falsches „nein"); korrekte Antwort lag in Brevo Events API
-- **Coverage:** ✅ Standard 030 (Mail-Architektur — Pre-Flight-Pflicht, Anti-Pattern-Scan für `uploadUrl.split("{")` / `Basic healthcheck:invalid` / `/.well-known/jmap`-Request / Public-URL aus Edge-Function / fehlender DB-Status `rejected_unauthenticated_domain`). Quelle: [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-studio-org/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md) (20 Regeln, lebendiges Dokument).
+- **Coverage:** ✅ Standard 030 (Mail-Architektur — Pre-Flight-Pflicht, Anti-Pattern-Scan für `uploadUrl.split("{")` / `Basic healthcheck:invalid` / `/.well-known/jmap`-Request / Public-URL aus Edge-Function / fehlender DB-Status `rejected_unauthenticated_domain`). Quelle: [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md) (20 Regeln, lebendiges Dokument).
 
 ### G. Strukturelle / Wartbarkeits-Lücken (langfristig sicherheitsrelevant)
 

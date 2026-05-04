@@ -8,7 +8,7 @@
 // 2. <PROJEKT_BRAND> mit Anzeige-Name (z.B. "SnapFlow")
 // 3. <BESCHREIBUNG> mit 1–2 Sätzen aus credits-API oder hardcoded
 // 4. <NAV_LINKS> mit projekt-spezifischer Navigation füllen
-// 5. <PROJEKT_REPO> = repo-Slug bei github.com/maxone-studio-org
+// 5. <PROJEKT_REPO> = repo-Slug bei github.com/maxone-one
 
 // In Next.js: import { Link } from "next/link" + href statt to
 // In React Router: import { Link } from "react-router-dom" + to

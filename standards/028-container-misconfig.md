@@ -91,7 +91,7 @@ unbekannt ist.
 ```yaml
 services:
   app:
-    image: ghcr.io/maxone-studio-org/<projekt>:2026-04-28-abc1234
+    image: ghcr.io/maxone-one/<projekt>:2026-04-28-abc1234
     restart: unless-stopped
     mem_limit: 2g
     healthcheck:

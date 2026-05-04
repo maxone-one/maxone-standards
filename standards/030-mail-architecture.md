@@ -49,7 +49,7 @@ Jedes Projekt mit Mail-Code **MUSS** dieser Architektur folgen:
 
 Diese Regel ist die destillierte Form von **20 unverhandelbaren
 Regeln** aus der Stalwart-Bibel
-([`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-studio-org/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md)),
+([`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md)),
 die aus drei realen Vorfällen gewachsen sind:
 
 ### Vorfall 1 — 2026-03-24 Stalwart Admin Lockout
@@ -261,7 +261,7 @@ verletzte Regel-Nummer (z.B. „Regel 19 verletzt").
 
 ## Cross-Reference
 
-- **Bibel-Original:** [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-studio-org/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md)
+- **Bibel-Original:** [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md)
   (20 Regeln, 4 Vorfälle, lebendiges Dokument — bei jedem Update
   dort auch hier nachziehen)
 - **Globale CLAUDE.md:** Sektion „Zentinel/Stalwart/Mail: Bibel ist

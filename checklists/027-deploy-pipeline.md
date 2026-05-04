@@ -42,8 +42,8 @@ Vor jedem neuen Projekt-Setup UND vor jedem Pipeline-Refactor.
 
 ## D. Self-Hosted Runner
 
-- [ ] Runner `voltfair-server` ist online (`gh api orgs/maxone-studio-org/actions/runners`)
-- [ ] Service läuft: `actions.runner.maxone-studio-org.voltfair-server.service`
+- [ ] Runner `voltfair-server` ist online (`gh api orgs/maxone-one/actions/runners`)
+- [ ] Service läuft: `actions.runner.maxone-one.voltfair-server.service`
 - [ ] Runner-Version aktuell (≥ 2.331.0)
 - [ ] Runner hat SSH-Key für Deploy-Ziel (`maxone-prod`)
 - [ ] Runner hat Docker-Daemon-Zugriff lokal

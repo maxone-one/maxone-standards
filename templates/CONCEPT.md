@@ -1,8 +1,8 @@
 # CONCEPT — <PROJEKTNAME>
 
-> Pflicht-Dokument nach [Standard 015](https://github.com/maxone-studio-org/maxone-standards/blob/main/standards/015-concept-gate.md).
+> Pflicht-Dokument nach [Standard 015](https://github.com/maxone-one/maxone-standards/blob/main/standards/015-concept-gate.md).
 > Vor erster Code-Zeile ausfüllen, Sign-Off einholen.
-> Checkliste: [`checklists/015-concept-gate.md`](https://github.com/maxone-studio-org/maxone-standards/blob/main/checklists/015-concept-gate.md)
+> Checkliste: [`checklists/015-concept-gate.md`](https://github.com/maxone-one/maxone-standards/blob/main/checklists/015-concept-gate.md)
 
 ---
 
