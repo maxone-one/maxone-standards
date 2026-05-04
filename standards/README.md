@@ -49,6 +49,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [030-mail-architecture.md](030-mail-architecture.md) — Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart JMAP); Pre-Flight Brevo-Domain-Auth; destilliert aus 20 Bibel-Regeln + 4 Vorfällen (03-24/04-05/04-10/04-27)
 - [031-routine-platform.md](031-routine-platform.md) — Routine-Platform: Cron/Reminder/Watchdog-Routinen NUR auf Heartbeat-Plattform (GH Actions schedule, systemd-Timer, pg_cron) oder via 24/7-Agent (VECTOR) — niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig
 - [032-supabase-ssr-auth.md](032-supabase-ssr-auth.md) — Supabase SSR Auth Middleware-Matcher: broad Negative-Lookahead-Pattern, niemals selektive Pfad-Liste — sonst sterben Sessions nach ~1h Idle / bei Deploys (SLF-Vorfall 2026-04-28)
+- [033-post-deploy-warmup.md](033-post-deploy-warmup.md) — Post-Deploy-Warmup: Health-Check + erste Page-Renders gegen den NEUEN Container, BEVOR Traefik geswappt wird
 
 **Kosten & Budget:**
 - [034-cost-caps-and-budget-alerts.md](034-cost-caps-and-budget-alerts.md) — Drei Verteidigungslinien gegen API-Kostenüberraschungen (Provider-Cap + Code-Cap + Wiederholungs-Marker) + Privat-DM-Alert; SLF Places-API-Vorfall 2026-05-02 (715 EUR)
