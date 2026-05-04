@@ -193,6 +193,41 @@ Mirror ist seit 2026-05-04 09:30 UTC live.
 - Ob die zugrunde liegende Spec sinnvoll war (PRD-Qualität) → Gate-1/Gate-3-Sache, nicht 036
 - Drift zwischen `DONE.md` und tatsächlichem Code (Item als done markiert, aber Code rebased weg) → Code-Review-Sache
 
-## Bestehende Projekte (Stand 2026-05-04)
+## Rückwirkende Migration bestehender Briefings/PRDs
 
-Existierende `PRD-*.md` / `HANDOFF-*.md` / Briefings in laufenden Projekten werden NICHT rückwirkend ins Drei-Datei-Schema migriert. Sie bleiben wo sie sind, gelten als Legacy. Ab dieser Regel gilt: **jede neue Phase** in jedem Projekt nutzt das Schema. Bei nächster grösserer Aufräum-Aktion pro Projekt: Legacy-PRDs prüfen, in `docs/archive/legacy/` verschieben, in `INDEX.md` aufnehmen.
+Existierende `PRD-*.md` / `BRIEFING-*.md` / `PHASE-*.md` aus der Pre-036-Zeit werden **rückwirkend migriert** — aber nicht blind. Pro Briefing gilt:
+
+1. **Briefing lesen.** Status der einzelnen Items inhaltlich beurteilen — nicht aus dem Repo-Status (live/sunset/pause) ableiten.
+2. **In drei Buckets sortieren:**
+   - **DONE-Items:** explizit als erledigt markiert (Checkmarks, "live seit", "umgesetzt", Commits referenziert) → `DONE.md`
+   - **TODO-Items:** unchecked, "geplant", "ToDo", "offen", "noch zu tun" → `TODO.md`
+   - **Spec/Kontext:** Ziel, Scope, Akzeptanz-Kriterien, Hintergrund → `PRD.md`
+3. **Tripel im richtigen Pfad ablegen:**
+   - Aktives Projekt + Phase läuft noch → `docs/phases/<phase-name>/`
+   - Aktives Projekt + Phase abgeschlossen → `docs/archive/<phase-name>/`
+   - Pause-/Off-State-Projekt → `docs/archive/<phase-name>/`
+4. **Original durch DEPRECATED-Stub ersetzen** mit Forward-Pointer auf den neuen Pfad.
+
+### Pause-/Off-State-Projekte (kritisch — Information bewahren!)
+
+Wenn ein Projekt pausiert oder abgeschaltet wurde, **darf TODO.md nicht leer migriert werden**, nur weil das Projekt nicht mehr läuft. "Pause" ≠ "alle Items done". Im Gegenteil: gerade hier ist die Information "was war noch offen?" der wertvollste Teil der Migration — bei Reanimation ist das die Wiederaufnahme-Liste.
+
+DONE.md bekommt einen **Phase-Abschluss-Block mit Pause-Grund**:
+
+```markdown
+## Phase pausiert/abgeschaltet — 2026-MM-DD
+
+- Status: pausiert (nicht abgeschlossen) | abgeschaltet (nicht final geliefert)
+- Grund: <warum wurde gestoppt — Kostenfrage, Pivot, externe Gründe>
+- Was war erledigt: <Liste oder Verweis auf DONE-Einträge oben>
+- Was war NICHT erledigt: <Liste oder Verweis auf TODO.md>
+- Reanimation: TODO.md ist Wiederaufnahme-Liste / oder: Reanimation ausgeschlossen, Items nur als Lessons Learned
+```
+
+Beispiele:
+- **maxonestudio v1** (abgeschaltet 2026-04-16): v1-Briefings wandern in `docs/archive/v1/`, TODO.md enthält nicht-realisierte Features (BRAND, Bananen-Prinzip, Sektion-Solo, etc.). Reanimation ausgeschlossen — Domain ist tot — aber Items bleiben dokumentiert als Lessons-Learned-Quelle.
+- **Vybora** (pausiert 2026-04-27): Sprint-Listen wandern in `docs/archive/2026-pausiert/`, TODO.md enthält letzte offene Sprints. Reanimation explizit vorgesehen → TODO.md ist Wiederaufnahme-Liste.
+
+### Migration läuft repo-weise
+
+Pro Repo eine Migrations-Session: alle Briefings lesen, Tripel schreiben, DEPRECATED-Stubs setzen, ein Commit pro Repo (`migrate briefings → 036 schema`). Mirror updated automatisch. Reihenfolge nach Aufwand / Wert.
