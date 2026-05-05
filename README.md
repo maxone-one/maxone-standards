@@ -20,6 +20,7 @@ projekten ist das nicht akzeptabel.
 - **Test-Standards** (Smoke + Unit, ENV-Overrides, TESTING.md)
 - **Pfad-Standards** (`/opt/<projekt>/`, `HANDOFF.md`, Container-Naming)
 - **Text-Standards** (Impressum, Mail-Footer, Error-Pages, Cookie-Hinweise)
+- **Sprach-Standards** (Echte Umlaute, wahrhaftige Unterschrift)
 
 ## Struktur
 
