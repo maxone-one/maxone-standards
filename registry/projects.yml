@@ -81,8 +81,9 @@ projects:
     path_local: c:\Users\max\Projects\katchi
     path_server: /opt/katchi
     secrets_dir: katchi
-    status: live
+    status: paused
     tags: product
+    notes: "Projekt archiviert/pausiert seit 2026-05-06; Kundin hat das Projekt vorerst abgebrochen. Nicht als aktives Live-/Customer-Priority-Projekt behandeln."
     warmup_required: false  # Standard 033: Vue SPA via nginx, kein SSR (Cold-Start nur fuer /api-Proxy, der Backend triggert)
 
   - name: repivot
@@ -96,32 +97,48 @@ projects:
     secrets_dir: repivot
     status: live
     tags: product
-    notes: Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
+    notes: "Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29)."
 
   - name: vanfree
     workspace: vanfree
-    domain: planexo.io
+    domain: vanfree.de
     server: maxone-prod
     deploy: blue-green
-    container: planexo-app
+    container: vanfree-app
     path_local: c:\Users\max\Projects\vanfree
-    path_server: /opt/planexo
-    secrets_dir: planexo
+    path_server: /opt/vanfree
+    secrets_dir: vanfree
     status: live
     tags: product
-    notes: Phase-1-Rename Code abgeschlossen, Phase-2 Server pending; Container/Pfad/Secrets noch planexo-*
+    notes: "Aktueller kanonischer Produktname und Deploy-Stand: vanfree, Domain vanfree.de, Container vanfree-*."
 
-  - name: plansey
-    workspace: plansey
-    domain: plansey.app
+  - name: plansey-2026
+    workspace: plansey-2026
+    domain: new.plansey.de
     server: maxone-prod
     deploy: blue-green
     container: plansey-app
-    path_local: c:\Users\max\Projects\plansey
-    path_server: /opt/plansey-next
+    path_local: c:\Users\max\Projects\plansey-2026
+    path_server: /opt/plansey-2026
     secrets_dir: plansey
     status: live
     tags: product
+    notes: 'Plansey 2026 ist die aktuelle Hauptversion. Plansey Legacy (Plansey 2015) liegt separat unter C:\Users\max\Projects\plansey-legacy; Child-Version Phase 0 ist Plansey Engaged unter C:\Users\max\Projects\plansey-engaged.'
+
+  - name: stadtpunkt
+    workspace: stadtpunkt
+    domain: stadtpunkt.maxone.one
+    server: maxone-prod
+    deploy: blue-green
+    container: stadtpunkt-app
+    path_local: c:\Users\max\Projects\stadtpunkt
+    path_server: /opt/stadtpunkt
+    secrets_dir: stadtpunkt
+    status: live
+    tags: customer
+    external_subscriptions: []
+    last_review_date: "2026-05-04"
+    notes: "Grafikerin-/Sponsor-Produktionsprozess. Sales-Funnel und Admin-Slot-View liegen im maxone.one Repo; dieses Repo betreibt stadtpunkt.maxone.one."
 
   - name: kitchen-station
     workspace: kitchen-station
@@ -185,3 +202,16 @@ projects:
     tags: product
     warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
+
+  - name: zentinel
+    workspace: zentinel
+    domain: zentinel.maxone.one
+    server: maxone-prod
+    deploy: null
+    container: null
+    path_local: c:\Users\max\Projects\Zentinel
+    path_server: null
+    secrets_dir: zentinel
+    status: dev
+    tags: product
+    notes: "Seit 2026-05-07 als eigenes Projekt-Repo auf Projektebene entkoppelt. Standalone Deploy/Container-Pfade werden nach Abschluss der Entkopplung gesetzt; bis dahin laufen produktive Teile weiterhin ueber maxone.one-Infrastruktur."
