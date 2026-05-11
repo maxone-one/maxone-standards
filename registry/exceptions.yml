@@ -56,6 +56,21 @@ exceptions:
     expires_until: '2026-10-29'
     granted_by: max
 
+  # katchi ist paused — kein docker-compose.yml vorhanden (nur Test-Stubs).
+  - project: katchi
+    standard: '002'
+    reason: Projekt paused — kein docker-compose.yml lokal, nur Test-Stubs. Bei Reaktivierung nachreichen.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  - project: katchi
+    standard: '004'
+    reason: Projekt paused — kein docker-compose.yml lokal, TLS-Konfiguration nicht prüfbar. Bei Reaktivierung nachreichen.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
   # katchi ist paused — kein Source-Code im lokalen Verzeichnis, nur Test-Stubs.
   # CONCEPT.md wird beim Reaktivierungs-Sprint nachgereicht.
   - project: katchi
@@ -108,7 +123,7 @@ exceptions:
   # plansey verwendet NextAuth (JWT-Sessions) statt Supabase SSR Auth.
   # @supabase/ssr ist nur für DB-Zugriffe (server-side queries), nicht für Auth.
   # Token-Refresh läuft über NextAuth's auth()-Call in middleware.ts.
-  - project: plansey
+  - project: plansey-2026
     standard: '032'
     reason: NextAuth JWT-Sessions — Supabase SSR nur für DB, nicht Auth. auth()-Call in middleware.ts ist das NextAuth-Äquivalent.
     granted_at: '2026-05-12'

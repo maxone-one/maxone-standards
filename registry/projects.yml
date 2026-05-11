@@ -172,6 +172,7 @@ projects:
     deploy: blue-green
     container: vanfree-app
     path_local: c:\Users\max\Projects\vanfree
+    compose_file: ops/docker-compose.app.yml
     path_server: /opt/vanfree
     secrets_dir: vanfree
     status: live
@@ -207,6 +208,7 @@ projects:
     container: plansey-app
     path_local: c:\Users\max\Projects\plansey-2026
     path_server: /opt/plansey-2026
+    compose_file: docker-compose.prod.yml
     secrets_dir: plansey
     status: live
     tags: product
@@ -346,6 +348,7 @@ projects:
     deploy: blue-green
     container: snapflow-app
     path_local: c:\Users\max\Projects\snapflow.one
+    compose_file: infra/docker-compose.yml
     path_server: /opt/snapflow
     secrets_dir: snapflow
     status: live
@@ -374,6 +377,7 @@ projects:
     deploy: null
     container: null
     path_local: c:\Users\max\Projects\Zentinel
+    compose_file: zentinel/vigil/docker-compose.yml
     path_server: null
     secrets_dir: zentinel
     status: dev
