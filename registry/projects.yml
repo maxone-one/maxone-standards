@@ -64,6 +64,21 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: keiner - VPS-Hosting ist strukturell notwendig
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (Zentinel)
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-04-27"
 
   - name: stadtlahnflow
     workspace: stadt-lahn-flow
@@ -86,6 +101,21 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: keiner - VPS-Hosting ist strukturell notwendig
     last_review_date: "2026-05-06"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-05-06"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (Outreach, Benachrichtigungen)
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-05-06"
     impressum_local_intentional: true  # Infrastruktur-Unabhaengigkeit (siehe Projekt-CLAUDE.md)
     notes: "Kanonischer Name: stadtlahnflow. GitHub-Repo 2026-05-06 von maxone-one/stadtlahnfluss auf maxone-one/stadtlahnflow umbenannt. Legacy-Domains wie stadtlahnfluss.de redirecten auf stadtlahnflow.de; Container/Secrets bleiben historisch slf-*."
 
@@ -101,6 +131,14 @@ projects:
     status: paused
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
     notes: "Projekt archiviert/pausiert seit 2026-05-06; Kundin hat das Projekt vorerst abgebrochen. Nicht als aktives Live-/Customer-Priority-Projekt behandeln."
     warmup_required: false  # Standard 033: Vue SPA via nginx, kein SSR (Cold-Start nur fuer /api-Proxy, der Backend triggert)
 
@@ -117,6 +155,14 @@ projects:
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
     notes: "Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29)."
 
   - name: vanfree
@@ -136,6 +182,21 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: "Domain behalten solange Projekt aktiv"
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-04-27"
     notes: "Aktueller kanonischer Produktname und Deploy-Stand: vanfree, Domain vanfree.de, Container vanfree-*."
 
   - name: plansey-2026
@@ -155,6 +216,14 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: "Domain behalten solange Projekt aktiv"
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
     notes: 'Plansey 2026 ist die aktuelle Hauptversion. Plansey Legacy (Plansey 2015) liegt separat unter C:\Users\max\Projects\plansey-legacy; Child-Version Phase 0 ist Plansey Engaged unter C:\Users\max\Projects\plansey-engaged.'
 
   - name: stadtpunkt
@@ -170,6 +239,14 @@ projects:
     tags: customer
     external_subscriptions: []
     last_review_date: "2026-05-04"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-05-04"
     notes: "Grafikerin-/Sponsor-Produktionsprozess. Sales-Funnel und Admin-Slot-View liegen im maxone.one Repo; dieses Repo betreibt stadtpunkt.maxone.one."
 
   - name: kitchen-station
@@ -185,6 +262,7 @@ projects:
     tags: internal
     external_subscriptions: []  # internes Tool, keine eigenen Abos
     last_review_date: "2026-04-27"
+    data_processors: []  # internes Tool ohne Kundendaten
     deploy_pipeline: manual  # Standard 027 — internes Tool, kein externer Traffic
     notes: Internes Tool, kein Customer-facing-Traffic. Ausnahme von Standards 011 (Vector-Chat) und 012 (Footer).
 
@@ -209,6 +287,21 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: keiner - eigener VPS für voltfair-cli
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (voltfair-cli)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (Lead-Reminders, E-Mail-Sequenzen)
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-04-27"
 
   - name: solarproof
     workspace: solarproof
@@ -222,6 +315,7 @@ projects:
     tags: brand
     external_subscriptions: []  # kein Server, keine Domain — keine eigenen Abos
     last_review_date: "2026-04-27"
+    data_processors: []  # kein Server, keine personenbezogenen Daten verarbeitet
 
   - name: vector
     workspace: vector
@@ -236,6 +330,14 @@ projects:
     tags: infra
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
 
   - name: snapflow
     workspace: snapflow
@@ -254,6 +356,14 @@ projects:
         cost_per_month_eur: variabel
         sunset_plan: "Domain behalten solange Projekt aktiv"
     last_review_date: "2026-04-27"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
     warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
 
@@ -269,4 +379,12 @@ projects:
     status: dev
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-04-27"
     notes: "Seit 2026-05-07 als eigenes Projekt-Repo auf Projektebene entkoppelt. Standalone Deploy/Container-Pfade werden nach Abschluss der Entkopplung gesetzt; bis dahin laufen produktive Teile weiterhin ueber maxone.one-Infrastruktur."
