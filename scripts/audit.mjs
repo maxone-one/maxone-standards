@@ -1654,6 +1654,58 @@ const localChecks = {
     if (warns.length) return WARN(warns.join('; '));
     return PASS(`${found.split(/[\\/]/).pop()}: 7 Pflicht-Klassen sauber`);
   },
+  '037-tech-stack-currency': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+    if (project.status === 'sunset') return SKIP('status=sunset');
+
+    const pkgPath = join(project.path_local, 'package.json');
+    if (!existsSync(pkgPath)) return SKIP('kein package.json');
+
+    const today = new Date();
+    const findings = [];
+
+    // Last dep-sweep via git log
+    try {
+      const since180 = new Date(today - 180 * 86400000).toISOString().slice(0, 10);
+      const since90  = new Date(today - 90  * 86400000).toISOString().slice(0, 10);
+      const log180 = execFileSync('git', ['log', '--oneline', `--since=${since180}`, '--grep=chore(deps)'],
+        { cwd: project.path_local, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+      const log90  = execFileSync('git', ['log', '--oneline', `--since=${since90}`,  '--grep=chore(deps)'],
+        { cwd: project.path_local, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+
+      if (!log180) {
+        findings.push({ level: 'fail', msg: 'kein chore(deps)-Commit in 180+ Tagen — Sweep dringend überfällig' });
+      } else if (!log90) {
+        findings.push({ level: 'warn', msg: 'kein chore(deps)-Commit in 90+ Tagen — Sweep Kadenz verletzt' });
+      }
+    } catch {
+      // git nicht verfügbar oder kein git-Repo — sweep check überspringen
+    }
+
+    // npm audit high/critical (nur wenn node_modules existiert)
+    const nmPath = join(project.path_local, 'node_modules');
+    if (existsSync(nmPath)) {
+      try {
+        execFileSync('npm', ['audit', '--json', '--audit-level=high'],
+          { cwd: project.path_local, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+      } catch (e) {
+        try {
+          const auditJson = JSON.parse(e.stdout ?? '{}');
+          const vulns = auditJson?.metadata?.vulnerabilities ?? {};
+          const criticalHigh = (vulns.critical ?? 0) + (vulns.high ?? 0);
+          if (criticalHigh > 0) {
+            findings.push({ level: 'warn', msg: `npm audit: ${criticalHigh} high/critical Vuln(s)` });
+          }
+        } catch { /* JSON parse fehlgeschlagen */ }
+      }
+    }
+
+    const fails = findings.filter(f => f.level === 'fail');
+    const warns = findings.filter(f => f.level === 'warn');
+    if (fails.length) return FAIL(fails.map(f => f.msg).join('; '));
+    if (warns.length) return WARN(warns.map(f => f.msg).join('; '));
+    return PASS('Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
