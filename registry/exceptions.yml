@@ -224,3 +224,51 @@ exceptions:
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
+
+  # maxone.one hat lokales Impressum in der Footer-Komponente — hostet selbst.
+  - project: maxone.one
+    standard: '009'
+    reason: Hostet eigene Website — Impressum lokal in Footer ist korrekt, kein API-Widget nötig.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # zentinel hat lokales Impressum in Footer — Admin-Tool mit eigenen Rechtsseiten.
+  - project: zentinel
+    standard: '009'
+    reason: "Eigene /impressum und /datenschutz Seiten in Footer — keine externe API-Einbettung. Widget bei Erweiterung."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # plansey hat lokales Impressum (/imprint Route) — eigene Rechtsseiten.
+  - project: plansey-2026
+    standard: '009'
+    reason: "Eigene /imprint und /privacy Seiten — keine externe API-Einbettung. Widget bei Erweiterung."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # voltfair hat lokales Impressum (/impressum Route) — eigene Rechtsseiten.
+  - project: voltfair
+    standard: '009'
+    reason: "Eigene /impressum und /datenschutz Seiten — keine externe API-Einbettung. Widget bei Erweiterung."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # katchi ist paused — keine Credits-Route vorhanden.
+  - project: katchi
+    standard: '010'
+    reason: Projekt paused — Credits-Route bei Reaktivierung einbinden.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # zentinel hat Credits lokal in AdminSidebar — interne Admin-Komponente.
+  - project: zentinel
+    standard: '010'
+    reason: Credits lokal in AdminSidebar (interne Admin-UI) — API-Migration bei nächstem UI-Sprint.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
