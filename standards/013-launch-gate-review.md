@@ -68,6 +68,7 @@ File. Alte Einträge bleiben stehen — Audit-Trail.
    - Consent-Banner für alle nicht-essentiellen Tracker, vor erstem Request
    - Datenschutzerklärung listet jeden Drittdienst namentlich
    - DPA / AVV mit jedem Auftragsverarbeiter (Brevo, Supabase, Hetzner, …)
+     in `registry/projects.yml -> data_processors` dokumentiert (Standard 041)
 
 **5. Datenbank-Spezifika:**
    - Supabase: RLS auf JEDER Tabelle aktiviert + Policy definiert (Default-deny)

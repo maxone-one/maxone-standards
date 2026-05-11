@@ -48,7 +48,8 @@ Inventar nicht kennt, kann keine korrekte Erklärung schreiben.
 
 **1. Bei Gate 1 (Standard 015 CONCEPT.md):**
    - Section „Externe Dienste" listet jeden geplanten Dienst mit
-     AVV-Status und Server-Region
+     AVV-Status und Server-Region; Auftragsverarbeiter werden spaeter in
+     `registry/projects.yml -> data_processors` nach Standard 041 gespiegelt
 
 **2. Bei Gate 3 (Standard 013 LAUNCH-REVIEW.md):**
    - Section D füllt das vollständige Tracker-Inventar aus

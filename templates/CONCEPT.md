@@ -57,7 +57,9 @@ Policy). Service-Role nur server-seitig.
 ## Externe Dienste
 
 Jeder Drittdienst, der Daten verarbeitet, mit Verarbeitungsrolle und
-AVV-Status.
+AVV-Status. Dienste, die personenbezogene Daten im Auftrag verarbeiten, muessen
+vor Live-Gang zusaetzlich in `registry/projects.yml -> data_processors` nach
+Standard 041 stehen.
 
 | Dienst         | Zweck                         | Server-Region | AVV/DPA           | Datenkategorie      |
 |----------------|-------------------------------|---------------|--------------------|---------------------|
@@ -66,6 +68,12 @@ AVV-Status.
 | Brevo          | Transaktions-Mails            | EU            | ✅ im Account      | E-Mail-Adressen     |
 | Stripe         | Zahlungen                     | EU/US         | ✅ Standard         | Zahlungsdaten       |
 | OpenAI / Anthropic | (nur falls genutzt)       | US            | …                   | …                   |
+
+**Registry-Abgleich (Standard 041):** geplante `data_processors`:
+
+| Dienst | Zweck | Datenkategorie | Region | AVV/DPA-Status | Nachweis-Ort |
+|--------|-------|----------------|--------|----------------|--------------|
+|        |       |                |        |                |              |
 
 **Server-Lock:** Code läuft nur auf eigener Infra (Hetzner) ODER auf
 Whitelist-Plattform (siehe Standard 016, geplant). Lovable / Bolt / Base44

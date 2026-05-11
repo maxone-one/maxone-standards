@@ -267,7 +267,7 @@ Jeder Eintrag mit:
 
 #### C4 — Fehlender AVV / DPA
 - **Rechtsgrundlage:** DSGVO Art. 28
-- **Coverage:** ✅ Standard 013 Section D
+- **Coverage:** Standard 013 Section D + Standard 041 (data_processors-Registry mit AVV-/DPA-Status, Nachweis-Ort und reviewed_at)
 
 #### C5 — Daten ausserhalb EU
 - **Rechtsgrundlage:** DSGVO Kap. V
@@ -351,7 +351,7 @@ Jeder Eintrag mit:
 - **Coverage:** ✅ Standard 018 (audit.mjs zieht bis zu 8 Live-Assets pro Domain und scannt auf `*.maxone.studio`-Reste, Plattform-Watermarks, Dev-Hosts, Service-Role-Keys; am 2026-04-27 hat das Audit bei repivot genau diesen Drift live nachgewiesen)
 
 #### F3 — Cert-Ablauf
-- **Vorfall:** vanfree (planexo.io) hat 2026-04-27 TLS-Handshake-Fehler — Audit hat es als FAIL geflaggt; karastelev.de hatte 2026-04-22 Account-Ratelimit-Sprenger durch HTTP-01 (Auslöser für DNS-01-Direktive)
+- **Vorfall:** vanfree (vanfree.de) hat 2026-04-27 TLS-Handshake-Fehler — Audit hat es als FAIL geflaggt; karastelev.de hatte 2026-04-22 Account-Ratelimit-Sprenger durch HTTP-01 (Auslöser für DNS-01-Direktive)
 - **Coverage:** ✅ Standard 019 (audit.mjs `tls.connect` zieht Cert, prüft Restlaufzeit (>14d OK / 7-14d WARN / <7d FAIL), Issuer (Let's Encrypt) und Subject/SAN-Match)
 
 #### F4 — Source-Maps in Production
@@ -441,7 +441,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 | DSGVO | Google Fonts (C2) | D | 017 | HTML-Pattern-Scan | ✅ hart (seit 017) |
 | DSGVO | PII in Logs | — | — | — | 🔴 **TODO** |
 | DSGVO | PII-Exposure (Endpunkt) | C, J6 | 020 (außen) | manuell + Pen-Test-Light + Vibe App Scanner | ⚠️ teilweise (`.env`/`.git`/Backup hart, Endpunkt-Scan manuell) |
-| DSGVO | AVV / DPA | D | — | Liste pflegen | ⚠️ manuell |
+| DSGVO | AVV / DPA | D | 041 | data_processors-Registry | hart (seit 041) |
 | DSGVO | EU-Region | D | — | manuell | ⚠️ manuell |
 | DSGVO | Datenfriedhof / Sunset-Drift | — | 014 | SUNSET.md + Container-Tear-Down-Check | ✅ hart (seit 014) |
 | LLM01:2025 | Prompt Injection (direct) | — | 025 | System-Prompt-Härtung + Input-Wrapping + Test-Suite (garak-Probes empfohlen) | ✅ hart (seit 025) |
@@ -496,6 +496,7 @@ Basierend auf der Coverage-Matrix, in Reihenfolge nach Hebelwirkung:
 | ~~**029** Indirect-Prompt-Injection-Test~~ | LLM01:2025 (indirect via RAG/Telegram/Email/Web/Upload) | hoch — schließt die größte ungetestete LLM-Klasse (Bing/Copilot/ChatGPT-Memory-Klasse), hat live FAILs an vector + voltfair + stadtlahnflow gefunden | ✅ **erledigt 2026-04-28** |
 | ~~**030** Mail-Architektur (Outbound=Brevo, Inbound+Sent=Stalwart)~~ | F5 (Mail-Architektur-Drift): Pre-Flight-Pflicht für Brevo-Domain-Auth, JMAP-Template-Erhaltung, Health-Check-Anti-Patterns, interner vs. Public-Hostname | hoch — destilliert 20 Bibel-Regeln aus 4 realen Vorfällen (03-24/04-05/04-10/04-27) in Audit-Checks; verhindert Sent-Blackholes, Self-Bans, Silent-Brevo-Rejections | ✅ **erledigt 2026-04-28** |
 | ~~**031** Routine-Platform~~ | G4 (IDE-/Sitzungs-Drift): Cron/Reminder/Watchdog-Routinen NUR auf Heartbeat-Plattform (GH Actions schedule, systemd-Timer, pg_cron) oder via 24/7-Agent (VECTOR) — niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig | hoch — verhindert Single-Point-of-Failure für alle Drift-Detection-Routinen (021/019/020/030); ausgelöst durch eigenen Vorfall 2026-04-27 mit 4 NUC-abhängigen Optionen | ✅ **erledigt 2026-04-28** |
+| ~~**041** AVV-/DPA-Registry~~ | C4 (fehlender AVV/DPA): Auftragsverarbeiter-Inventar mit AVV-Status, Nachweis-Ort und reviewed_at in `registry/projects.yml` | hoch - macht DSGVO Art. 28 pruefbar statt nur Launch-Review-Checkbox | erledigt 2026-05-08 |
 
 Plus zu schliessen ohne nummerierten Standard, in Section J / 013 Updates:
 - Crypto-Failures (B3) — semgrep-Regelpaket erweitern

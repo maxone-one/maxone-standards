@@ -1,4 +1,4 @@
-# 019 — Cert- und DNS-Realität
+﻿# 019 — Cert- und DNS-Realität
 
 **Status:** active
 **Seit:** 2026-04-27
@@ -23,7 +23,7 @@ bei Kundenanruf bemerkt. Konkrete Vorfälle 2026-04:
 - **plansey.app** hatte den DNS-A-Record auf eine Lovable-IP zeigen,
   obwohl wir den Build selbst hosten. Resultat: HTTP 404 vom Lovable-CDN
   für eine Domain, die wir „verloren" hatten ohne es zu merken.
-- **vanfree** (Domain `planexo.io` bis Phase 2) hatte TLS-Handshake-Fehler
+- **vanfree** (Domain `vanfree.de` bis Phase 2) hatte TLS-Handshake-Fehler
   (`ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR`) — Audit 017 und 018 konnten gar
   nichts mehr sehen, weil der Server keinen TLS-Cert mehr hat.
 - **karastelev.de**-Wildcard (siehe CLAUDE.md TLS-Direktive 2026-04-22)

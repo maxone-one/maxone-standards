@@ -59,6 +59,10 @@ Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
       aber Skript läuft trotzdem")
 - [ ] **AVV / DPA** abgeschlossen mit jedem Auftragsverarbeiter
       (Hetzner ✅ standardmäßig, Brevo ✅ im Account, Supabase ✅ Plus-Plan)
+- [ ] **Standard 041:** alle Auftragsverarbeiter in
+      `registry/projects.yml -> data_processors` dokumentiert
+      (`service`, `purpose`, `personal_data`, `region`, `avv_status`,
+      `evidence`, `reviewed_at`)
 - [ ] Google Fonts: lokal eingebunden ODER Consent ODER nicht verwendet
       (LG München I, Az. 3 O 17493/20)
 - [ ] Externe Embeds (YouTube, Vimeo, Maps): Two-Click-Lösung oder Consent

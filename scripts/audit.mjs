@@ -855,6 +855,142 @@ const localChecks = {
     if (allWarnings.length) return WARN(allWarnings.join('; '));
     return PASS('keine Abo-/SaaS-Marker, external_subscriptions sauber');
   },
+  '041-avv-dpa-registry': (project) => {
+    if (!['live', 'dev'].includes(project.status)) return SKIP(`status=${project.status ?? 'null'}`);
+    const tags = Array.isArray(project.tags) ? project.tags : [project.tags].filter(Boolean);
+    const lowRisk = tags.includes('internal') || tags.includes('infra');
+    const customerFacing = Boolean(project.domain) && !lowRisk;
+    const processors = project.data_processors;
+
+    if (processors === undefined) {
+      return WARN('data_processors fehlt in registry/projects.yml (Standard 041)');
+    }
+    if (!Array.isArray(processors)) {
+      return WARN('data_processors ist kein Array');
+    }
+    if (processors.length === 0) {
+      if (customerFacing) return WARN('data_processors leer bei Domain-Projekt — explizit pruefen, ob wirklich kein Auftragsverarbeiter existiert');
+      return PASS('data_processors leer dokumentiert');
+    }
+
+    const allowedStatus = new Set(['signed', 'account-enabled', 'standard-terms', 'not-required', 'missing', 'unknown']);
+    const requiredFields = ['service', 'purpose', 'personal_data', 'region', 'avv_status', 'evidence', 'reviewed_at'];
+    const warnings = [];
+    const failures = [];
+    const now = Date.now();
+
+    for (const [idx, p] of processors.entries()) {
+      const label = p?.service || `Eintrag #${idx + 1}`;
+      for (const field of requiredFields) {
+        if (!p || p[field] === undefined || p[field] === null || String(p[field]).trim() === '') {
+          warnings.push(`${label}: ${field} fehlt`);
+        }
+      }
+      if (!p?.avv_status) continue;
+      if (!allowedStatus.has(p.avv_status)) {
+        warnings.push(`${label}: unbekannter avv_status=${p.avv_status}`);
+      }
+      if (['missing', 'unknown'].includes(p.avv_status) && project.status === 'live') {
+        failures.push(`${label}: avv_status=${p.avv_status}`);
+      }
+      if (p.reviewed_at) {
+        const reviewedAt = new Date(p.reviewed_at).getTime();
+        if (Number.isNaN(reviewedAt)) {
+          warnings.push(`${label}: reviewed_at unlesbar (${p.reviewed_at})`);
+        } else {
+          const ageDays = Math.floor((now - reviewedAt) / 86400000);
+          if (ageDays > 365) warnings.push(`${label}: AVV-Pruefung aelter als 12 Monate (${p.reviewed_at})`);
+        }
+      }
+    }
+
+    if (failures.length) return FAIL(failures.join('; '));
+    if (warnings.length) return WARN(warnings.slice(0, 8).join('; '));
+    return PASS(`${processors.length} Auftragsverarbeiter dokumentiert`);
+  },
+  '038-cross-project-broadcast': (project) => {
+    const broadcastsDir = join(ROOT, 'broadcasts');
+    if (!existsSync(broadcastsDir)) return WARN('broadcasts/-Verzeichnis fehlt in maxone-standards');
+
+    let files;
+    try { files = readdirSync(broadcastsDir).filter(f => /^BCAST-.*\.md$/i.test(f)); }
+    catch { return WARN('broadcasts/-Verzeichnis nicht lesbar'); }
+
+    if (files.length === 0) return PASS('keine Broadcasts vorhanden');
+
+    const today = new Date();
+    const failures = [];
+    const warnings = [];
+
+    for (const file of files) {
+      const filePath = join(broadcastsDir, file);
+      let content;
+      try { content = readFileSync(filePath, 'utf8'); } catch { continue; }
+
+      // Status: nur open-Broadcasts prüfen
+      const statusMatch = content.match(/\*\*Status:\*\*\s*(open|closed)/i);
+      if (!statusMatch || statusMatch[1].toLowerCase() !== 'open') continue;
+
+      // Datum aus Dateiname: BCAST-YYYY-MM-DD-...
+      const dateMatch = file.match(/BCAST-(\d{4}-\d{2}-\d{2})/i);
+      const broadcastDate = dateMatch ? new Date(dateMatch[1]) : null;
+      const ageDays = broadcastDate ? Math.floor((today - broadcastDate) / 86400000) : null;
+
+      // Betroffene-Projekte-Tabelle parsen: Zeilen mit | projektname | status |
+      const tableSection = content.match(/## Betroffene Projekte([\s\S]*?)##/i);
+      if (!tableSection) continue;
+      const tableText = tableSection[1];
+
+      // Tabellenzeilen: | name | status | ... |
+      const rowRegex = /\|\s*([^|]+?)\s*\|\s*(open|resolved)\s*\|/gi;
+      let rowMatch;
+      let projectFound = false;
+      let projectStatus = null;
+
+      while ((rowMatch = rowRegex.exec(tableText)) !== null) {
+        const rowName = rowMatch[1].trim().toLowerCase();
+        const rowStatus = rowMatch[2].trim().toLowerCase();
+        if (rowName === project.name.toLowerCase()) {
+          projectFound = true;
+          projectStatus = rowStatus;
+          break;
+        }
+      }
+
+      if (!projectFound) continue;
+      if (projectStatus === 'resolved') continue;
+
+      // Projekt ist open in diesem Broadcast
+      const label = file.replace('.md', '');
+      if (ageDays !== null && ageDays > 30) {
+        failures.push(`${label}: überfällig (${ageDays} Tage) — Fix fehlt`);
+        continue;
+      }
+
+      // Audit-Grep-Pattern prüfen
+      const failGrepMatch = content.match(/\*\*Fail-Grep:\*\*\s*`([^`]+)`/i);
+      const filePatternMatch = content.match(/\*\*Datei-Pattern:\*\*\s*`([^`]+)`/i);
+
+      if (failGrepMatch && filePatternMatch && project.path_local && existsSync(project.path_local)) {
+        const failPattern = failGrepMatch[1];
+        const fileGlob = filePatternMatch[1].replace(/\*\*/g, '').replace(/\//g, '/');
+        try {
+          const grepResult = execFileSync('grep', ['-rl', '--include=*.ts', '--include=*.tsx', '--include=*.js',
+            failPattern, project.path_local], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+          if (grepResult) {
+            failures.push(`${label}: Fail-Grep-Pattern trifft (${failPattern})`);
+            continue;
+          }
+        } catch { /* keine Treffer oder grep nicht verfügbar */ }
+      }
+
+      failures.push(`${label}: offener Broadcast — Fix für ${project.name} fehlt`);
+    }
+
+    if (failures.length) return FAIL(failures.join('; '));
+    if (warnings.length) return WARN(warnings.join('; '));
+    return PASS(`${files.length} Broadcast(s) geprüft — kein offener Eintrag für ${project.name}`);
+  },
   '025-llm-app-spezial': (project) => {
     if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
 

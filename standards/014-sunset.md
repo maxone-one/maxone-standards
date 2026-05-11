@@ -1,4 +1,4 @@
-# 014 — Sunset (Stilllegung von Projekten)
+﻿# 014 — Sunset (Stilllegung von Projekten)
 
 **Status:** active
 **Seit:** 2026-04-27
@@ -22,9 +22,9 @@ Sunset-Prozess statt zu „verwaisen". Der Endzustand ist nachweisbar:
 Zwei aktuelle Schwebezustände aus dem 2026-04-27-Audit zeigen das
 Problem:
 
-- **vanfree** (`planexo.io`) — Code wurde umbenannt, aber Server-
-  Container heißt weiter `planexo-app`, TLS-Cert ist defekt
-  (Standard 019 FAIL), Domain `planexo.io` muss noch entschieden werden
+- **vanfree** (`vanfree.de`) — Code wurde umbenannt, aber Server-
+  Container heißt weiter `vanfree-app`, TLS-Cert ist defekt
+  (Standard 019 FAIL), Domain `vanfree.de` muss noch entschieden werden
   (behalten als Brand-Schutz oder freigeben?). Im Repo steht nirgendwo
   der Sunset-Plan.
 - **plansey** — DNS zeigt auf Cloudflare-IPs (Standard 019 WARN),

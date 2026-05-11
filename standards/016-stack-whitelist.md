@@ -12,7 +12,9 @@ Migrations-Pfad in der `CONCEPT.md` (Standard 015) und Sign-Off, dass
 die Migration vor Gate 3 (Standard 013) abgeschlossen ist.
 
 Kein Stack-Eintrag ohne Begründung. Keine Blacklist-Komponente ohne
-Migrations-Pfad. Kein Live-Status mit Blacklist-Komponente im Bundle.
+Migrations-Pfad. Kein Live-Status mit Blacklist-Komponente im Bundle. Kein
+PII-verarbeitender externer Dienst ohne geklaerten AVV-/DPA-Status nach
+Standard 041.
 
 ## Warum
 

@@ -168,9 +168,9 @@ maxone-standards audit — 11 Projekt(e)
   [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
   [skip] 004-tls-dns01 — keine Traefik-Labels (vermutlich kein eigener Reverse-Proxy)
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [WARN] 009-impressum-widget — Impressum lokal? siehe plansey-next/app/[locale]/layout.tsx
-  [OK]   010-credits-api — API in plansey-next/app/[locale]/credits/page.tsx
-  [OK]   011-vector-chat — eingebunden in plansey-next/app/[locale]/layout.tsx
+  [WARN] 009-impressum-widget — Impressum lokal? siehe plansey-2026/app/[locale]/layout.tsx
+  [OK]   010-credits-api — API in plansey-2026/app/[locale]/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in plansey-2026/app/[locale]/layout.tsx
   [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
   [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
   [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
@@ -393,12 +393,12 @@ maxone-standards audit — 11 Projekt(e)
 
 === vanfree (ssh) ===
   [OK]   006-handoff-md
-  [FAIL] 003-secrets-store — /opt/secrets/planexo/keys.env fehlt
+  [FAIL] 003-secrets-store — /opt/secrets/vanfree/keys.env fehlt
   [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
   [OK]   033-post-deploy-warmup — deploy.sh hat Warm-Up vor Traefik-Swap
-  [OK]   007-container-running — 1 Slot aktiv: planexo-app-blue (Blue/Green normal)
+  [OK]   007-container-running — 1 Slot aktiv: vanfree-app-blue (Blue/Green normal)
 
 === plansey (ssh) ===
   [OK]   006-handoff-md
@@ -524,8 +524,8 @@ maxone-standards audit — 11 Projekt(e)
   stadtlahnflow        028-container-misconfig      app-blue: image: stadtlahnfluss-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: stadtlahnfluss-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 3 WARN)
   katchi               028-container-misconfig      app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
   repivot              006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/repivot/
-  vanfree              003-secrets-store            /opt/secrets/planexo/keys.env fehlt
-  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  vanfree              003-secrets-store            /opt/secrets/vanfree/keys.env fehlt
+  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
   kitchen-station      003-secrets-store            /opt/secrets/kitchen-station/keys.env fehlt
   snapflow             006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/snapflow/
   snapflow             003-secrets-store            /opt/secrets/snapflow/keys.env fehlt

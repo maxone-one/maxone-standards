@@ -34,6 +34,13 @@
 #                             keinen Post-Deploy-Warm-Up brauchen (Static SPAs ohne SSR,
 #                             pure-API-Container ohne User-Frontend). Default = audit
 #                             erwartet Warm-Up-Pattern in deploy.sh.
+#   data_processors         — (optional, Standard 041; Pflicht vor Live-Gang bei
+#                             personenbezogenen Daten) Liste externer Auftragsverarbeiter.
+#                             Jeder Eintrag: { service, purpose, personal_data, region,
+#                             avv_status, evidence, reviewed_at, subprocessors,
+#                             transfer_basis }. Erlaubte avv_status-Werte:
+#                             signed | account-enabled | standard-terms | not-required |
+#                             missing | unknown.
 
 projects:
   - name: maxone.one
