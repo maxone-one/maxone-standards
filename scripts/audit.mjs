@@ -1017,7 +1017,7 @@ const localChecks = {
       for (const e of entries) {
         const full = join(dir, e.name);
         if (e.isDirectory()) {
-          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv)/.test(e.name)) continue;
+          if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|\.claude|coverage|audits|\.venv)/.test(e.name)) continue;
           scan(full, depth + 1);
         } else if (/\.(js|ts|tsx|jsx|mjs|py)$/i.test(e.name)) {
           codeFiles.push(full);
