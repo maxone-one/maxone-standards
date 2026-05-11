@@ -1115,7 +1115,7 @@ const localChecks = {
         } else if (/\.(js|ts|tsx|jsx|mjs|cjs|py)$/i.test(e.name)) {
           codeFiles.push(full);
           if (/indirect[-_]?injection|prompt[-_]?injection/i.test(e.name)) testFiles.push(full);
-          if (codeFiles.length > 600) return;
+          if (codeFiles.length > 700) return;
         } else if (/package\.json$/.test(e.name) || /requirements.*\.txt$/.test(e.name) || /promptfooconfig\.ya?ml$/i.test(e.name)) {
           codeFiles.push(full);
           if (/promptfooconfig\.ya?ml$/i.test(e.name)) testFiles.push(full);
@@ -1123,7 +1123,7 @@ const localChecks = {
       }
     }
     scan(project.path_local, 0);
-    const sample = codeFiles.slice(0, 600).map(f => {
+    const sample = codeFiles.slice(0, 700).map(f => {
       try { return readFileSync(f, 'utf8'); } catch { return ''; }
     }).join('\n');
 
