@@ -199,3 +199,28 @@ exceptions:
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
+
+  # plansey env_file nutzt .env (relativ → /opt/plansey-2026/.env auf Server).
+  # Migrate ist One-Shot-Container — restart wäre falsch (würde nach Migration neustarten).
+  - project: plansey-2026
+    standard: '028'
+    reason: "env_file=.env (relativ, nicht /opt/secrets/plansey/keys.env); migrate-Service ist One-Shot (kein restart). Migration auf /opt/secrets/ bei nächstem Infra-Sprint."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # vector env_file nutzt .env (relativ → /opt/vector/.env auf Server).
+  - project: vector
+    standard: '028'
+    reason: "env_file=.env (relativ, nicht /opt/secrets/vector/keys.env). Migration auf /opt/secrets/ bei nächstem Infra-Sprint."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # repivot env_file nutzt relative Pfade im Repo-Root.
+  - project: repivot
+    standard: '028'
+    reason: "env_file zeigt auf relative Pfade (./backend/.env) statt /opt/secrets/repivot/keys.env. Migration ausstehend."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
