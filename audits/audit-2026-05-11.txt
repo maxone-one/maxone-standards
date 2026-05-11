@@ -2,19 +2,19 @@ maxone-standards audit — 13 Projekt(e)
 (3 Ausnahme(n) aus registry/exceptions.yml geladen)
 
 === maxone.one (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/maxone-v2
+  [FAIL] 007-paths — Workspace fehlt: /opt/maxone-v2/maxone.one.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [WARN] 009-impressum-widget — Impressum lokal? siehe build-blue/client/_app/immutable/entry/app.Y46XBcAL.js
   [skip] 010-credits-api — hostet die API selbst
   [OK]   011-vector-chat — hostet Widget mit, Einbau geprüft separat
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
   [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
@@ -22,31 +22,34 @@ maxone-standards audit — 13 Projekt(e)
   [OK]   019-cert-dns — DNS=128.140.40.235, Cert 70d, Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für maxone.one
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: systemd-timer, vector-agent, maxone-watchdog
+  [skip] 032-ssr-auth — kein Next.js (Regel gilt nur für Next App Router)
+  [FAIL] 024-code-health-budget — > 1000-Zeilen-Datei(en): build-blue/handler.js:1199, build-blue/server/chunks/_page.svelte-xCInGCip.js:2534, build-blue/server/chunks/index3-C3cf8TMy.js:1502 (+19); > 500-Zeilen-Datei(en): build-blue/server/chunks/MetaTags-D_4hbfVJ.js:668, build-blue/server/chunks/_layout.svelte-BDo1O0AK.js:592, build-blue/server/chunks/_page.svelte-BvfN-Xbw.js:907 (+13)
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [WARN] 037-tech-stack-currency — npm audit: 2 high/critical Vuln(s)
 
 === stadtlahnflow (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/stadtlahnflow
+  [FAIL] 007-paths — Workspace fehlt: /opt/stadtlahnflow/stadt-lahn-flow.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
   [OK]   009-impressum-widget — lokal (bewusste Ausnahme — siehe Projekt-CLAUDE.md)
   [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
   [FAIL] 011-vector-chat — Widget nicht eingebunden
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
   [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
@@ -55,30 +58,33 @@ maxone-standards audit — 13 Projekt(e)
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — keine Footer-Komponente gefunden
   [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für stadtlahnflow
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: vector-agent
+  [skip] 032-ssr-auth — keine package.json
+  [WARN] 024-code-health-budget — > 500-Zeilen-Datei(en): crawler/src/crawl-regional.ts:774, crawler/src/enrich-emails.ts:850
   [OK]   021-re-review-reminder — letzter Review vor 5 Tagen (2026-05-06)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [skip] 037-tech-stack-currency — kein package.json
 
 === katchi (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/katchi
+  [FAIL] 007-paths — Workspace fehlt: /opt/katchi/katchi.code-workspace
   [skip] 001-blue-green — nicht live
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
   [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
   [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
   [FAIL] 011-vector-chat — Widget nicht eingebunden
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [FAIL] 015-concept-gate — CONCEPT.md fehlt — Pflicht vor erster Code-Zeile (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [skip] 017-dsgvo-tracker — status=paused
   [skip] 018-bundle-drift — status=paused
   [skip] 014-sunset — status=paused
@@ -86,16 +92,19 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 019-cert-dns — status=paused
   [skip] 013-launch-gate — status=paused
   [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [skip] 041-avv-dpa-registry — status=paused
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für katchi
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [OK]   030-mail-architecture — Mail-Architektur konform (1 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
   [skip] 024-code-health-budget — status=paused
   [skip] 021-re-review-reminder — status=paused
   [skip] 027-deploy-pipeline — status=paused
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [FAIL] 028-container-misconfig-local — app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
+  [skip] 037-tech-stack-currency — kein package.json
 
 === repivot (local) ===
   [FAIL] 007-paths — Workspace fehlt: /opt/repivot/repivot.in.code-workspace
@@ -104,7 +113,7 @@ maxone-standards audit — 13 Projekt(e)
   [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
   [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [OK]   009-impressum-widget — API .one in frontend/src/pages/landing/Impressum.tsx
+  [WARN] 009-impressum-widget — nutzt panel.maxone.studio (auf .one migrieren) — frontend/src/pages/landing/Impressum.tsx
   [OK]   010-credits-api — API in frontend/src/pages/landing/Credits.tsx
   [FAIL] 011-vector-chat — Widget nicht eingebunden
   [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
@@ -115,98 +124,107 @@ maxone-standards audit — 13 Projekt(e)
   [WARN] 018-bundle-drift — Drift: *.maxone.studio in index-BP1SgKbE.js; Dev-Host (localhost) in index-BP1SgKbE.js
   [skip] 014-sunset — status=live
   [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; Server-Header verrät Version: "nginx/1.29.6" [SPA-Catch-All erkannt — Probes via Inhalts-Match]
-  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 70d, Let's Encrypt
+  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 69d, Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für repivot
   [FAIL] 025-llm-app-spezial — System-Prompt-Härtung komplett fehlt; keine LLM-Injection-Test-Suite
   [skip] 029-indirect-prompt-injection-test — LLM-App ohne externe Content-Ingestion (kein Telegram/Email/RAG/Web/Upload-Marker)
   [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
   [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
   [skip] 032-ssr-auth — keine package.json
   [WARN] 024-code-health-budget — > 500-Zeilen-Datei(en): frontend/src/pages/Dashboard.tsx:669
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
   [WARN] 028-container-misconfig-local — backend-blue: env_file: zeigt nicht auf /opt/secrets/repivot/keys.env; backend-green: env_file: zeigt nicht auf /opt/secrets/repivot/keys.env
+  [skip] 037-tech-stack-currency — kein package.json
 
 === vanfree (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/vanfree
+  [FAIL] 007-paths — Workspace fehlt: /opt/vanfree/vanfree.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
   [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
   [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
   [FAIL] 011-vector-chat — Widget nicht eingebunden
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
-  [WARN] 018-bundle-drift — Drift: Dev-Host (localhost) in 33-3d078583f7006929.js
+  [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
   [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; X-Powered-By gesetzt: "Next.js"
-  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 83d, Let's Encrypt
+  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 82d, Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für vanfree
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [FAIL] 028-container-misconfig-local — app-blue: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift
+  [skip] 037-tech-stack-currency — kein package.json
 
 === plansey-2026 (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/plansey-2026
+  [FAIL] 007-paths — Workspace fehlt: /opt/plansey-2026/plansey-2026.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
   [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
   [WARN] 004-tls-dns01 — docker-compose.yml fehlt
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
-  [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
+  [WARN] 009-impressum-widget — Impressum lokal? siehe components/layout/Footer.tsx
+  [OK]   010-credits-api — API in app/[locale]/credits/page.tsx
   [FAIL] 011-vector-chat — Widget nicht eingebunden
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
   [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
   [WARN] 020-pentest-light — HSTS-Header fehlt; X-Powered-By gesetzt: "Next.js"
   [OK]   019-cert-dns — DNS=128.140.40.235, Cert 69d, Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
-  [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
+  [WARN] 012-footer — Footer fehlt: impressum, datenschutz, attribution
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für plansey-2026
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [FAIL] 032-ssr-auth — middleware.ts: Matcher nicht broad (Negative-Lookahead fehlt) — Sessions verlieren bei Deploys
+  [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
+  [WARN] 027-deploy-pipeline — Workflow unvollständig: ubuntuLatest, dockerSave, sshImageTransfer (+ compose: docker-compose.yml nicht im Repo-Root)
   [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
 
 === stadtpunkt (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/stadtpunkt
+  [FAIL] 007-paths — Workspace fehlt: /opt/stadtpunkt/stadtpunkt.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
   [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
   [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
   [FAIL] 011-vector-chat — Widget nicht eingebunden
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
   [OK]   018-bundle-drift — 2 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
@@ -215,30 +233,33 @@ maxone-standards audit — 13 Projekt(e)
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — keine Footer-Komponente gefunden
   [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für stadtpunkt
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
   [OK]   021-re-review-reminder — letzter Review vor 7 Tagen (2026-05-04)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [skip] 037-tech-stack-currency — kein package.json
 
 === kitchen-station (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/kitchen-station
+  [FAIL] 007-paths — Workspace fehlt: /opt/kitchen-station/kitchen-station.code-workspace
   [FAIL] 001-blue-green — deploy=single (sollte blue-green sein)
   [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
   [skip] 004-tls-dns01 — keine Domain
   [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
   [skip] 009-impressum-widget — Internes Tool
   [skip] 010-credits-api — Internes Tool
   [skip] 011-vector-chat — Internes Tool
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
   [skip] 017-dsgvo-tracker — keine Domain
   [skip] 018-bundle-drift — keine Domain
   [skip] 014-sunset — status=live
@@ -246,116 +267,23 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 019-cert-dns — keine Domain
   [WARN] 013-launch-gate — LAUNCH-REVIEW.md fehlt (internes/Infra-Tool, Empfehlung)
   [skip] 012-footer — Internes Tool
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  [skip] 027-deploy-pipeline — deploy_pipeline=manual (Ausnahme)
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
-
-=== voltfair (local) ===
-  [FAIL] 007-paths — Workspace fehlt: /opt/voltfair/voltfair.code-workspace
-  [FAIL] 001-blue-green — deploy=single (sollte blue-green sein)
-  [OK]   008-domain-policy
-  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
-  [OK]   004-tls-dns01
-  [WARN] 005-test-first — smoke.mjs ja, TESTING.md fehlt
-  [WARN] 009-impressum-widget — Impressum lokal? siehe app/(public)/credits/page.tsx
-  [OK]   010-credits-api — API in app/(public)/credits/page.tsx
-  [OK]   011-vector-chat — eingebunden in app/layout.tsx
-  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
-  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
-  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
-  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
-  [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
-  [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
-  [skip] 014-sunset — status=live
-  [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; X-Powered-By gesetzt: "Next.js"
-  [OK]   019-cert-dns — DNS=46.225.107.118, Cert 67d, Let's Encrypt
-  [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
-  [WARN] 012-footer — Footer fehlt: attribution
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [FAIL] 025-llm-app-spezial — System-Prompt-Härtung komplett fehlt; Schreib-Tool ohne Approval-Queue-Pattern; keine LLM-Injection-Test-Suite
-  [FAIL] 029-indirect-prompt-injection-test — LLM-App mit External-Ingestion, aber keine Indirect-Injection-Test-Datei (tests/indirect-injection.* oder promptfoo)
-  [OK]   030-mail-architecture — Mail-Architektur konform (3 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
-  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: gh-actions:cron-crawlers.yml, gh-actions:cron-emails.yml, gh-actions:cron-enricher.yml (+2)
-  [OK]   032-ssr-auth — proxy.ts: broad matcher + auth.getUser()
-  [FAIL] 024-code-health-budget — Refactor-Anteil 3% (< 8%); > 500-Zeilen-Datei(en): lib/stalwart/jmap.ts:691, app/(dashboard)/berater/profil/ProviderProfileForm.tsx:733, app/(public)/berater-finden/[slug]/page.tsx:502 (+1)
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  [FAIL] 027-deploy-pipeline — Antipattern in deploy-app.yml: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)
-  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
-
-=== solarproof (local) ===
-  [FAIL] 007-paths — Workspace fehlt: /opt/solarproof/solarproof.code-workspace
-  [FAIL] 001-blue-green — deploy=null (sollte blue-green sein)
-  [OK]   008-domain-policy
-  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
-  [skip] 004-tls-dns01 — keine Domain
-  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
-  [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
-  [OK]   011-vector-chat — eingebunden in source/index.html
-  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
-  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
-  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
-  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
-  [skip] 017-dsgvo-tracker — keine Domain
-  [skip] 018-bundle-drift — keine Domain
-  [skip] 014-sunset — status=live
-  [skip] 020-pentest-light — keine Domain
-  [skip] 019-cert-dns — keine Domain
-  [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
-  [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — data_processors leer dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für kitchen-station
   [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
   [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
   [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
   [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
   [skip] 032-ssr-auth — keine package.json
   [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — deploy_pipeline=manual (Ausnahme)
   [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [skip] 037-tech-stack-currency — kein package.json
 
-=== vector (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/vector
-  [OK]   001-blue-green
-  [OK]   008-domain-policy
-  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
-  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
-  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
-  [skip] 009-impressum-widget — Infra-Projekt
-  [skip] 010-credits-api — Infra-Projekt
-  [skip] 011-vector-chat — hostet Widget selbst
-  [skip] 022-secret-scan — Pfad fehlt
-  [skip] 023-static-analysis — Pfad fehlt
-  [skip] 015-concept-gate — Pfad fehlt
-  [skip] 016-stack-whitelist — Pfad fehlt
-  [skip] 017-dsgvo-tracker — internes/Infra-Projekt
-  [skip] 018-bundle-drift — internes/Infra-Projekt
-  [skip] 014-sunset — status=live
-  [skip] 020-pentest-light — internes/Infra-Projekt
-  [skip] 019-cert-dns — internes/Infra-Projekt
-  [WARN] 013-launch-gate — LAUNCH-REVIEW.md fehlt (internes/Infra-Tool, Empfehlung)
-  [skip] 012-footer — Infra-Projekt
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
-  [skip] 025-llm-app-spezial — kein path_local
-  [skip] 029-indirect-prompt-injection-test — kein path_local
-  [skip] 030-mail-architecture — kein path_local
-  [skip] 031-routine-platform — kein path_local
-  [skip] 032-ssr-auth — Pfad fehlt lokal
-  [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
-
-=== snapflow (local) ===
-  [FAIL] 007-paths — Pfad fehlt: /opt/snapflow
-  [OK]   001-blue-green
+=== voltfair (local) ===
+  [FAIL] 007-paths — Pfad fehlt: /opt/voltfair
+  [FAIL] 001-blue-green — deploy=single (sollte blue-green sein)
   [OK]   008-domain-policy
   [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
   [WARN] 004-tls-dns01 — docker-compose.yml fehlt
@@ -367,23 +295,131 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 023-static-analysis — Pfad fehlt
   [skip] 015-concept-gate — Pfad fehlt
   [skip] 016-stack-whitelist — Pfad fehlt
-  [WARN] 017-dsgvo-tracker — Tracker im Initial-HTML: Google Fonts (LG München I) — vor Consent rechtswidrig (DSGVO Art. 6 + TTDSG § 25)
-  [WARN] 018-bundle-drift — Drift: Dev-Host (localhost) in index-CC5QEsMS.js
+  [OK]   017-dsgvo-tracker — keine bekannten Tracker im Initial-HTML
+  [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
   [skip] 014-sunset — status=live
-  [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; Server-Header verrät Version: "nginx/1.29.8" [SPA-Catch-All erkannt — Probes via Inhalts-Match]
-  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 89d, Let's Encrypt
+  [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; X-Powered-By gesetzt: "Next.js"
+  [OK]   019-cert-dns — DNS=46.225.107.118, Cert 66d, Let's Encrypt
   [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
   [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für voltfair
   [skip] 025-llm-app-spezial — kein path_local
   [skip] 029-indirect-prompt-injection-test — kein path_local
   [skip] 030-mail-architecture — kein path_local
   [skip] 031-routine-platform — kein path_local
   [skip] 032-ssr-auth — Pfad fehlt lokal
   [skip] 024-code-health-budget — kein path_local
-  [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
   [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [skip] 037-tech-stack-currency — kein path_local
+
+=== solarproof (local) ===
+  [FAIL] 007-paths — Pfad fehlt: /opt/solarproof
+  [FAIL] 001-blue-green — deploy=null (sollte blue-green sein)
+  [OK]   008-domain-policy
+  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [skip] 004-tls-dns01 — keine Domain
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
+  [FAIL] 011-vector-chat — Widget nicht eingebunden
+  [skip] 022-secret-scan — Pfad fehlt
+  [skip] 023-static-analysis — Pfad fehlt
+  [skip] 015-concept-gate — Pfad fehlt
+  [skip] 016-stack-whitelist — Pfad fehlt
+  [skip] 017-dsgvo-tracker — keine Domain
+  [skip] 018-bundle-drift — keine Domain
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — keine Domain
+  [skip] 019-cert-dns — keine Domain
+  [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
+  [WARN] 012-footer — keine Footer-Komponente gefunden
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — data_processors leer dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für solarproof
+  [skip] 025-llm-app-spezial — kein path_local
+  [skip] 029-indirect-prompt-injection-test — kein path_local
+  [skip] 030-mail-architecture — kein path_local
+  [skip] 031-routine-platform — kein path_local
+  [skip] 032-ssr-auth — Pfad fehlt lokal
+  [skip] 024-code-health-budget — kein path_local
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
+  [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
+  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [skip] 037-tech-stack-currency — kein path_local
+
+=== vector (local) ===
+  [FAIL] 007-paths — Workspace fehlt: /opt/vector/vector.code-workspace
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [skip] 009-impressum-widget — Infra-Projekt
+  [skip] 010-credits-api — Infra-Projekt
+  [skip] 011-vector-chat — hostet Widget selbst
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — internes/Infra-Projekt
+  [skip] 018-bundle-drift — internes/Infra-Projekt
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — internes/Infra-Projekt
+  [skip] 019-cert-dns — internes/Infra-Projekt
+  [WARN] 013-launch-gate — LAUNCH-REVIEW.md fehlt (internes/Infra-Tool, Empfehlung)
+  [skip] 012-footer — Infra-Projekt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für vector
+  [FAIL] 025-llm-app-spezial — System-Prompt-Härtung komplett fehlt; keine LLM-Injection-Test-Suite
+  [FAIL] 029-indirect-prompt-injection-test — LLM-App mit External-Ingestion, aber keine Indirect-Injection-Test-Datei (tests/indirect-injection.* oder promptfoo)
+  [FAIL] 030-mail-architecture — Regel 20 verletzt — Brevo-Send ohne Domain-Pre-Flight (Vorfall 2026-04-10: 1 Mail still verloren); DB-Status `rejected_unauthenticated_domain` fehlt im sent_emails-Schema (Brevo-Bounce-Watchdog-Hook)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: systemd-timer, systemd-service, vector-agent (+1)
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — > 1000-Zeilen-Datei(en): src/chat/web-reasoner.ts:1108; > 500-Zeilen-Datei(en): src/telegram/bot.ts:501
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
+  [FAIL] 027-deploy-pipeline — Antipattern in deploy.yml: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)
+  [WARN] 028-container-misconfig-local — app-blue: env_file: zeigt nicht auf /opt/secrets/vector/keys.env; app-green: env_file: zeigt nicht auf /opt/secrets/vector/keys.env; redis: kein mem_limit:
+  [WARN] 037-tech-stack-currency — npm audit: 7 high/critical Vuln(s)
+
+=== snapflow (local) ===
+  [FAIL] 007-paths — Workspace fehlt: /opt/snapflow/snapflow.code-workspace
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
+  [FAIL] 005-test-first — weder smoke.mjs noch TESTING.md
+  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [WARN] 010-credits-api — keine Credits-Route gefunden (sollte hinzugefügt werden)
+  [FAIL] 011-vector-chat — Widget nicht eingebunden
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [WARN] 015-concept-gate — CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [WARN] 017-dsgvo-tracker — Tracker im Initial-HTML: Google Fonts (LG München I) — vor Consent rechtswidrig (DSGVO Art. 6 + TTDSG § 25)
+  [OK]   018-bundle-drift — 8 Asset(s) geprüft, kein Drift
+  [skip] 014-sunset — status=live
+  [WARN] 020-pentest-light — HSTS-Header fehlt; X-Content-Type-Options fehlt; X-Frame-Options + frame-ancestors fehlen beide; Server-Header verrät Version: "nginx/1.29.8" [SPA-Catch-All erkannt — Probes via Inhalts-Match]
+  [OK]   019-cert-dns — DNS=128.140.40.235, Cert 89d, Let's Encrypt
+  [FAIL] 013-launch-gate — LAUNCH-REVIEW.md fehlt
+  [WARN] 012-footer — keine Footer-Komponente gefunden
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für snapflow
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
+  [OK]   021-re-review-reminder — letzter Review vor 14 Tagen (2026-04-27)
+  [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
+  [FAIL] 028-container-misconfig-local — app-blue: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin)
+  [skip] 037-tech-stack-currency — kein package.json
 
 === zentinel (local) ===
   [FAIL] 007-paths — Pfad fehlt: /opt/zentinel
@@ -406,7 +442,9 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 019-cert-dns — status=dev
   [skip] 013-launch-gate — status=dev
   [WARN] 012-footer — keine Footer-Komponente gefunden
-  [WARN] 026-self-hosted-first — external_subscriptions in registry fehlt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für zentinel
   [skip] 025-llm-app-spezial — kein path_local
   [skip] 029-indirect-prompt-injection-test — kein path_local
   [skip] 030-mail-architecture — kein path_local
@@ -416,87 +454,88 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 021-re-review-reminder — status=dev
   [skip] 027-deploy-pipeline — status=dev
   [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [skip] 037-tech-stack-currency — kein path_local
 
 --- SSH-Checks (--local-only zum Überspringen) ---
 
 === maxone.one (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/maxone-v2/
-  [FAIL] 003-secrets-store — /opt/secrets/maxone/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/maxone-v2
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/maxone/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   028-container-misconfig — docker-compose.yml@maxone-prod: 7 Pflicht-Klassen sauber
+  [OK]   033-post-deploy-warmup — deploy.sh hat Warm-Up vor Traefik-Swap
+  [OK]   007-container-running — 1 Slot aktiv: maxone-v2-green (Blue/Green normal)
 
 === stadtlahnflow (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/stadtlahnflow/
-  [FAIL] 003-secrets-store — /opt/secrets/slf/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/stadtlahnflow
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/slf/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   028-container-misconfig — docker-compose.yml@maxone-prod: 7 Pflicht-Klassen sauber
+  [OK]   033-post-deploy-warmup — deploy.sh hat Warm-Up vor Traefik-Swap
+  [OK]   007-container-running — 1 Slot aktiv: slf-app-green (Blue/Green normal)
 
 === katchi (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/katchi/
-  [FAIL] 003-secrets-store — /opt/secrets/katchi/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/katchi
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/katchi/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=paused
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [FAIL] 028-container-misconfig — app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
   [skip] 033-post-deploy-warmup — warmup_required=false (Static-Site, registry)
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   007-container-running — 1 Slot aktiv: katchi-app-green (Blue/Green normal)
 
 === repivot (ssh) ===
   [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/repivot/
-  [FAIL] 003-secrets-store — /opt/secrets/repivot/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/repivot
+  [OK]   003-secrets-store — /opt/secrets/repivot/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [WARN] 028-container-misconfig — backend-blue: env_file: zeigt nicht auf /opt/secrets/repivot/keys.env; backend-green: env_file: zeigt nicht auf /opt/secrets/repivot/keys.env
+  [WARN] 033-post-deploy-warmup — deploy.sh hat keinen Warm-Up-Block (kein prewarm/warmup/docker-exec-fetch erkennbar)
+  [OK]   007-container-running — 1 Slot aktiv: repivot-backend-blue (Blue/Green normal)
 
 === vanfree (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/vanfree/
+  [OK]   006-handoff-md
   [FAIL] 003-secrets-store — /opt/secrets/vanfree/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/vanfree
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift
+  [OK]   033-post-deploy-warmup — deploy.sh hat Warm-Up vor Traefik-Swap
+  [OK]   007-container-running — 1 Slot aktiv: vanfree-app-blue (Blue/Green normal)
 
 === plansey-2026 (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/plansey-2026/
-  [FAIL] 003-secrets-store — /opt/secrets/plansey/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/plansey-2026
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/plansey/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
   [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [WARN] 033-post-deploy-warmup — deploy.sh hat keinen Warm-Up-Block (kein prewarm/warmup/docker-exec-fetch erkennbar)
+  [OK]   007-container-running — 1 Slot aktiv: plansey-app-green (Blue/Green normal)
 
 === stadtpunkt (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/stadtpunkt/
-  [FAIL] 003-secrets-store — /opt/secrets/stadtpunkt/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/stadtpunkt
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/stadtpunkt/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 033-post-deploy-warmup — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   028-container-misconfig — docker-compose.yml@maxone-prod: 7 Pflicht-Klassen sauber
+  [WARN] 033-post-deploy-warmup — deploy.sh hat keinen Warm-Up-Block (kein prewarm/warmup/docker-exec-fetch erkennbar)
+  [OK]   007-container-running — 1 Slot aktiv: stadtpunkt-app-blue (Blue/Green normal)
 
 === kitchen-station (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/kitchen-station/
-  [FAIL] 003-secrets-store — /opt/secrets/kitchen-station/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/kitchen-station
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/kitchen-station/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   028-container-misconfig — docker-compose.yml@maxone-prod: 7 Pflicht-Klassen sauber
   [skip] 033-post-deploy-warmup — deploy=single (Standard 033 nur fuer blue-green)
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   007-container-running
 
 === voltfair (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf voltfair-cli:/opt/voltfair/
+  [OK]   006-handoff-md
   [skip] 003-secrets-store — Store nur auf maxone-prod
-  [FAIL] 007-paths-server — Server-Pfad fehlt: voltfair-cli:/opt/voltfair
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/voltfair -o BatchMode=yes -o ConnectTimeou
+  [OK]   028-container-misconfig — docker-compose.yml@voltfair-cli: 7 Pflicht-Klassen sauber
   [skip] 033-post-deploy-warmup — deploy=single (Standard 033 nur fuer blue-green)
   [skip] 007-container-running — kein Container
 
@@ -510,26 +549,26 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 007-container-running — kein Container
 
 === vector (ssh) ===
-  [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/vector/
-  [FAIL] 003-secrets-store — /opt/secrets/vector/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/vector
+  [OK]   006-handoff-md
+  [OK]   003-secrets-store — /opt/secrets/vector/keys.env
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [WARN] 028-container-misconfig — app-blue: env_file: zeigt nicht auf /opt/secrets/vector/keys.env; app-green: env_file: zeigt nicht auf /opt/secrets/vector/keys.env; redis: kein mem_limit:
   [skip] 033-post-deploy-warmup — exception: Stop-OLD-first wegen Telegram 409 Conflict — Warm-Up trotzdem nach Health-Check und vor erstem User-Traffic auf agent.maxone.one (expires 2026-10-29, granted 2026-04-29 by max)
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   007-container-running — 1 Slot aktiv: vector-green (Blue/Green normal)
 
 === snapflow (ssh) ===
   [FAIL] 006-handoff-md — HANDOFF.md fehlt auf maxone-prod:/opt/snapflow/
   [FAIL] 003-secrets-store — /opt/secrets/snapflow/keys.env fehlt
-  [FAIL] 007-paths-server — Server-Pfad fehlt: maxone-prod:/opt/snapflow
+  [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [WARN] 028-container-misconfig — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [FAIL] 028-container-misconfig — app-blue: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin)
   [skip] 033-post-deploy-warmup — warmup_required=false (Static-Site, registry)
-  [WARN] 007-container-running — SSH-Fehler: Command failed: ssh -i undefined/.ssh/id_ed25519 -o BatchMode=yes -o ConnectTime
+  [OK]   007-container-running — 1 Slot aktiv: snapflow-app-green (Blue/Green normal)
 
 === zentinel (ssh) ===
   [skip] 006-handoff-md — kein Server
-  [FAIL] 003-secrets-store — /opt/secrets/zentinel/keys.env fehlt
+  [OK]   003-secrets-store — /opt/secrets/zentinel/keys.env
   [skip] 007-paths-server — kein Server
   [skip] 014-sunset-teardown — status=dev
   [skip] 028-container-misconfig — kein Server
@@ -537,154 +576,131 @@ maxone-standards audit — 13 Projekt(e)
   [skip] 007-container-running — kein Container
 
 --- Summary ---
-  Total:   481
-  Passed:  67
-  Warning: 96
-  Failed:  101
-  Skipped: 217
+  Total:   520
+  Passed:  185
+  Warning: 62
+  Failed:  75
+  Skipped: 198
 
 --- Failures ---
-  maxone.one           007-paths                    Pfad fehlt: /opt/maxone-v2
+  maxone.one           007-paths                    Workspace fehlt: /opt/maxone-v2/maxone.one.code-workspace
   maxone.one           005-test-first               weder smoke.mjs noch TESTING.md
   maxone.one           013-launch-gate              LAUNCH-REVIEW.md fehlt
-  maxone.one           021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
+  maxone.one           024-code-health-budget       > 1000-Zeilen-Datei(en): build-blue/handler.js:1199, build-blue/server/chunks/_page.svelte-xCInGCip.js:2534, build-blue/server/chunks/index3-C3cf8TMy.js:1502 (+19); > 500-Zeilen-Datei(en): build-blue/server/chunks/MetaTags-D_4hbfVJ.js:668, build-blue/server/chunks/_layout.svelte-BDo1O0AK.js:592, build-blue/server/chunks/_page.svelte-BvfN-Xbw.js:907 (+13)
   maxone.one           027-deploy-pipeline          .github/workflows/ fehlt komplett
-  stadtlahnflow        007-paths                    Pfad fehlt: /opt/stadtlahnflow
+  stadtlahnflow        007-paths                    Workspace fehlt: /opt/stadtlahnflow/stadt-lahn-flow.code-workspace
   stadtlahnflow        005-test-first               weder smoke.mjs noch TESTING.md
   stadtlahnflow        011-vector-chat              Widget nicht eingebunden
   stadtlahnflow        013-launch-gate              LAUNCH-REVIEW.md fehlt
   stadtlahnflow        027-deploy-pipeline          .github/workflows/ fehlt komplett
-  katchi               007-paths                    Pfad fehlt: /opt/katchi
+  katchi               007-paths                    Workspace fehlt: /opt/katchi/katchi.code-workspace
   katchi               005-test-first               weder smoke.mjs noch TESTING.md
   katchi               011-vector-chat              Widget nicht eingebunden
+  katchi               015-concept-gate             CONCEPT.md fehlt — Pflicht vor erster Code-Zeile (Standard 015)
+  katchi               028-container-misconfig-local app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
   repivot              007-paths                    Workspace fehlt: /opt/repivot/repivot.in.code-workspace
   repivot              005-test-first               weder smoke.mjs noch TESTING.md
   repivot              011-vector-chat              Widget nicht eingebunden
   repivot              013-launch-gate              LAUNCH-REVIEW.md fehlt
   repivot              025-llm-app-spezial          System-Prompt-Härtung komplett fehlt; keine LLM-Injection-Test-Suite
-  repivot              021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   repivot              027-deploy-pipeline          .github/workflows/ fehlt komplett
-  vanfree              007-paths                    Pfad fehlt: /opt/vanfree
+  vanfree              007-paths                    Workspace fehlt: /opt/vanfree/vanfree.code-workspace
   vanfree              005-test-first               weder smoke.mjs noch TESTING.md
   vanfree              011-vector-chat              Widget nicht eingebunden
   vanfree              013-launch-gate              LAUNCH-REVIEW.md fehlt
-  vanfree              021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   vanfree              027-deploy-pipeline          .github/workflows/ fehlt komplett
-  plansey-2026         007-paths                    Pfad fehlt: /opt/plansey-2026
+  vanfree              028-container-misconfig-local app-blue: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift
+  plansey-2026         007-paths                    Workspace fehlt: /opt/plansey-2026/plansey-2026.code-workspace
   plansey-2026         005-test-first               weder smoke.mjs noch TESTING.md
   plansey-2026         011-vector-chat              Widget nicht eingebunden
   plansey-2026         013-launch-gate              LAUNCH-REVIEW.md fehlt
-  plansey-2026         021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  plansey-2026         027-deploy-pipeline          .github/workflows/ fehlt komplett
-  stadtpunkt           007-paths                    Pfad fehlt: /opt/stadtpunkt
+  plansey-2026         032-ssr-auth                 middleware.ts: Matcher nicht broad (Negative-Lookahead fehlt) — Sessions verlieren bei Deploys
+  stadtpunkt           007-paths                    Workspace fehlt: /opt/stadtpunkt/stadtpunkt.code-workspace
   stadtpunkt           005-test-first               weder smoke.mjs noch TESTING.md
   stadtpunkt           011-vector-chat              Widget nicht eingebunden
   stadtpunkt           013-launch-gate              LAUNCH-REVIEW.md fehlt
   stadtpunkt           027-deploy-pipeline          .github/workflows/ fehlt komplett
-  kitchen-station      007-paths                    Pfad fehlt: /opt/kitchen-station
+  kitchen-station      007-paths                    Workspace fehlt: /opt/kitchen-station/kitchen-station.code-workspace
   kitchen-station      001-blue-green               deploy=single (sollte blue-green sein)
   kitchen-station      005-test-first               weder smoke.mjs noch TESTING.md
-  kitchen-station      021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  voltfair             007-paths                    Workspace fehlt: /opt/voltfair/voltfair.code-workspace
+  voltfair             007-paths                    Pfad fehlt: /opt/voltfair
   voltfair             001-blue-green               deploy=single (sollte blue-green sein)
+  voltfair             005-test-first               weder smoke.mjs noch TESTING.md
+  voltfair             011-vector-chat              Widget nicht eingebunden
   voltfair             013-launch-gate              LAUNCH-REVIEW.md fehlt
-  voltfair             025-llm-app-spezial          System-Prompt-Härtung komplett fehlt; Schreib-Tool ohne Approval-Queue-Pattern; keine LLM-Injection-Test-Suite
-  voltfair             029-indirect-prompt-injection-test LLM-App mit External-Ingestion, aber keine Indirect-Injection-Test-Datei (tests/indirect-injection.* oder promptfoo)
-  voltfair             024-code-health-budget       Refactor-Anteil 3% (< 8%); > 500-Zeilen-Datei(en): lib/stalwart/jmap.ts:691, app/(dashboard)/berater/profil/ProviderProfileForm.tsx:733, app/(public)/berater-finden/[slug]/page.tsx:502 (+1)
-  voltfair             021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  voltfair             027-deploy-pipeline          Antipattern in deploy-app.yml: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)
-  solarproof           007-paths                    Workspace fehlt: /opt/solarproof/solarproof.code-workspace
+  voltfair             027-deploy-pipeline          .github/workflows/ fehlt komplett
+  solarproof           007-paths                    Pfad fehlt: /opt/solarproof
   solarproof           001-blue-green               deploy=null (sollte blue-green sein)
   solarproof           005-test-first               weder smoke.mjs noch TESTING.md
+  solarproof           011-vector-chat              Widget nicht eingebunden
   solarproof           013-launch-gate              LAUNCH-REVIEW.md fehlt
-  solarproof           021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   solarproof           027-deploy-pipeline          .github/workflows/ fehlt komplett
-  vector               007-paths                    Pfad fehlt: /opt/vector
+  vector               007-paths                    Workspace fehlt: /opt/vector/vector.code-workspace
   vector               005-test-first               weder smoke.mjs noch TESTING.md
-  vector               021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
-  vector               027-deploy-pipeline          .github/workflows/ fehlt komplett
-  snapflow             007-paths                    Pfad fehlt: /opt/snapflow
+  vector               025-llm-app-spezial          System-Prompt-Härtung komplett fehlt; keine LLM-Injection-Test-Suite
+  vector               029-indirect-prompt-injection-test LLM-App mit External-Ingestion, aber keine Indirect-Injection-Test-Datei (tests/indirect-injection.* oder promptfoo)
+  vector               030-mail-architecture        Regel 20 verletzt — Brevo-Send ohne Domain-Pre-Flight (Vorfall 2026-04-10: 1 Mail still verloren); DB-Status `rejected_unauthenticated_domain` fehlt im sent_emails-Schema (Brevo-Bounce-Watchdog-Hook)
+  vector               024-code-health-budget       > 1000-Zeilen-Datei(en): src/chat/web-reasoner.ts:1108; > 500-Zeilen-Datei(en): src/telegram/bot.ts:501
+  vector               027-deploy-pipeline          Antipattern in deploy.yml: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)
+  snapflow             007-paths                    Workspace fehlt: /opt/snapflow/snapflow.code-workspace
   snapflow             005-test-first               weder smoke.mjs noch TESTING.md
   snapflow             011-vector-chat              Widget nicht eingebunden
   snapflow             013-launch-gate              LAUNCH-REVIEW.md fehlt
-  snapflow             021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   snapflow             027-deploy-pipeline          .github/workflows/ fehlt komplett
+  snapflow             028-container-misconfig-local app-blue: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin)
   zentinel             007-paths                    Pfad fehlt: /opt/zentinel
   zentinel             005-test-first               weder smoke.mjs noch TESTING.md
   zentinel             011-vector-chat              Widget nicht eingebunden
-  maxone.one           006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/maxone-v2/
-  maxone.one           003-secrets-store            /opt/secrets/maxone/keys.env fehlt
-  maxone.one           007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/maxone-v2
-  stadtlahnflow        006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/stadtlahnflow/
-  stadtlahnflow        003-secrets-store            /opt/secrets/slf/keys.env fehlt
-  stadtlahnflow        007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/stadtlahnflow
-  katchi               006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/katchi/
-  katchi               003-secrets-store            /opt/secrets/katchi/keys.env fehlt
-  katchi               007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/katchi
+  katchi               028-container-misconfig      app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
   repivot              006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/repivot/
-  repivot              003-secrets-store            /opt/secrets/repivot/keys.env fehlt
-  repivot              007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/repivot
-  vanfree              006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/vanfree/
   vanfree              003-secrets-store            /opt/secrets/vanfree/keys.env fehlt
-  vanfree              007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/vanfree
-  plansey-2026         006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/plansey-2026/
-  plansey-2026         003-secrets-store            /opt/secrets/plansey/keys.env fehlt
-  plansey-2026         007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/plansey-2026
-  stadtpunkt           006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/stadtpunkt/
-  stadtpunkt           003-secrets-store            /opt/secrets/stadtpunkt/keys.env fehlt
-  stadtpunkt           007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/stadtpunkt
-  kitchen-station      006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/kitchen-station/
-  kitchen-station      003-secrets-store            /opt/secrets/kitchen-station/keys.env fehlt
-  kitchen-station      007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/kitchen-station
-  voltfair             006-handoff-md               HANDOFF.md fehlt auf voltfair-cli:/opt/voltfair/
-  voltfair             007-paths-server             Server-Pfad fehlt: voltfair-cli:/opt/voltfair
-  vector               006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/vector/
-  vector               003-secrets-store            /opt/secrets/vector/keys.env fehlt
-  vector               007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/vector
+  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree:latest — Registry-Pull mit :latest → silent drift
   snapflow             006-handoff-md               HANDOFF.md fehlt auf maxone-prod:/opt/snapflow/
   snapflow             003-secrets-store            /opt/secrets/snapflow/keys.env fehlt
-  snapflow             007-paths-server             Server-Pfad fehlt: maxone-prod:/opt/snapflow
-  zentinel             003-secrets-store            /opt/secrets/zentinel/keys.env fehlt
+  snapflow             028-container-misconfig      app-blue: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: snapflow-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin)
 
 --- Ausnahmen aktiv (FAIL/WARN unterdrückt) ---
   vector               033-post-deploy-warmup               bis 2026-10-29 — Stop-OLD-first wegen Telegram 409 Conflict — Warm-Up trotzdem nach Health-Check und vor erstem User-Traffic auf agent.maxone.one
 
 --- Score 0-10 pro Standard (PASS=10, WARN=5, FAIL=0; SKIP excluded) ---
   001-blue-green                          7.3   (8 PASS, 0 WARN, 3 FAIL, 2 SKIP)
-  002-no-build-on-prod                    6.2   (3 PASS, 10 WARN, 0 FAIL, 0 SKIP)
-  003-secrets-store                       0.0   (0 PASS, 0 WARN, 11 FAIL, 2 SKIP)
-  004-tls-dns01                           5.9   (2 PASS, 9 WARN, 0 FAIL, 2 SKIP)
-  005-test-first                          0.4   (0 PASS, 1 WARN, 12 FAIL, 0 SKIP)
-  006-handoff-md                          0.0   (0 PASS, 0 WARN, 11 FAIL, 2 SKIP)
-  007-container-running                   5.0   (0 PASS, 10 WARN, 0 FAIL, 3 SKIP)
+  002-no-build-on-prod                    8.5   (9 PASS, 4 WARN, 0 FAIL, 0 SKIP)
+  003-secrets-store                       8.2   (9 PASS, 0 WARN, 2 FAIL, 2 SKIP)
+  004-tls-dns01                           8.6   (8 PASS, 3 WARN, 0 FAIL, 2 SKIP)
+  005-test-first                          0.0   (0 PASS, 0 WARN, 13 FAIL, 0 SKIP)
+  006-handoff-md                          8.2   (9 PASS, 0 WARN, 2 FAIL, 2 SKIP)
+  007-container-running                  10.0   (10 PASS, 0 WARN, 0 FAIL, 3 SKIP)
   007-paths                               0.0   (0 PASS, 0 WARN, 13 FAIL, 0 SKIP)
-  007-paths-server                        0.0   (0 PASS, 0 WARN, 11 FAIL, 2 SKIP)
+  007-paths-server                       10.0   (11 PASS, 0 WARN, 0 FAIL, 2 SKIP)
   008-domain-policy                      10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
-  009-impressum-widget                    8.3   (2 PASS, 1 WARN, 0 FAIL, 10 SKIP)
+  009-impressum-widget                    6.3   (1 PASS, 3 WARN, 0 FAIL, 9 SKIP)
   010-credits-api                         6.0   (2 PASS, 8 WARN, 0 FAIL, 3 SKIP)
-  011-vector-chat                         2.7   (3 PASS, 0 WARN, 8 FAIL, 2 SKIP)
+  011-vector-chat                         0.9   (1 PASS, 0 WARN, 10 FAIL, 2 SKIP)
   012-footer                              5.5   (1 PASS, 10 WARN, 0 FAIL, 2 SKIP)
   013-launch-gate                         0.9   (0 PASS, 2 WARN, 9 FAIL, 2 SKIP)
   014-sunset                              N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
   014-sunset-teardown                     N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
-  015-concept-gate                        5.0   (0 PASS, 3 WARN, 0 FAIL, 10 SKIP)
-  016-stack-whitelist                    10.0   (3 PASS, 0 WARN, 0 FAIL, 10 SKIP)
+  015-concept-gate                        4.5   (0 PASS, 9 WARN, 1 FAIL, 3 SKIP)
+  016-stack-whitelist                    10.0   (10 PASS, 0 WARN, 0 FAIL, 3 SKIP)
   017-dsgvo-tracker                       8.8   (6 PASS, 2 WARN, 0 FAIL, 5 SKIP)
-  018-bundle-drift                        8.1   (5 PASS, 3 WARN, 0 FAIL, 5 SKIP)
+  018-bundle-drift                        9.4   (7 PASS, 1 WARN, 0 FAIL, 5 SKIP)
   019-cert-dns                           10.0   (8 PASS, 0 WARN, 0 FAIL, 5 SKIP)
   020-pentest-light                       5.6   (1 PASS, 7 WARN, 0 FAIL, 5 SKIP)
-  021-re-review-reminder                  1.8   (2 PASS, 0 WARN, 9 FAIL, 2 SKIP)
+  021-re-review-reminder                 10.0   (11 PASS, 0 WARN, 0 FAIL, 2 SKIP)
   022-secret-scan                         N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
   023-static-analysis                     N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
-  024-code-health-budget                  5.0   (1 PASS, 1 WARN, 1 FAIL, 10 SKIP)
+  024-code-health-budget                  6.7   (5 PASS, 2 WARN, 2 FAIL, 4 SKIP)
   025-llm-app-spezial                     0.0   (0 PASS, 0 WARN, 2 FAIL, 11 SKIP)
-  026-self-hosted-first                   5.8   (2 PASS, 11 WARN, 0 FAIL, 0 SKIP)
-  027-deploy-pipeline                     0.0   (0 PASS, 0 WARN, 10 FAIL, 3 SKIP)
-  028-container-misconfig                 5.0   (0 PASS, 11 WARN, 0 FAIL, 2 SKIP)
-  028-container-misconfig-local           8.3   (2 PASS, 1 WARN, 0 FAIL, 10 SKIP)
+  026-self-hosted-first                  10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  027-deploy-pipeline                     0.5   (0 PASS, 1 WARN, 9 FAIL, 3 SKIP)
+  028-container-misconfig                 5.9   (5 PASS, 3 WARN, 3 FAIL, 2 SKIP)
+  028-container-misconfig-local           5.6   (4 PASS, 2 WARN, 3 FAIL, 4 SKIP)
   029-indirect-prompt-injection-test      0.0   (0 PASS, 0 WARN, 1 FAIL, 12 SKIP)
-  030-mail-architecture                  10.0   (1 PASS, 0 WARN, 0 FAIL, 12 SKIP)
-  031-routine-platform                   10.0   (1 PASS, 0 WARN, 0 FAIL, 12 SKIP)
-  032-ssr-auth                           10.0   (1 PASS, 0 WARN, 0 FAIL, 12 SKIP)
-  033-post-deploy-warmup                  5.0   (0 PASS, 6 WARN, 0 FAIL, 7 SKIP)
-  OVERALL                                 4.4   (gewichtet, ohne SKIPs)
+  030-mail-architecture                   5.0   (1 PASS, 0 WARN, 1 FAIL, 11 SKIP)
+  031-routine-platform                   10.0   (3 PASS, 0 WARN, 0 FAIL, 10 SKIP)
+  032-ssr-auth                            0.0   (0 PASS, 0 WARN, 1 FAIL, 12 SKIP)
+  033-post-deploy-warmup                  7.5   (3 PASS, 3 WARN, 0 FAIL, 7 SKIP)
+  037-tech-stack-currency                 6.7   (1 PASS, 2 WARN, 0 FAIL, 10 SKIP)
+  038-cross-project-broadcast            10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  041-avv-dpa-registry                   10.0   (12 PASS, 0 WARN, 0 FAIL, 1 SKIP)
+  OVERALL                                 6.7   (gewichtet, ohne SKIPs)
