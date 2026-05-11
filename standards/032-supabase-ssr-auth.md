@@ -124,6 +124,36 @@ Request für die GoTrue-Validierung. Bei statisch gerenderten Seiten kein
 Issue (Middleware läuft an der Edge, vor Page-Cache). Mehrwert: Sessions
 überleben Deploys, Tab-Wechsel und längere Idle-Zeiten zuverlässig.
 
+### SvelteKit-Variante (`hooks.server.ts`)
+
+In SvelteKit gibt es kein Edge-Middleware-Konstrukt — der äquivalente Ort ist
+`src/hooks.server.ts`. Pflicht-Setup:
+
+```ts
+event.locals.supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+  cookies: {
+    getAll: () => event.cookies.getAll(),
+    setAll: (cookies) => {
+      // @supabase/ssr ruft `setAll` async aus `_notifyAllSubscribers`
+      // auch NACH dem Senden der Response auf. SvelteKit lockt dann
+      // `event.cookies.set(...)` → wirft → uncaughtException → Node-Exit.
+      try {
+        cookies.forEach(({ name, value, options }) =>
+          event.cookies.set(name, value, { ...options, path: '/' })
+        );
+      } catch {
+        /* Response bereits gesendet — Refresh greift beim nächsten Request */
+      }
+    },
+  },
+});
+```
+
+**Niemals** in SvelteKit den `setAll`-Callback ohne `try/catch` lassen — der
+unhandled Reject im Auth-Hintergrund-Refresh killt den Node-Prozess. Symptom:
+sporadische Container-Restarts und transiente `"no available server"`-Antworten
+von Traefik (`maxone.one`-Vorfall 2026-05-11).
+
 **Niemals:**
 - Selektive Matcher wie `["/dashboard/:path*", "/admin/:path*"]`.
 - `auth.getUser()` in Server Component aufrufen ohne Middleware-Refresh
@@ -143,8 +173,8 @@ Initial-Audit 2026-04-28 (manuell, noch kein Audit-Skript):
 | stadt-lahn-flow | Next.js + `@supabase/ssr` | ✅ broad matcher | gefixt 2026-04-28 (Commit `f7b5f6b`); vorher selektiv `/dashboard,/admin,/login,/claim,/auth` |
 | vanfree | Next.js 14 + `@supabase/ssr` | ✅ broad matcher | `middleware.ts` (root) ruft `updateSession` aus `lib/supabase/middleware.ts` auf |
 | voltfair.de | Next.js 16 + `@supabase/ssr` | ✅ broad matcher | nutzt `proxy.ts` (Next 16-Rename), broad matcher + `auth.getUser()` korrekt |
-| maxone.one | SvelteKit | – nicht betroffen | anderer Auth-Flow (SvelteKit Hooks) |
-| plansey-next | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
+| maxone.one | SvelteKit + `@supabase/ssr` | ✅ try/catch in setAll | gefixt 2026-05-11 (Commit `612c339b`); vorher uncaughtException-Restart-Loop |
+| plansey-2026 | Next.js + NextAuth + `next-intl` | – nicht betroffen | nutzt NextAuth (`@/lib/auth`), kein Supabase SSR |
 | katchi, getsnapflow, solarproof | Vite/React | – nicht betroffen | kein `@supabase/ssr` |
 | snapflow, repivot, plansey, kitchen-station | unklar | ❓ | kein `package.json` an Root (Monorepo / leer) — bei nächstem Touch prüfen |
 
