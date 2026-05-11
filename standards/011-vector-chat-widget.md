@@ -69,7 +69,7 @@ Stand 2026-04-27 (nach Roll-out): alle 9 Customer-facing Projekte ✅
 | katchi | ✅ (in `index.html`) |
 | repivot.in | ✅ (in `frontend/index.html`) |
 | vanfree | ✅ (in `app/layout.tsx`) |
-| plansey | ✅ (in `plansey-next/app/[locale]/layout.tsx`) |
+| plansey | ✅ (in `plansey-2026/app/[locale]/layout.tsx`) |
 | solarproof | ✅ (in `index.html`) |
 | vector | – (hostet Widget selbst) |
 | kitchen-station | – (internes Tool, kein Customer-facing) |

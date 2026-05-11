@@ -10,6 +10,13 @@ on:
     # 2026-05-11 10:00 Europe/Berlin = 08:00 UTC (DST aktiv).
     # Plus monatlich am 11. um 08:00 UTC als Drift-Schutz für Standard 021.
     - cron: '0 8 11 * *'
+  push:
+    branches: [main]
+    paths:
+      # Standard 038 — Cross-Project Broadcast: Audit sofort beim Merge
+      # eines neuen/geänderten Broadcasts, damit FAILs ohne Verzögerung
+      # sichtbar sind (statt erst beim nächsten monatlichen Lauf).
+      - 'broadcasts/BCAST-*.md'
   workflow_dispatch:
     inputs:
       emit_issues:

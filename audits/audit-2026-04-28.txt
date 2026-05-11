@@ -130,7 +130,7 @@ maxone-standards audit — 11 Projekt(e)
   [WARN] 028-container-misconfig-local — backend: kein mem_limit:; frontend: kein mem_limit:
 
 === vanfree (local) ===
-  [FAIL] 007-paths — Workspace fehlt: /opt/planexo/vanfree.code-workspace
+  [FAIL] 007-paths — Workspace fehlt: /opt/vanfree/vanfree.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
   [OK]   002-no-build-on-prod — docker-compose.yml: nur image: (CI-Build separat)
@@ -159,10 +159,10 @@ maxone-standards audit — 11 Projekt(e)
   [OK]   024-code-health-budget — Refactor-Anteil + Datei-Längen im Budget
   [FAIL] 021-re-review-reminder — last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   [FAIL] 027-deploy-pipeline — .github/workflows/ fehlt komplett
-  [FAIL] 028-container-misconfig-local — app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  [FAIL] 028-container-misconfig-local — app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
 
 === plansey (local) ===
-  [FAIL] 007-paths — Workspace fehlt: /opt/plansey-next/plansey.code-workspace
+  [FAIL] 007-paths — Workspace fehlt: /opt/plansey-2026/plansey.code-workspace
   [OK]   001-blue-green
   [OK]   008-domain-policy
   [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
@@ -389,11 +389,11 @@ maxone-standards audit — 11 Projekt(e)
 
 === vanfree (ssh) ===
   [OK]   006-handoff-md
-  [FAIL] 003-secrets-store — /opt/secrets/planexo/keys.env fehlt
+  [FAIL] 003-secrets-store — /opt/secrets/vanfree/keys.env fehlt
   [OK]   007-paths-server
   [skip] 014-sunset-teardown — status=live
-  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
-  [OK]   007-container-running — 1 Slot aktiv: planexo-app-blue (Blue/Green normal)
+  [FAIL] 028-container-misconfig — app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
+  [OK]   007-container-running — 1 Slot aktiv: vanfree-app-blue (Blue/Green normal)
 
 === plansey (ssh) ===
   [OK]   006-handoff-md
@@ -479,15 +479,15 @@ maxone-standards audit — 11 Projekt(e)
   repivot              025-llm-app-spezial          System-Prompt-Härtung komplett fehlt; keine LLM-Injection-Test-Suite
   repivot              021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   repivot              027-deploy-pipeline          .github/workflows/ fehlt komplett
-  vanfree              007-paths                    Workspace fehlt: /opt/planexo/vanfree.code-workspace
+  vanfree              007-paths                    Workspace fehlt: /opt/vanfree/vanfree.code-workspace
   vanfree              005-test-first               weder smoke.mjs noch TESTING.md
   vanfree              011-vector-chat              Widget nicht eingebunden
   vanfree              019-cert-dns                 TLS-Handshake fehlgeschlagen: ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR
   vanfree              013-launch-gate              LAUNCH-REVIEW.md fehlt
   vanfree              021-re-review-reminder       last_review_date in registry fehlt — initialer Gate-3 nicht dokumentiert
   vanfree              027-deploy-pipeline          .github/workflows/ fehlt komplett
-  vanfree              028-container-misconfig-local app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
-  plansey              007-paths                    Workspace fehlt: /opt/plansey-next/plansey.code-workspace
+  vanfree              028-container-misconfig-local app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
+  plansey              007-paths                    Workspace fehlt: /opt/plansey-2026/plansey.code-workspace
   plansey              005-test-first               weder smoke.mjs noch TESTING.md
   plansey              011-vector-chat              Widget nicht eingebunden
   plansey              013-launch-gate              LAUNCH-REVIEW.md fehlt
@@ -525,8 +525,8 @@ maxone-standards audit — 11 Projekt(e)
   snapflow             027-deploy-pipeline          .github/workflows/ fehlt komplett
   stadtlahnflow        028-container-misconfig      app-blue: image: stadtlahnfluss-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: stadtlahnfluss-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 3 WARN)
   katchi               028-container-misconfig      app-blue: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin); app-green: image: katchi-app:latest (lokales :latest) ohne build: → keine Quelle definiert (Pattern verlangt build: oder Registry-Pin) (+ 2 WARN)
-  vanfree              003-secrets-store            /opt/secrets/planexo/keys.env fehlt
-  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/planexo.io:latest — Registry-Pull mit :latest → silent drift
+  vanfree              003-secrets-store            /opt/secrets/vanfree/keys.env fehlt
+  vanfree              028-container-misconfig      app-blue: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift; app-green: image: ghcr.io/maxone-one/vanfree.de:latest — Registry-Pull mit :latest → silent drift
   kitchen-station      003-secrets-store            /opt/secrets/kitchen-station/keys.env fehlt
   snapflow             003-secrets-store            /opt/secrets/snapflow/keys.env fehlt
 

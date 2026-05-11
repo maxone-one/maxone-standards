@@ -1,8 +1,60 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-04-29 (Warm-Up-Sprint abgeschlossen + Quick-Win-Cleanup: maxone.one-Workflow auf deploy.sh-Aufruf refactored, stadtlahnflow×009-Ausnahme entfernt — Standard 033 = 10.0/10)
+**Stand:** 2026-05-11 (Standard 038 + CPIB-Mechanismus hinzugefügt)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 32 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
+**Status:** 33 Standards aktiv, OWASP-LLM-IDs eingearbeitet, Templates da; Audit-Vergleich am 2026-05-11 läuft jetzt als GH-Action `schedule:` auf `voltfair-server`-Runner (heartbeat-platform statt User-NUC)
+
+---
+
+## Session-Update 2026-05-11 — Standard 038 Cross-Project Incident Broadcast
+
+Max hat festgestellt, dass Fehler in einem Projekt unentdeckt in anderen
+weiterschlafen — Beispiele: Route-Rename, Domain-Wechsel, Auth-Token-Umbenennung.
+Umsetzung:
+
+- Neuer Standard: `standards/038-cross-project-broadcast.md`
+- Neues Verzeichnis: `broadcasts/` (Kommunikations-Schnittstelle zwischen Projekten)
+- Broadcast-Format: `BCAST-YYYY-MM-DD-<slug>.md` mit Typ/Status/Betroffene-Tabelle/Fix-Muster/Audit-Grep
+- Erster retroaktiver Broadcast: `BCAST-2026-04-22-domain-studio-to-one.md` (closed)
+- Audit-Check `038-cross-project-broadcast` in `scripts/audit.mjs`
+- `standards/README.md` um Kategorie "Projektübergreifende Koordination" erweitert
+
+Verifikation: `node scripts/audit.mjs --standard=038 --local-only` → 13/13 PASS
+
+---
+
+## Session-Update 2026-05-08 — Standard 041 AVV-/DPA-Registry
+
+Max hat angefordert, das Thema AVV in das Maxone-Standards-Regelwerk
+aufzunehmen. Umsetzung:
+
+- Neuer Standard: `standards/041-avv-dpa-registry.md`
+- Neuer Audit-Check: `041-avv-dpa-registry` in `scripts/audit.mjs`
+- Neues Registry-Feld dokumentiert: `data_processors` in `registry/projects.yml`
+- Gate-/Template-Verknuepfung nachgezogen:
+  `standards/013-launch-gate-review.md`,
+  `standards/015-concept-gate.md`,
+  `standards/016-stack-whitelist.md`,
+  `standards/017-dsgvo-tracker-audit.md`,
+  `templates/CONCEPT.md`,
+  `templates/LAUNCH-REVIEW.md`,
+  `checklists/013-launch-gate.md`
+- `standards/VULN-CATALOG.md` Coverage fuer C4 (fehlender AVV/DPA) auf
+  Standard 041 umgestellt; `standards/README.md` und Root-README verlinkt.
+
+Verifikation:
+
+- `node scripts/audit.mjs --standard=041 --local-only`
+- Ergebnis: 13 Projekte, 12 WARN, 0 FAIL, 1 SKIP; Score 5.0.
+- WARNs sind erwartbar, weil `data_processors` pro Projekt noch nicht
+  befuellt ist.
+
+Offen:
+
+- Registry-Backfill pro Projekt: echte Auftragsverarbeiter, AVV-/DPA-Status,
+  Evidence-Ort und `reviewed_at` eintragen. Keine Anbieter-Fakten raten; wenn
+  Account-/Vertragsstatus nicht sichtbar ist, als `unknown` markieren und Max
+  entscheiden lassen.
 
 ---
 
@@ -82,7 +134,7 @@ separat geführt).
   `docker save | docker load` transferiert — kein Registry-Pull)
 - Live-Verify-Findings: stadtlahnflow + katchi haben `image: <name>:latest`
   ohne `build:`-Block (CLAUDE.md global rule violation), vanfree pulled
-  `ghcr.io/maxone-one/planexo.io:latest` (echter Registry-Pull),
+  `ghcr.io/maxone-one/vanfree.de:latest` (echter Registry-Pull),
   plansey nutzt `minio/minio:latest` (3rd-party, sollte SHA-pinned sein)
 
 ### Empfohlene nächste Schritte (priorisiert)
@@ -346,7 +398,7 @@ manchmal langsam laden / 503 zurückgeben. Sprint-Ziel: Ursachen finden + fixen.
   > „NIEMALS Docker Images auf Produktions-Servern bauen!"
 - **Systemweit:** 13 von 14 Projekten machen das gleiche
   (`grep 'docker build' .github/workflows/*.yml | grep self-hosted` →
-  getsnapflow, katchi, kitchen-station, planexo.io, stadtlahnfluss, trader,
+  getsnapflow, katchi, kitchen-station, vanfree.de, stadtlahnfluss, trader,
   vector, viktoria-from, visual-engine, voltfair, vox, zrow, zync). Nicht
   ein einzelnes SLF-Problem.
 - **SLF-spezifisch:** im Letzten Build-Run (`Worker_20260428-172541-utc.log`)
@@ -443,8 +495,8 @@ SSH-Check):
 | ✅ PASS | stadtlahnflow | deploy.sh + Warm-Up vor Swap (39 Routen) — Vorlage |
 | ✅ PASS | maxone.one | NEU `/opt/maxone-v2/deploy.sh` (101 Zeilen, 21 Routen, SvelteKit Marketing+Bio) |
 | ✅ PASS | repivot | Warm-Up in `/opt/repivot/deploy.sh` (1 FE + 9 BE-Routen) |
-| ✅ PASS | vanfree | Warm-Up in `/opt/planexo/deploy.sh` (10 Next-Routen) |
-| ✅ PASS | plansey | Warm-Up in `/opt/plansey-next/deploy.sh` (10 Routen, de+en) |
+| ✅ PASS | vanfree | Warm-Up in `/opt/vanfree/deploy.sh` (10 Next-Routen) |
+| ✅ PASS | plansey | Warm-Up in `/opt/plansey-2026/deploy.sh` (10 Routen, de+en) |
 | skip | katchi | `warmup_required: false` (Vue SPA via nginx, kein SSR) |
 | skip | snapflow | `warmup_required: false` (Static SPA via nginx, kein SSR) |
 | skip | vector | exception bis 2026-10-29 (Stop-OLD-first wegen Telegram 409) — Warm-Up trotzdem im Skript (11 Routen), aber nach Stop-OLD |
@@ -463,8 +515,8 @@ warten auf nächsten regulären Push pro Projekt). Backups liegen als
 |---|---|---|
 | maxone.one | `/opt/maxone-v2/deploy.sh` | NEU (101 Zeilen) |
 | repivot | `/opt/repivot/deploy.sh` | +Warm-Up (97 Zeilen) |
-| vanfree | `/opt/planexo/deploy.sh` | +Warm-Up (73 Zeilen) |
-| plansey | `/opt/plansey-next/deploy.sh` | +Warm-Up (81 Zeilen, +027-Violation-Header) |
+| vanfree | `/opt/vanfree/deploy.sh` | +Warm-Up (73 Zeilen) |
+| plansey | `/opt/plansey-2026/deploy.sh` | +Warm-Up (81 Zeilen, +027-Violation-Header) |
 | vector | `/opt/vector/deploy.sh` | +Warm-Up (77 Zeilen) |
 
 ### Registry-Korrekturen (2026-04-29)
@@ -486,7 +538,7 @@ warten auf nächsten regulären Push pro Projekt). Backups liegen als
 - **vector + vanfree**: Lokale `deploy.sh` (im Repo) drift'en vom Server-
   Stand ab — Server ist authoritative, Repo-Versionen sollten beim
   nächsten Touch-Punkt synchronisiert werden.
-- **plansey NextAuth UntrustedHost**: Auth-Routen werfen `UntrustedHost: Host
+- **Plansey 2026Auth UntrustedHost**: Auth-Routen werfen `UntrustedHost: Host
   must be trusted. URL was: https://plansey.app/api/auth/session` beim
   internen Warm-Up — Auth.js versucht die Live-Domain im SSR zu re-fetchen.
   Routen sind aus PREWARM_PATHS entfernt (5 statt 10), aber Bug bleibt für
@@ -527,7 +579,7 @@ Datei: [`audits/baseline-2026-04-27.txt`](audits/baseline-2026-04-27.txt)
 - `stadtlahnflow` 011-vector-chat — Widget nicht eingebunden
 - `katchi`, `repivot`, `vanfree`, `plansey`, `kitchen-station`, `vector`, `snapflow` 005-test-first — kein smoke.mjs/TESTING.md
 - `kitchen-station`, `voltfair`, `solarproof` 001-blue-green — kein Blue/Green
-- `vanfree` 003-secrets-store — `/opt/secrets/planexo/keys.env` fehlt (Phase-2-Migration ausstehend)
+- `vanfree` 003-secrets-store — `/opt/secrets/vanfree/keys.env` fehlt (Phase-2-Migration ausstehend)
 - `kitchen-station` 003-secrets-store — `/opt/secrets/kitchen-station/keys.env` fehlt
 - `snapflow` 003-secrets-store — `/opt/secrets/snapflow/keys.env` fehlt
 
@@ -597,8 +649,8 @@ hat **eigene Memories**. Wichtige Punkte daher hier wiederholen:
   env. Das WARN auf 009-impressum bei SLF ist **eine bewusste Ausnahme**, kein
   echter Fehler — Standard 009 erlaubt das ausdrücklich (Tabelle in
   `standards/009-impressum-widget.md`).
-- **`vanfree`** ist die ehemalige `planexo.io`. Code ist umbenannt, aber
-  Server-Container heißen noch `planexo-*` und `/opt/secrets/planexo/` —
+- **`vanfree`** ist die ehemalige `vanfree.de`. Code ist umbenannt, aber
+  Server-Container heißen noch `vanfree-*` und `/opt/secrets/vanfree/` —
   Phase 2 wartet auf Domain-Kauf. FAIL auf `vanfree` 003-secrets-store ist
   daher **erwartetes Drift**, kein Bug.
 - **`altrading.eu`** ist seit 2026-04-24 archiviert — nicht reaktivieren.

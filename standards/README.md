@@ -33,6 +33,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [014-sunset.md](014-sunset.md) — Sunset-Prozess: Daten exportieren, Drittdienste kündigen, Container/DNS abbauen, Repo archivieren
 - [036-spec-archive.md](036-spec-archive.md) — PRD/TODO/DONE-Lifecycle: Drei-Datei-Schema pro Phase + Archiv-Pfad + Mirror-Repo + drei Kategorien für Arbeit ausserhalb Phasen
 - [017-dsgvo-tracker-audit.md](017-dsgvo-tracker-audit.md) — Drittdienste/Tracker (Google Fonts, GA, Pixel, Embeds) erst nach Consent
+- [041-avv-dpa-registry.md](041-avv-dpa-registry.md) — AVV-/DPA-Registry: Auftragsverarbeiter pro Projekt in `registry/projects.yml` dokumentieren und vor Live-Gang pruefen
 - [018-bundle-drift-audit.md](018-bundle-drift-audit.md) — Live-Bundle ohne veraltete Hosts, Source-Maps, Plattform-Watermarks
 - [019-cert-dns-reality.md](019-cert-dns-reality.md) — DNS auf eigenen Server + TLS-Cert gültig + LE-Issuer
 - [020-pentest-light.md](020-pentest-light.md) — defensive Außensicht: exposed Files / Admin-Routen / Header-Hygiene (SPA-Catch-All-erkennend)
@@ -57,6 +58,9 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 
 **Marken-Werte & Kommunikation:**
 - [035-signature-truthful.md](035-signature-truthful.md) — Wahrhaftige Unterschrift: es unterzeichnet, wer wirklich verschickt — KI niemals als Max, Bot niemals als Person (Viktoria-From-Vorfall 2026-04-29)
+
+**Projektübergreifende Koordination:**
+- [038-cross-project-broadcast.md](038-cross-project-broadcast.md) — Cross-Project Incident Broadcast (CPIB): Fehler/Änderungen mit projektübergreifendem Effekt werden als Broadcast in `broadcasts/` dokumentiert — alle betroffenen Projekte fixieren, Audit prüft offene Einträge
 
 - [VULN-CATALOG.md](VULN-CATALOG.md) — Sicherheitslücken-Katalog: Tools, Vorfälle, Coverage-Matrix (Referenz für 013/014/015/016/017/018/019/020/022/023/025/028/029/030/031/032); D-Block mit OWASP LLM01..LLM10:2025 + Agentic ASI01..ASI10:2026 IDs verknüpft
 

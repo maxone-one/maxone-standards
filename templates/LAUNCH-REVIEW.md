@@ -58,6 +58,8 @@
 - [ ] Consent-Banner für nicht-essentielle: ja / n/a (keine)
 - [ ] Tracker werden ERST nach Consent geladen: ja / verifiziert wie ...
 - [ ] AVV / DPA mit jedem Verarbeiter: Hetzner ✅, ... ✅
+- [ ] Standard 041: `registry/projects.yml -> data_processors` vollstaendig
+      und mit `reviewed_at` aktualisiert
 - [ ] Google Fonts: lokal / Consent / nicht verwendet
 - [ ] Externe Embeds: keine / Two-Click / Consent
 - [ ] Server-Region: EU (...)

@@ -17,6 +17,7 @@ projekten ist das nicht akzeptabel.
 - **Architektur-Standards** (Next.js Rendering, Docker, Reverse Proxy, DB)
 - **Deploy-Standards** (Blue/Green, Image-Transfer, kein Build auf Prod)
 - **Security-Standards** (Secrets-Store, TLS via DNS-01, Credential-Hoheit)
+- **Compliance-Standards** (DSGVO, AVV/DPA, Tracker, Impressum, Launch-Reviews)
 - **Test-Standards** (Smoke + Unit, ENV-Overrides, TESTING.md)
 - **Pfad-Standards** (`/opt/<projekt>/`, `HANDOFF.md`, Container-Naming)
 - **Text-Standards** (Impressum, Mail-Footer, Error-Pages, Cookie-Hinweise)

@@ -58,7 +58,8 @@ unten anhängen.
    - **Auth-Modell:** wer darf welche Resource lesen/schreiben — explizit
      pro Entität (Default: niemand ausser Owner)
    - **Externe Dienste:** jeder mit Verarbeitungsrolle, AVV-Status,
-     Server-Region, Datenfluss
+     Server-Region, Datenfluss; geplante Auftragsverarbeiter muessen spaeter in
+     `registry/projects.yml -> data_processors` nach Standard 041 landen
    - **Threat-Model (Top 3–5):** was ist das wahrscheinlichste Schaden-
      Szenario, wie wird es abgewendet
    - **Stack-Wahl:** Framework, DB, Hosting, AI-Coding-Tool — und WARUM,
