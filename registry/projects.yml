@@ -54,6 +54,16 @@ projects:
     secrets_dir: maxone
     status: live
     tags: brand
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: keiner - Domain-Registry ist strukturell notwendig
+      - service: Hetzner
+        reason: vps-hosting
+        cost_per_month_eur: variabel
+        sunset_plan: keiner - VPS-Hosting ist strukturell notwendig
+    last_review_date: "2026-04-27"
 
   - name: stadtlahnflow
     workspace: stadt-lahn-flow
@@ -90,6 +100,7 @@ projects:
     secrets_dir: katchi
     status: paused
     tags: product
+    external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
     notes: "Projekt archiviert/pausiert seit 2026-05-06; Kundin hat das Projekt vorerst abgebrochen. Nicht als aktives Live-/Customer-Priority-Projekt behandeln."
     warmup_required: false  # Standard 033: Vue SPA via nginx, kein SSR (Cold-Start nur fuer /api-Proxy, der Backend triggert)
 
@@ -104,6 +115,8 @@ projects:
     secrets_dir: repivot
     status: live
     tags: product
+    external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
+    last_review_date: "2026-04-27"
     notes: "Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29)."
 
   - name: vanfree
@@ -117,6 +130,12 @@ projects:
     secrets_dir: vanfree
     status: live
     tags: product
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: "Domain behalten solange Projekt aktiv"
+    last_review_date: "2026-04-27"
     notes: "Aktueller kanonischer Produktname und Deploy-Stand: vanfree, Domain vanfree.de, Container vanfree-*."
 
   - name: plansey-2026
@@ -130,6 +149,12 @@ projects:
     secrets_dir: plansey
     status: live
     tags: product
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: "Domain behalten solange Projekt aktiv"
+    last_review_date: "2026-04-27"
     notes: 'Plansey 2026 ist die aktuelle Hauptversion. Plansey Legacy (Plansey 2015) liegt separat unter C:\Users\max\Projects\plansey-legacy; Child-Version Phase 0 ist Plansey Engaged unter C:\Users\max\Projects\plansey-engaged.'
 
   - name: stadtpunkt
@@ -158,6 +183,8 @@ projects:
     secrets_dir: kitchen-station
     status: live
     tags: internal
+    external_subscriptions: []  # internes Tool, keine eigenen Abos
+    last_review_date: "2026-04-27"
     deploy_pipeline: manual  # Standard 027 — internes Tool, kein externer Traffic
     notes: Internes Tool, kein Customer-facing-Traffic. Ausnahme von Standards 011 (Vector-Chat) und 012 (Footer).
 
@@ -172,6 +199,16 @@ projects:
     secrets_dir: voltfair
     status: live
     tags: brand
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: "Domain behalten solange Projekt aktiv"
+      - service: Hetzner
+        reason: vps-hosting
+        cost_per_month_eur: variabel
+        sunset_plan: keiner - eigener VPS für voltfair-cli
+    last_review_date: "2026-04-27"
 
   - name: solarproof
     workspace: solarproof
@@ -183,6 +220,8 @@ projects:
     path_server: null
     status: live
     tags: brand
+    external_subscriptions: []  # kein Server, keine Domain — keine eigenen Abos
+    last_review_date: "2026-04-27"
 
   - name: vector
     workspace: vector
@@ -195,6 +234,8 @@ projects:
     secrets_dir: vector
     status: live
     tags: infra
+    external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
+    last_review_date: "2026-04-27"
 
   - name: snapflow
     workspace: snapflow
@@ -207,6 +248,12 @@ projects:
     secrets_dir: snapflow
     status: live
     tags: product
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: "Domain behalten solange Projekt aktiv"
+    last_review_date: "2026-04-27"
     warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
 
@@ -221,4 +268,5 @@ projects:
     secrets_dir: zentinel
     status: dev
     tags: product
+    external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
     notes: "Seit 2026-05-07 als eigenes Projekt-Repo auf Projektebene entkoppelt. Standalone Deploy/Container-Pfade werden nach Abschluss der Entkopplung gesetzt; bis dahin laufen produktive Teile weiterhin ueber maxone.one-Infrastruktur."
