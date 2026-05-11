@@ -1581,23 +1581,32 @@ const localChecks = {
       try { return readFileSync(join(wfDir, f), 'utf8'); } catch { return ''; }
     }).join('\n');
 
-    // Antipattern: self-hosted Runner (= voltfair-server lebt auf maxone-prod)
-    // führt docker build aus. Sieht harmlos aus, ist aber ein verkappter
-    // Build auf Prod und zog am 2026-04-28 mehrfach 80–180 s RAM/CPU vom
-    // Prod-Server (User-erlebter "Site lädt langsam"-Spike).
-    //
-    // Nur Workflows mit echtem build-Step zaehlen — pr-validate-audit.yml,
-    // scheduled-audit.yml etc. duerfen weiter self-hosted laufen, weil sie
-    // nichts schweres bauen. Wir werten daher pro Workflow-Datei aus.
+    // Antipattern: ein einzelner Job läuft auf self-hosted UND führt
+    // docker build aus — das bedeutet Build auf maxone-prod (OOM-Risiko,
+    // verletzt 002 + 027). Geprüft per Job, nicht per Datei, damit
+    // Multi-Job-Workflows (build=ubuntu-latest, deploy=self-hosted) kein
+    // False-Positive erzeugen (vector, snapflow: 2026-05-11).
     let buildOnProdAntipattern = false;
     let antipatternFile = '';
     for (const f of wfFiles) {
       let text = '';
       try { text = readFileSync(join(wfDir, f), 'utf8'); } catch { continue; }
-      const sh = /runs-on:\s*\[?\s*self-hosted/i.test(text);
-      // matched: `docker build`, `docker compose build`, `docker-compose build`
-      const db = /\bdocker\s+(compose\s+|-compose\s+)?build\b/i.test(text);
-      if (sh && db) { buildOnProdAntipattern = true; antipatternFile = f; break; }
+      let wfParsed;
+      try { wfParsed = yaml.load(text); } catch { continue; }
+      const jobs = (wfParsed && wfParsed.jobs) ? Object.values(wfParsed.jobs) : [];
+      for (const job of jobs) {
+        if (!job || !job.steps) continue;
+        const runsOn = JSON.stringify(job['runs-on'] ?? '');
+        const isSelfHosted = /self-hosted/i.test(runsOn);
+        if (!isSelfHosted) continue;
+        // Use raw run-text (not JSON.stringify) — JSON encodes \n as backslash+n,
+        // making "ndocker" run together and breaking \b word-boundary detection.
+        const stepsText = job.steps.map(s => `${s.name ?? ''}\n${s.run ?? ''}`).join('\n');
+        // matched: `docker build`, `docker compose build`, `docker-compose build`
+        const hasDockerBuild = /\bdocker\s+(compose\s+|-compose\s+)?build\b/i.test(stepsText);
+        if (hasDockerBuild) { buildOnProdAntipattern = true; antipatternFile = f; break; }
+      }
+      if (buildOnProdAntipattern) break;
     }
     if (buildOnProdAntipattern) {
       return FAIL(`Antipattern in ${antipatternFile}: runs-on: self-hosted + docker build → Build auf maxone-prod (Runner lebt dort, verletzt 002 + 027)`);
