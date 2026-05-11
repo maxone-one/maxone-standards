@@ -1021,14 +1021,14 @@ const localChecks = {
           scan(full, depth + 1);
         } else if (/\.(js|ts|tsx|jsx|mjs|py)$/i.test(e.name)) {
           codeFiles.push(full);
-          if (codeFiles.length > 400) return;
+          if (codeFiles.length > 700) return;
         } else if (/package\.json$/.test(e.name) || /requirements.*\.txt$/.test(e.name)) {
           codeFiles.push(full);
         }
       }
     }
     scan(project.path_local, 0);
-    const sample = codeFiles.slice(0, 400).map(f => {
+    const sample = codeFiles.slice(0, 700).map(f => {
       try { return readFileSync(f, 'utf8'); } catch { return ''; }
     }).join('\n');
     const hasLlmMarker = llmMarkers.some(re => re.test(sample));
