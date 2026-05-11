@@ -64,3 +64,43 @@ exceptions:
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
+
+  # katchi ist paused — kein HTML/Frontend vorhanden für Widget-Einbindung.
+  - project: katchi
+    standard: '011'
+    reason: Projekt paused — kein Frontend-HTML vorhanden. Widget bei Reaktivierung einbinden.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # kitchen-station ist ein lokales Kiosk-Device — kein Server, kein Blue-Green-Deploy.
+  - project: kitchen-station
+    standard: '001'
+    reason: Kiosk-App auf lokalem Android-Device — kein Server-Deploy, Blue-Green nicht anwendbar.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # solarproof hat kein eigenes Server-Deployment (domain/server null) — als Static-Site deployed.
+  - project: solarproof
+    standard: '001'
+    reason: Kein Server-Deploy konfiguriert (domain/server null) — Blue-Green-Migration wenn Server-Deploy geplant wird.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # voltfair läuft auf eigenem voltfair-cli VPS — Blue-Green-Migration steht aus.
+  - project: voltfair
+    standard: '001'
+    reason: Eigener voltfair-cli VPS mit single-Deploy — Blue-Green-Migration in nächstem Infra-Sprint geplant.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # repivot verwendet build: in docker-compose.yml — CI/CD-Pipeline noch nicht migriert.
+  - project: repivot
+    standard: '002'
+    reason: docker-compose.yml nutzt noch build: statt image: — CI/CD-Pipeline-Migration ausstehend.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
