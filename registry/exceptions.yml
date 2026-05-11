@@ -55,3 +55,12 @@ exceptions:
     granted_at: '2026-04-29'
     expires_until: '2026-10-29'
     granted_by: max
+
+  # katchi ist paused — kein Source-Code im lokalen Verzeichnis, nur Test-Stubs.
+  # CONCEPT.md wird beim Reaktivierungs-Sprint nachgereicht.
+  - project: katchi
+    standard: '015'
+    reason: Projekt paused — keine aktive Entwicklung, nur Test-Stubs lokal. CONCEPT.md vor Reaktivierung nachreichen.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
