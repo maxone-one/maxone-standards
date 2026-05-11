@@ -781,8 +781,8 @@ const localChecks = {
     if (!footerFiles.length) return WARN('keine Footer-Komponente gefunden');
     const text = footerFiles.map(f => { try { return readFileSync(f, 'utf8'); } catch { return ''; } }).join('\n');
     const checks = {
-      impressum: /\/impressum\b/.test(text),
-      datenschutz: /\/datenschutz\b/.test(text),
+      impressum: /\/impressum\b/.test(text) || /\/imprint\b/.test(text),
+      datenschutz: /\/datenschutz\b/.test(text) || /\/privacy\b/.test(text),
       year: /getFullYear\(\)|new Date\(\)/.test(text),
       attribution: /maxone\b/i.test(text),
     };
