@@ -173,3 +173,29 @@ exceptions:
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
+
+  # vanfree nutzt ghcr.io/:latest — bewusst akzeptiert für CD via GitHub Packages.
+  # Pinning auf SHA/Tag geplant wenn Registry-Workflow stabilisiert.
+  - project: vanfree
+    standard: '028'
+    reason: "ghcr.io/:latest — CD-Pattern via GitHub Packages; SHA-Pinning nach Registry-Workflow-Stabilisierung."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # snapflow nutzt lokales :latest — Image wird nur via CI docker load geladen,
+  # kein Registry-Pull-Drift möglich. Pinning geplant.
+  - project: snapflow
+    standard: '028'
+    reason: "Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # zentinel nutzt lokales :latest — gleicher Grund wie snapflow.
+  - project: zentinel
+    standard: '028'
+    reason: "Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
