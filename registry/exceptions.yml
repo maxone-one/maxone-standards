@@ -100,7 +100,7 @@ exceptions:
   # repivot verwendet build: in docker-compose.yml — CI/CD-Pipeline noch nicht migriert.
   - project: repivot
     standard: '002'
-    reason: docker-compose.yml nutzt noch build: statt image: — CI/CD-Pipeline-Migration ausstehend.
+    reason: "docker-compose.yml nutzt noch build: statt image: — CI/CD-Pipeline-Migration ausstehend."
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
