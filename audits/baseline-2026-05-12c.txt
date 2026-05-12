@@ -1,0 +1,547 @@
+maxone-standards audit — 13 Projekt(e)
+(32 Ausnahme(n) aus registry/exceptions.yml geladen)
+
+=== maxone.one (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [WARN] 002-no-build-on-prod — docker-compose.yml nicht im Repo-Root
+  [WARN] 004-tls-dns01 — docker-compose.yml fehlt
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — exception: Hostet eigene Website — Impressum lokal in Footer ist korrekt, kein API-Widget nötig. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 010-credits-api — hostet die API selbst
+  [OK]   011-vector-chat — hostet Widget mit, Einbau geprüft separat
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für maxone.one
+  [FAIL] 025-llm-app-spezial — System-Prompt-Härtung komplett fehlt; Schreib-Tool ohne Approval-Queue-Pattern
+  [skip] 029-indirect-prompt-injection-test — LLM-App ohne externe Content-Ingestion (kein Telegram/Email/RAG/Web/Upload-Marker)
+  [OK]   030-mail-architecture — Mail-Architektur konform (21 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: systemd-timer, pg_cron, vector-agent (+1)
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — Refactor-Anteil 4% (< 8%); > 1000-Zeilen-Datei(en): apps\umbrella\src\lib\components\admin\email\EmailDetail.svelte:1252, apps\umbrella\src\routes\(admin)\admin\voice\+page.svelte:1111; > 500-Zeilen-Datei(en): apps\umbrella\src\lib\components\admin\bio\BlockEditor.svelte:534, apps\umbrella\src\lib\components\admin\bio\InlineBlock.svelte:837, apps\umbrella\src\lib\components\admin\email\EmailSearch.svelte:979 (+13)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — exception: Tarball-Deployment (npm build → tar.gz → docker compose up). Kein Docker-Image-Build in CI — Standard 002 erfüllt. Image-Transfer via Tarball in compose-Slot. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== stadtlahnflow (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [OK]   009-impressum-widget — lokal (bewusste Ausnahme — siehe Projekt-CLAUDE.md)
+  [OK]   010-credits-api — API in src/app/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden via env in src/app/layout.tsx
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-05-06
+  [OK]   012-footer — 2 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für stadtlahnflow
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [OK]   029-indirect-prompt-injection-test — 11 Payloads, Quellen: greshake, giskard, garak, owasp, promptfoo
+  [OK]   030-mail-architecture — Mail-Architektur konform (14 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: gh-actions:cron-booking-reminders.yml, gh-actions:cron-connection-reminders.yml, gh-actions:cron-news.yml (+2)
+  [OK]   032-ssr-auth — src/middleware.ts: broad matcher + auth.getUser()
+  [FAIL] 024-code-health-budget — Refactor-Anteil 2% (< 8%); > 1000-Zeilen-Datei(en): src\app\dashboard\kreis\page.tsx:1030, src\app\mitglieder\[slug]\page.tsx:1148, src\components\admin\OutreachTabs.tsx:1874 (+2); > 500-Zeilen-Datei(en): src\app\admin\vorlagen\eigene\page.tsx:732, src\app\admin\zielgruppen\page.tsx:598, src\app\api\cron\outreach\route.ts:669 (+16)
+  [OK]   021-re-review-reminder — letzter Review vor 6 Tagen (2026-05-06)
+  [skip] 027-deploy-pipeline — exception: Build auf maxone-prod-Runner — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets NEXT_PUBLIC_SUPABASE_URL/ANON_KEY nötig. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== katchi (local) ===
+  [OK]   007-paths
+  [skip] 001-blue-green — nicht live
+  [OK]   008-domain-policy
+  [skip] 002-no-build-on-prod — exception: Projekt paused — kein docker-compose.yml lokal, nur Test-Stubs. Bei Reaktivierung nachreichen. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 004-tls-dns01 — exception: Projekt paused — kein docker-compose.yml lokal, TLS-Konfiguration nicht prüfbar. Bei Reaktivierung nachreichen. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [skip] 010-credits-api — exception: Projekt paused — Credits-Route bei Reaktivierung einbinden. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 011-vector-chat — exception: Projekt paused — kein Frontend-HTML vorhanden. Widget bei Reaktivierung einbinden. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [skip] 015-concept-gate — exception: Projekt paused — keine aktive Entwicklung, nur Test-Stubs lokal. CONCEPT.md vor Reaktivierung nachreichen. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — status=paused
+  [skip] 018-bundle-drift — status=paused
+  [skip] 014-sunset — status=paused
+  [skip] 020-pentest-light — status=paused
+  [skip] 019-cert-dns — status=paused
+  [skip] 013-launch-gate — status=paused
+  [skip] 012-footer — exception: Projekt paused — kein Frontend-HTML vorhanden. Footer bei Reaktivierung einbinden. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [skip] 041-avv-dpa-registry — status=paused
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für katchi
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [skip] 024-code-health-budget — status=paused
+  [skip] 021-re-review-reminder — status=paused
+  [skip] 027-deploy-pipeline — status=paused
+  [skip] 028-container-misconfig-local — kein Compose lokal (Server-Pfad authoritativ)
+  [skip] 037-tech-stack-currency — kein package.json
+
+=== repivot (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.prod.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [OK]   009-impressum-widget — API .one in frontend/src/pages/landing/Impressum.tsx
+  [OK]   010-credits-api — API in frontend/src/pages/landing/Credits.tsx
+  [OK]   011-vector-chat — eingebunden in frontend/index.html
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für repivot
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [skip] 029-indirect-prompt-injection-test — LLM-App ohne externe Content-Ingestion (kein Telegram/Email/RAG/Web/Upload-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [FAIL] 024-code-health-budget — Refactor-Anteil 0% (< 8%); > 500-Zeilen-Datei(en): frontend\src\pages\Dashboard.tsx:669
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [OK]   027-deploy-pipeline — deploy.yml + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)
+  [skip] 028-container-misconfig-local — exception: env_file zeigt auf relative Pfade (./backend/.env) statt /opt/secrets/repivot/keys.env. Migration ausstehend. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 037-tech-stack-currency — kein package.json
+
+=== vanfree (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — ops/docker-compose.app.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [OK]   009-impressum-widget — API .one in app/[locale]/datenschutz/page.tsx
+  [OK]   010-credits-api — API in app/[locale]/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in app/layout.tsx
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [skip] 012-footer — exception: Kein Footer-Component vorhanden — Footer-Sprint ausstehend. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für vanfree
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [skip] 029-indirect-prompt-injection-test — LLM-App ohne externe Content-Ingestion (kein Telegram/Email/RAG/Web/Upload-Marker)
+  [OK]   030-mail-architecture — Mail-Architektur konform (2 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: pg_cron, vector-agent
+  [OK]   032-ssr-auth — middleware.ts: broad matcher + auth.getUser()
+  [FAIL] 024-code-health-budget — Refactor-Anteil 3% (< 8%)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [OK]   027-deploy-pipeline — deploy.yml + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)
+  [skip] 028-container-misconfig-local — exception: ghcr.io/:latest — CD-Pattern via GitHub Packages; SHA-Pinning nach Registry-Workflow-Stabilisierung. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== plansey-2026 (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.prod.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — exception: Eigene /imprint und /privacy Seiten — keine externe API-Einbettung. Widget bei Erweiterung. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   010-credits-api — API in app/[locale]/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in app/[locale]/layout.tsx
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für plansey-2026
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — exception: NextAuth JWT-Sessions — Supabase SSR nur für DB, nicht Auth. auth()-Call in middleware.ts ist das NextAuth-Äquivalent. (expires 2026-11-12, granted 2026-05-12 by max)
+  [FAIL] 024-code-health-budget — Refactor-Anteil 0% (< 8%)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [OK]   027-deploy-pipeline — deploy.yml + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)
+  [skip] 028-container-misconfig-local — exception: env_file=.env (relativ, nicht /opt/secrets/plansey/keys.env); migrate-Service ist One-Shot (kein restart). Migration auf /opt/secrets/ bei nächstem Infra-Sprint. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== stadtpunkt (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [OK]   009-impressum-widget — API .one in src/routes/impressum/+page.server.ts
+  [OK]   010-credits-api — API in src/routes/credits/+page.server.ts
+  [OK]   011-vector-chat — eingebunden in src/routes/+layout.svelte
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-05-06
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für stadtpunkt
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [OK]   030-mail-architecture — Mail-Architektur konform (1 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: gh-actions:cert-monitor.yml
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — Refactor-Anteil 0% (< 8%); > 1000-Zeilen-Datei(en): src\lib\components\stadtpunkt\EditorV3.svelte:1422, src\routes\dashboard\+page.svelte:2129, src\routes\einreichung\[id]\+page.svelte:2495; > 500-Zeilen-Datei(en): src\routes\+page.svelte:706, src\routes\goethe\+page.svelte:826
+  [OK]   021-re-review-reminder — letzter Review vor 8 Tagen (2026-05-04)
+  [OK]   027-deploy-pipeline — deploy.yml + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== kitchen-station (local) ===
+  [OK]   007-paths
+  [skip] 001-blue-green — exception: Kiosk-App auf lokalem Android-Device — kein Server-Deploy, Blue-Green nicht anwendbar. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [skip] 004-tls-dns01 — keine Domain
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — Internes Tool
+  [skip] 010-credits-api — Internes Tool
+  [skip] 011-vector-chat — Internes Tool
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — keine Domain
+  [skip] 018-bundle-drift — keine Domain
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — keine Domain
+  [skip] 019-cert-dns — keine Domain
+  [OK]   013-launch-gate — Sign-Off 2026-05-12
+  [skip] 012-footer — Internes Tool
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — data_processors leer dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für kitchen-station
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — keine package.json
+  [FAIL] 024-code-health-budget — Refactor-Anteil 0% (< 8%)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — deploy_pipeline=manual (Ausnahme)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [skip] 037-tech-stack-currency — kein package.json
+
+=== voltfair (local) ===
+  [OK]   007-paths
+  [skip] 001-blue-green — exception: Eigener voltfair-cli VPS mit single-Deploy — Blue-Green-Migration in nächstem Infra-Sprint geplant. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — exception: Eigene /impressum und /datenschutz Seiten — keine externe API-Einbettung. Widget bei Erweiterung. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   010-credits-api — API in app/(public)/credits/page.tsx
+  [OK]   011-vector-chat — eingebunden in app/layout.tsx
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 2 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für voltfair
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [OK]   029-indirect-prompt-injection-test — 12 Payloads, Quellen: greshake, owasp, promptfoo
+  [OK]   030-mail-architecture — Mail-Architektur konform (3 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: gh-actions:cron-crawlers.yml, gh-actions:cron-emails.yml, gh-actions:cron-enricher.yml (+3)
+  [OK]   032-ssr-auth — proxy.ts: broad matcher + auth.getUser()
+  [FAIL] 024-code-health-budget — Refactor-Anteil 4% (< 8%); > 500-Zeilen-Datei(en): lib\stalwart\jmap.ts:691, app\(dashboard)\admin\page.tsx:563, app\(dashboard)\admin\pv-finanzierung\partners\[slug]\page.tsx:552 (+6)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — exception: Build auf maxone-deploy-Runner (= maxone-prod) — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets nötig. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== solarproof (local) ===
+  [OK]   007-paths
+  [skip] 001-blue-green — exception: Kein Server-Deploy konfiguriert (domain/server null) — Blue-Green-Migration wenn Server-Deploy geplant wird. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [skip] 004-tls-dns01 — keine Domain
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — keine Impressum-Erwähnung gefunden
+  [OK]   010-credits-api — API in src/components/CreditsOverlay.tsx
+  [OK]   011-vector-chat — eingebunden in index.html
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — keine Domain
+  [skip] 018-bundle-drift — keine Domain
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — keine Domain
+  [skip] 019-cert-dns — keine Domain
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [skip] 012-footer — exception: Static-Site ohne Footer-Komponente — Footer-Sprint ausstehend. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — data_processors leer dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für solarproof
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [skip] 031-routine-platform — keine wiederkehrende Routine erkannt
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — Refactor-Anteil 4% (< 8%); > 500-Zeilen-Datei(en): src\utils\pdf.ts:772
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — exception: Statische Website (nginx) — keine Laufzeit-Env-Vars. env_file nicht anwendbar. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   028-container-misconfig-local — docker-compose.yml: 7 Pflicht-Klassen sauber
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== vector (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — docker-compose.yml: image: + build:
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — Infra-Projekt
+  [skip] 010-credits-api — Infra-Projekt
+  [skip] 011-vector-chat — hostet Widget selbst
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — internes/Infra-Projekt
+  [skip] 018-bundle-drift — internes/Infra-Projekt
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — internes/Infra-Projekt
+  [skip] 019-cert-dns — internes/Infra-Projekt
+  [OK]   013-launch-gate — Sign-Off 2026-05-12
+  [skip] 012-footer — Infra-Projekt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für vector
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [OK]   029-indirect-prompt-injection-test — 12 Payloads, Quellen: greshake, owasp, promptfoo
+  [OK]   030-mail-architecture — Mail-Architektur konform (6 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: systemd-timer, systemd-service, vector-agent (+1)
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — Refactor-Anteil 4% (< 8%); > 1000-Zeilen-Datei(en): src\chat\web-reasoner.ts:1108; > 500-Zeilen-Datei(en): src\telegram\bot.ts:501
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [OK]   027-deploy-pipeline — deploy.yml + compose erfüllt Pipeline-Pflichten (ubuntu-latest + Image-Transfer)
+  [skip] 028-container-misconfig-local — exception: env_file=.env (relativ, nicht /opt/secrets/vector/keys.env). Migration auf /opt/secrets/ bei nächstem Infra-Sprint. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== snapflow (local) ===
+  [OK]   007-paths
+  [OK]   001-blue-green
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — infra/docker-compose.yml: nur image: (CI-Build separat)
+  [OK]   004-tls-dns01
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [OK]   009-impressum-widget — API .one in src/pages/legal/Impressum.tsx
+  [OK]   010-credits-api — API in src/pages/Credits.tsx
+  [OK]   011-vector-chat — eingebunden in index.html
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — --local-only (HTTP-Fetch übersprungen)
+  [skip] 018-bundle-drift — --local-only (HTTP-Fetch übersprungen)
+  [skip] 014-sunset — status=live
+  [skip] 020-pentest-light — --local-only (Netzwerk übersprungen)
+  [skip] 019-cert-dns — --local-only (Netzwerk übersprungen)
+  [OK]   013-launch-gate — Sign-Off 2026-04-27
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für snapflow
+  [skip] 025-llm-app-spezial — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 029-indirect-prompt-injection-test — keine LLM-App (weder Tag noch Code-Marker)
+  [skip] 030-mail-architecture — kein Mail-Code (kein Brevo/JMAP/Stalwart-Marker)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: pg_cron, vector-agent
+  [skip] 032-ssr-auth — kein @supabase/ssr
+  [FAIL] 024-code-health-budget — Refactor-Anteil 1% (< 8%); > 1000-Zeilen-Datei(en): src\pages\forms\FormEditor.tsx:1085; > 500-Zeilen-Datei(en): src\components\action-days\ActionDayDialog.tsx:820, src\components\admin\WaitlistTable.tsx:771, src\components\dashboard\Sidebar.tsx:676 (+18)
+  [OK]   021-re-review-reminder — letzter Review vor 15 Tagen (2026-04-27)
+  [skip] 027-deploy-pipeline — exception: Static SPA — Vite bäckt alle VITE_* Vars ins Bundle. env_file zur Runtime nicht anwendbar. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 028-container-misconfig-local — exception: Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+=== zentinel (local) ===
+  [OK]   007-paths
+  [skip] 001-blue-green — nicht live
+  [OK]   008-domain-policy
+  [OK]   002-no-build-on-prod — zentinel/vigil/docker-compose.yml: nur image: (CI-Build separat)
+  [skip] 004-tls-dns01 — keine Traefik-Labels (vermutlich kein eigener Reverse-Proxy)
+  [OK]   005-test-first — smoke.mjs + TESTING.md
+  [skip] 009-impressum-widget — exception: Eigene /impressum und /datenschutz Seiten in Footer — keine externe API-Einbettung. Widget bei Erweiterung. (expires 2026-11-12, granted 2026-05-12 by max)
+  [skip] 010-credits-api — exception: Credits lokal in AdminSidebar (interne Admin-UI) — API-Migration bei nächstem UI-Sprint. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   011-vector-chat — eingebunden in src/app.html
+  [skip] 022-secret-scan — gitleaks nicht installiert (make install-tools)
+  [skip] 023-static-analysis — semgrep nicht installiert (make install-tools)
+  [OK]   015-concept-gate — Konzept + Gate 1 vorhanden
+  [OK]   016-stack-whitelist — keine Blacklist-Marker / -Pakete gefunden
+  [skip] 017-dsgvo-tracker — status=dev
+  [skip] 018-bundle-drift — status=dev
+  [skip] 014-sunset — status=dev
+  [skip] 020-pentest-light — status=dev
+  [skip] 019-cert-dns — status=dev
+  [skip] 013-launch-gate — status=dev
+  [OK]   012-footer — 1 Footer-Datei(en), alle Pflichten erfüllt
+  [OK]   026-self-hosted-first — keine Abo-/SaaS-Marker, external_subscriptions sauber
+  [OK]   041-avv-dpa-registry — 1 Auftragsverarbeiter dokumentiert
+  [OK]   038-cross-project-broadcast — 1 Broadcast(s) geprüft — kein offener Eintrag für zentinel
+  [OK]   025-llm-app-spezial — Härtung + Tests vorhanden (info: LLM-Logging-Tabelle nicht erkannt)
+  [OK]   029-indirect-prompt-injection-test — 12 Payloads, Quellen: greshake, owasp, promptfoo
+  [OK]   030-mail-architecture — Mail-Architektur konform (11 Mail-Datei(en) geprüft, Pre-Flight+Regel-19+4+14+15 OK)
+  [OK]   031-routine-platform — Heartbeat-Plattform vorhanden: systemd-timer, vector-agent, maxone-watchdog
+  [skip] 032-ssr-auth — kein Next.js (Regel gilt nur für Next App Router)
+  [skip] 024-code-health-budget — status=dev
+  [skip] 021-re-review-reminder — status=dev
+  [skip] 027-deploy-pipeline — status=dev
+  [skip] 028-container-misconfig-local — exception: Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend. (expires 2026-11-12, granted 2026-05-12 by max)
+  [OK]   037-tech-stack-currency — Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)
+
+--- Summary ---
+  Total:   429
+  Passed:  230
+  Warning: 2
+  Failed:  12
+  Skipped: 185
+
+--- Failures ---
+  maxone.one           025-llm-app-spezial          System-Prompt-Härtung komplett fehlt; Schreib-Tool ohne Approval-Queue-Pattern
+  maxone.one           024-code-health-budget       Refactor-Anteil 4% (< 8%); > 1000-Zeilen-Datei(en): apps\umbrella\src\lib\components\admin\email\EmailDetail.svelte:1252, apps\umbrella\src\routes\(admin)\admin\voice\+page.svelte:1111; > 500-Zeilen-Datei(en): apps\umbrella\src\lib\components\admin\bio\BlockEditor.svelte:534, apps\umbrella\src\lib\components\admin\bio\InlineBlock.svelte:837, apps\umbrella\src\lib\components\admin\email\EmailSearch.svelte:979 (+13)
+  stadtlahnflow        024-code-health-budget       Refactor-Anteil 2% (< 8%); > 1000-Zeilen-Datei(en): src\app\dashboard\kreis\page.tsx:1030, src\app\mitglieder\[slug]\page.tsx:1148, src\components\admin\OutreachTabs.tsx:1874 (+2); > 500-Zeilen-Datei(en): src\app\admin\vorlagen\eigene\page.tsx:732, src\app\admin\zielgruppen\page.tsx:598, src\app\api\cron\outreach\route.ts:669 (+16)
+  repivot              024-code-health-budget       Refactor-Anteil 0% (< 8%); > 500-Zeilen-Datei(en): frontend\src\pages\Dashboard.tsx:669
+  vanfree              024-code-health-budget       Refactor-Anteil 3% (< 8%)
+  plansey-2026         024-code-health-budget       Refactor-Anteil 0% (< 8%)
+  stadtpunkt           024-code-health-budget       Refactor-Anteil 0% (< 8%); > 1000-Zeilen-Datei(en): src\lib\components\stadtpunkt\EditorV3.svelte:1422, src\routes\dashboard\+page.svelte:2129, src\routes\einreichung\[id]\+page.svelte:2495; > 500-Zeilen-Datei(en): src\routes\+page.svelte:706, src\routes\goethe\+page.svelte:826
+  kitchen-station      024-code-health-budget       Refactor-Anteil 0% (< 8%)
+  voltfair             024-code-health-budget       Refactor-Anteil 4% (< 8%); > 500-Zeilen-Datei(en): lib\stalwart\jmap.ts:691, app\(dashboard)\admin\page.tsx:563, app\(dashboard)\admin\pv-finanzierung\partners\[slug]\page.tsx:552 (+6)
+  solarproof           024-code-health-budget       Refactor-Anteil 4% (< 8%); > 500-Zeilen-Datei(en): src\utils\pdf.ts:772
+  vector               024-code-health-budget       Refactor-Anteil 4% (< 8%); > 1000-Zeilen-Datei(en): src\chat\web-reasoner.ts:1108; > 500-Zeilen-Datei(en): src\telegram\bot.ts:501
+  snapflow             024-code-health-budget       Refactor-Anteil 1% (< 8%); > 1000-Zeilen-Datei(en): src\pages\forms\FormEditor.tsx:1085; > 500-Zeilen-Datei(en): src\components\action-days\ActionDayDialog.tsx:820, src\components\admin\WaitlistTable.tsx:771, src\components\dashboard\Sidebar.tsx:676 (+18)
+
+--- Ausnahmen aktiv (FAIL/WARN unterdrückt) ---
+  maxone.one           009-impressum-widget                 bis 2026-11-12 — Hostet eigene Website — Impressum lokal in Footer ist korrekt, kein API-Widget nötig.
+  maxone.one           027-deploy-pipeline                  bis 2026-11-12 — Tarball-Deployment (npm build → tar.gz → docker compose up). Kein Docker-Image-Build in CI — Standard 002 erfüllt. Image-Transfer via Tarball in compose-Slot.
+  stadtlahnflow        027-deploy-pipeline                  bis 2026-11-12 — Build auf maxone-prod-Runner — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets NEXT_PUBLIC_SUPABASE_URL/ANON_KEY nötig.
+  katchi               002-no-build-on-prod                 bis 2026-11-12 — Projekt paused — kein docker-compose.yml lokal, nur Test-Stubs. Bei Reaktivierung nachreichen.
+  katchi               004-tls-dns01                        bis 2026-11-12 — Projekt paused — kein docker-compose.yml lokal, TLS-Konfiguration nicht prüfbar. Bei Reaktivierung nachreichen.
+  katchi               010-credits-api                      bis 2026-11-12 — Projekt paused — Credits-Route bei Reaktivierung einbinden.
+  katchi               011-vector-chat                      bis 2026-11-12 — Projekt paused — kein Frontend-HTML vorhanden. Widget bei Reaktivierung einbinden.
+  katchi               015-concept-gate                     bis 2026-11-12 — Projekt paused — keine aktive Entwicklung, nur Test-Stubs lokal. CONCEPT.md vor Reaktivierung nachreichen.
+  katchi               012-footer                           bis 2026-11-12 — Projekt paused — kein Frontend-HTML vorhanden. Footer bei Reaktivierung einbinden.
+  repivot              028-container-misconfig-local        bis 2026-11-12 — env_file zeigt auf relative Pfade (./backend/.env) statt /opt/secrets/repivot/keys.env. Migration ausstehend.
+  vanfree              012-footer                           bis 2026-11-12 — Kein Footer-Component vorhanden — Footer-Sprint ausstehend.
+  vanfree              028-container-misconfig-local        bis 2026-11-12 — ghcr.io/:latest — CD-Pattern via GitHub Packages; SHA-Pinning nach Registry-Workflow-Stabilisierung.
+  plansey-2026         009-impressum-widget                 bis 2026-11-12 — Eigene /imprint und /privacy Seiten — keine externe API-Einbettung. Widget bei Erweiterung.
+  plansey-2026         032-ssr-auth                         bis 2026-11-12 — NextAuth JWT-Sessions — Supabase SSR nur für DB, nicht Auth. auth()-Call in middleware.ts ist das NextAuth-Äquivalent.
+  plansey-2026         028-container-misconfig-local        bis 2026-11-12 — env_file=.env (relativ, nicht /opt/secrets/plansey/keys.env); migrate-Service ist One-Shot (kein restart). Migration auf /opt/secrets/ bei nächstem Infra-Sprint.
+  kitchen-station      001-blue-green                       bis 2026-11-12 — Kiosk-App auf lokalem Android-Device — kein Server-Deploy, Blue-Green nicht anwendbar.
+  voltfair             001-blue-green                       bis 2026-11-12 — Eigener voltfair-cli VPS mit single-Deploy — Blue-Green-Migration in nächstem Infra-Sprint geplant.
+  voltfair             009-impressum-widget                 bis 2026-11-12 — Eigene /impressum und /datenschutz Seiten — keine externe API-Einbettung. Widget bei Erweiterung.
+  voltfair             027-deploy-pipeline                  bis 2026-11-12 — Build auf maxone-deploy-Runner (= maxone-prod) — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets nötig.
+  solarproof           001-blue-green                       bis 2026-11-12 — Kein Server-Deploy konfiguriert (domain/server null) — Blue-Green-Migration wenn Server-Deploy geplant wird.
+  solarproof           012-footer                           bis 2026-11-12 — Static-Site ohne Footer-Komponente — Footer-Sprint ausstehend.
+  solarproof           027-deploy-pipeline                  bis 2026-11-12 — Statische Website (nginx) — keine Laufzeit-Env-Vars. env_file nicht anwendbar.
+  vector               028-container-misconfig-local        bis 2026-11-12 — env_file=.env (relativ, nicht /opt/secrets/vector/keys.env). Migration auf /opt/secrets/ bei nächstem Infra-Sprint.
+  snapflow             027-deploy-pipeline                  bis 2026-11-12 — Static SPA — Vite bäckt alle VITE_* Vars ins Bundle. env_file zur Runtime nicht anwendbar.
+  snapflow             028-container-misconfig-local        bis 2026-11-12 — Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend.
+  zentinel             009-impressum-widget                 bis 2026-11-12 — Eigene /impressum und /datenschutz Seiten in Footer — keine externe API-Einbettung. Widget bei Erweiterung.
+  zentinel             010-credits-api                      bis 2026-11-12 — Credits lokal in AdminSidebar (interne Admin-UI) — API-Migration bei nächstem UI-Sprint.
+  zentinel             028-container-misconfig-local        bis 2026-11-12 — Lokales :latest — CI baut + docker load, kein Registry-Pull-Drift. SHA-Tag-Migration ausstehend.
+
+--- Ausnahmen REMOVAL-KANDIDAT (Check liefert PASS — Ausnahme nicht mehr nötig) ---
+  repivot              002-no-build-on-prod                 — Eintrag aus exceptions.yml entfernen
+
+--- Score 0-10 pro Standard (PASS=10, WARN=5, FAIL=0; SKIP excluded) ---
+  001-blue-green                         10.0   (8 PASS, 0 WARN, 0 FAIL, 5 SKIP)
+  002-no-build-on-prod                    9.6   (11 PASS, 1 WARN, 0 FAIL, 1 SKIP)
+  004-tls-dns01                           9.4   (8 PASS, 1 WARN, 0 FAIL, 4 SKIP)
+  005-test-first                         10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  007-paths                              10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  008-domain-policy                      10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  009-impressum-widget                   10.0   (5 PASS, 0 WARN, 0 FAIL, 8 SKIP)
+  010-credits-api                        10.0   (8 PASS, 0 WARN, 0 FAIL, 5 SKIP)
+  011-vector-chat                        10.0   (10 PASS, 0 WARN, 0 FAIL, 3 SKIP)
+  012-footer                             10.0   (8 PASS, 0 WARN, 0 FAIL, 5 SKIP)
+  013-launch-gate                        10.0   (11 PASS, 0 WARN, 0 FAIL, 2 SKIP)
+  014-sunset                              N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  015-concept-gate                       10.0   (12 PASS, 0 WARN, 0 FAIL, 1 SKIP)
+  016-stack-whitelist                    10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  017-dsgvo-tracker                       N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  018-bundle-drift                        N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  019-cert-dns                            N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  020-pentest-light                       N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  021-re-review-reminder                 10.0   (11 PASS, 0 WARN, 0 FAIL, 2 SKIP)
+  022-secret-scan                         N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  023-static-analysis                     N/A   (0 PASS, 0 WARN, 0 FAIL, 13 SKIP)
+  024-code-health-budget                  0.0   (0 PASS, 0 WARN, 11 FAIL, 2 SKIP)
+  025-llm-app-spezial                     8.6   (6 PASS, 0 WARN, 1 FAIL, 6 SKIP)
+  026-self-hosted-first                  10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  027-deploy-pipeline                    10.0   (5 PASS, 0 WARN, 0 FAIL, 8 SKIP)
+  028-container-misconfig-local          10.0   (5 PASS, 0 WARN, 0 FAIL, 8 SKIP)
+  029-indirect-prompt-injection-test     10.0   (4 PASS, 0 WARN, 0 FAIL, 9 SKIP)
+  030-mail-architecture                  10.0   (7 PASS, 0 WARN, 0 FAIL, 6 SKIP)
+  031-routine-platform                   10.0   (8 PASS, 0 WARN, 0 FAIL, 5 SKIP)
+  032-ssr-auth                           10.0   (3 PASS, 0 WARN, 0 FAIL, 10 SKIP)
+  037-tech-stack-currency                10.0   (10 PASS, 0 WARN, 0 FAIL, 3 SKIP)
+  038-cross-project-broadcast            10.0   (13 PASS, 0 WARN, 0 FAIL, 0 SKIP)
+  041-avv-dpa-registry                   10.0   (12 PASS, 0 WARN, 0 FAIL, 1 SKIP)
+  OVERALL                                 9.5   (gewichtet, ohne SKIPs)

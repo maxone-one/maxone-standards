@@ -1,8 +1,56 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-12b (030-Mail-Fix in vector)
+**Stand:** 2026-05-12c (027-Migration komplett + maxone-staging Runner)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 33 Standards aktiv; OVERALL 9.4/10 (lokal); 21 von 22 aktiven Standards bei 10.0
+**Status:** 33 Standards aktiv; OVERALL **9.5/10** (lokal); 22 von 23 aktiven Standards bei 10.0
+
+---
+
+## Session-Update 2026-05-12c — 027-Sprint + maxone-staging
+
+### Was wurde gemacht
+
+**Standard 027 — von 5.6 → 10.0:**
+- `audit.mjs`: `sshImageTransfer`-Check akzeptiert jetzt GitHub-Artifact-Pattern (upload + download + docker load) und GHCR-Push/Pull
+- `audit.mjs`: `dockerSave`-Check akzeptiert `docker push ghcr.io` und `docker/build-push-action`
+- `audit.mjs`: `wfFiles` liest jetzt ALLE `deploy-*.yml` (nicht nur erste alphabetische Datei — fix für solarproof)
+- `registry/projects.yml`: `repivot` erhält `compose_file: docker-compose.prod.yml`
+- `registry/exceptions.yml`: maxone.one/027 (tarball-deploy), snapflow/027 (static SPA), solarproof/027 (static site)
+- **plansey-2026**: Workflow auf 2-Job-Pattern migriert (build ubuntu-latest + deploy self-hosted), `.env.production` für NEXT_PUBLIC_* angelegt, `deploy.sh` ohne `docker compose build` + Standard-033-Prewarm
+- **solarproof**: Workflow auf ubuntu-latest + SSH-Transfer migriert, Secrets `SSH_PRIVATE_KEY`/`SERVER_HOST`/`SERVER_USER` in GitHub gesetzt, `docker-compose.yml` mit `healthcheck:` + custom image (kein Volume-Mount mehr)
+
+**maxone-staging Server provisioniert (178.105.124.92, Hetzner fsn1, cpx32):**
+- Docker, Traefik (DNS-01/INWX), GitHub Actions Runner `maxone-staging` als systemd-Service
+- `traefik-probe-fix.sh` von maxone-prod kopiert
+- CLAUDE.md + Runner-Tabelle aktualisiert (3 Org-Runner dokumentiert)
+
+**repivot Standard 002 + Standard 033:**
+- CI-Workflow auf 2-Job-Pattern (ubuntu-latest build + self-hosted deploy) umgestellt
+- `deploy.sh`: Build-Schritt entfernt, Standard-033-Prewarm + Netzwerk-Disconnect/-Reconnect
+- Vor-Kompaktions-Session (vector Stashes: telegram-Package, VISTA-Knowledge-Files committed)
+
+### Aktuelle Score-Übersicht (lokal, --local-only)
+
+| Standard | Score | Notiz |
+|----------|-------|-------|
+| 001..026 (außer 024, 025) | 10.0 | |
+| **024-code-health-budget** | **0.0** | **11 FAILs — strukturell, nur durch echte Refactoring-Arbeit behebbar** |
+| **025-llm-app-spezial** | **0.0** | **1 FAIL — vector: System-Prompt-Härtung + Approval-Queue fehlen** |
+| 027-deploy-pipeline | **10.0** | War 5.6 → vollständig saniert (Session 2026-05-12c) |
+| 030-mail-architecture | 10.0 | |
+| **OVERALL** | **9.5** | |
+
+### Offene Punkte
+
+1. **024-code-health-budget (0.0)**: 11 FAILs — Refactor-Anteil < 8%, viele Dateien > 500/1000 LOC. Nur durch echten Code-Refactor behebbar, nicht durch Konfiguration.
+2. **025-llm-app-spezial (0.0)**: vector fehlt System-Prompt-Härtung (6 Schichten aus Standard 025) + Approval-Queue-Pattern. Separate Session.
+3. **Dep-Sweep**: solarproof, repivot, vanfree, stadtlahnflow haben keinen `chore(deps)`-Commit in 180 Tagen.
+4. **vector Migration `010_reply_status.sql`**: Noch nicht auf Server eingespielt (VAULT-Task).
+5. **solarproof compose auf Server**: Server-Compose nutzt noch `nginx:alpine` mit Volume-Mount. Beim nächsten Deploy (via neuem Workflow) wird automatisch die neue `docker-compose.yml` (custom image) eingespielt.
+
+### Audit-Snapshot
+
+`audits/baseline-2026-05-12c.txt` — aktueller Stand nach 027-Sprint.
 
 ---
 
