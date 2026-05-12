@@ -149,6 +149,7 @@ projects:
     deploy: blue-green
     container: repivot-backend
     path_local: c:\Users\max\Projects\repivot.in
+    compose_file: docker-compose.prod.yml
     path_server: /opt/repivot
     secrets_dir: repivot
     status: live

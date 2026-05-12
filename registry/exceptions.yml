@@ -192,6 +192,25 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
+  # snapflow ist eine Vite-gebaute Static SPA (nginx). Alle Env-Vars werden
+  # zur Build-Zeit ins Bundle eingebettet (VITE_* baked-in). Kein runtime
+  # env_file nötig — ein .env auf dem Server würde keinen Effekt haben.
+  - project: snapflow
+    standard: '027'
+    reason: "Static SPA — Vite bäckt alle VITE_* Vars ins Bundle. env_file zur Runtime nicht anwendbar."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # solarproof ist eine statische Website (nginx). Keine Laufzeit-Env-Vars —
+  # alles ist im Build-Output enthalten. env_file würde keinen Effekt haben.
+  - project: solarproof
+    standard: '027'
+    reason: "Statische Website (nginx) — keine Laufzeit-Env-Vars. env_file nicht anwendbar."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
   # zentinel nutzt lokales :latest — gleicher Grund wie snapflow.
   - project: zentinel
     standard: '028'
@@ -221,6 +240,16 @@ exceptions:
   - project: repivot
     standard: '028'
     reason: "env_file zeigt auf relative Pfade (./backend/.env) statt /opt/secrets/repivot/keys.env. Migration ausstehend."
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # maxone.one nutzt tarball-basiertes Node.js-Deploy (kein Docker-Image-Build im CI).
+  # Das Docker-Image (SvelteKit adapter-node Basis) ist pre-pulled; Build-Artefakte
+  # werden per .tar.gz in den Container-Slot übertragen. Kein docker save/GHCR.
+  - project: maxone.one
+    standard: '027'
+    reason: "Tarball-Deployment (npm build → tar.gz → docker compose up). Kein Docker-Image-Build in CI — Standard 002 erfüllt. Image-Transfer via Tarball in compose-Slot."
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max

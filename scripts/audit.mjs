@@ -1566,12 +1566,12 @@ const localChecks = {
     const wfDir = join(project.path_local, '.github', 'workflows');
     if (!existsSync(wfDir)) return FAIL('.github/workflows/ fehlt komplett');
 
-    // Workflow-Datei finden (deploy.yml bevorzugt, sonst alle .yml/.yaml)
+    // Workflow-Dateien finden (alle deploy-*.yml bevorzugt, sonst alle .yml/.yaml)
     let wfFiles = [];
     try {
       const entries = readdirSync(wfDir).filter(f => /\.(ya?ml)$/i.test(f));
-      const preferred = entries.find(f => /deploy/i.test(f));
-      wfFiles = preferred ? [preferred] : entries;
+      const preferred = entries.filter(f => /deploy/i.test(f));
+      wfFiles = preferred.length ? preferred : entries;
     } catch {
       return FAIL('.github/workflows/ nicht lesbar');
     }
@@ -1622,8 +1622,12 @@ const localChecks = {
     // Pflichtkomponenten der Premium-Pipeline
     const checks = {
       ubuntuLatest: /runs-on:\s*\[?\s*ubuntu-(latest|22\.04|24\.04)/i.test(wfText),
-      dockerSave: /docker\s+save\b/i.test(wfText),
-      sshImageTransfer: /docker\s+save[^\n]*\|[^\n]*ssh[^\n]*docker\s+load|ssh[^\n]*"\s*gunzip\s*\|\s*docker\s+load/i.test(wfText),
+      // docker save (tarball) OR docker push to registry (GHCR/other) — both are off-prod image transfer
+      dockerSave: /docker\s+save\b/i.test(wfText) || /docker\s+push\s+ghcr\.io/i.test(wfText) || /docker\/build-push-action/i.test(wfText),
+      // SSH-pipe OR GitHub-Artifact OR GHCR push+pull pattern
+      sshImageTransfer: /docker\s+save[^\n]*\|[^\n]*ssh[^\n]*docker\s+load|ssh[^\n]*"\s*gunzip\s*\|\s*docker\s+load/i.test(wfText)
+        || (/upload-artifact/i.test(wfText) && /download-artifact/i.test(wfText) && /docker\s+load/i.test(wfText))
+        || (/docker\s+push\s+ghcr\.io/i.test(wfText) && /docker\s+pull\s+ghcr\.io/i.test(wfText)),
     };
     const failed = Object.entries(checks).filter(([_, ok]) => !ok).map(([k]) => k);
 
