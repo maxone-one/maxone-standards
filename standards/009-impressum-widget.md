@@ -43,6 +43,33 @@ Beide Sätze sind **Pflicht**:
 1. Der Link zur OS-Plattform (`https://ec.europa.eu/consumers/odr/`)
 2. Die Erklärung zur Nicht-Teilnahme
 
+## Pflicht-Felder im Template (§ 5 TMG, rechtsformabhängig)
+
+Die API liefert alle Daten — das Template **muss** sie auch rendern. Der Audit
+erkennt die Rechtsform automatisch aus der Live-API-Response und prüft die
+entsprechenden Felder.
+
+### Alle Rechtsformen (Einzelunternehmen, GmbH, UG, AG, …)
+
+| API-Feld | Rechtsgrundlage | Pflicht |
+|---|---|---|
+| `legal_name` | §5 Abs. 1 Nr. 1 TMG — Name | immer |
+| `street` | §5 Abs. 1 Nr. 1 TMG — Anschrift | immer |
+| `zip` + `city` | §5 Abs. 1 Nr. 1 TMG — Anschrift | immer |
+| `email` **oder** `phone` | §5 Abs. 1 Nr. 2 TMG — schnelle Kommunikation | mind. eines |
+| `vat_id` | §5 Abs. 1 Nr. 6 TMG — USt-IdNr. | wenn in API vorhanden |
+| `tax_id` | §5 Abs. 1 Nr. 6 TMG — Steuernummer | wenn `vat_id` fehlt und in API vorhanden |
+
+### Zusätzlich für Kapitalgesellschaften (GmbH, UG, AG)
+
+Erkennung: API-Response enthält `register_court` **und** `register_number`.
+
+| API-Feld | Rechtsgrundlage | Pflicht |
+|---|---|---|
+| `register_court` + `register_number` | §5 Abs. 1 Nr. 4 TMG — Handelsregister | immer |
+
+**Aktueller Stand (2026-05-12):** Einzelunternehmen — nur die universellen Felder werden geprüft.
+
 ## Warum zentrale API
 
 Stamm­daten, Geschäftsführer, Anschrift, USt-IdNr. ändern sich gelegentlich.

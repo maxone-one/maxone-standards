@@ -124,6 +124,29 @@ function grepRepo(repoRoot, regex, maxFiles = 5) {
   return hits;
 }
 
+// Impressum-API-Cache — einmalig pro Audit-Lauf
+let _impressumApiData = null;
+let _impressumApiFetched = false;
+async function fetchImpressumApi() {
+  if (_impressumApiFetched) return _impressumApiData;
+  _impressumApiFetched = true;
+  try {
+    const res = await fetch('https://panel.maxone.one/functions/v1/impressum',
+      { signal: AbortSignal.timeout(5000) });
+    if (res.ok) _impressumApiData = await res.json();
+  } catch { /* API nicht erreichbar — Feldprüfung wird übersprungen */ }
+  return _impressumApiData;
+}
+
+function findImpressumFiles(repoRoot) {
+  const hits = [];
+  for (const file of walkSource(repoRoot)) {
+    const rel = file.slice(repoRoot.length + 1).replace(/\\/g, '/');
+    if (/impressum|imprint/i.test(rel)) hits.push({ abs: file, rel });
+  }
+  return hits;
+}
+
 // --- Local Checks ---
 
 const localChecks = {
@@ -184,27 +207,62 @@ const localChecks = {
     if (!smoke && testingMd) return WARN('TESTING.md ja, smoke.mjs fehlt');
     return FAIL('weder smoke.mjs noch TESTING.md');
   },
-  '009-impressum-widget': (project) => {
+  '009-impressum-widget': async (project) => {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
     if (project.tags === 'internal') return SKIP('Internes Tool');
 
-    const hasOsLink = () => grepRepo(project.path_local, /ec\.europa\.eu\/consumers\/odr/, 1).length > 0;
-
-    const apiNew = grepRepo(project.path_local, /panel\.maxone\.one\/functions\/v1\/impressum/, 1);
     const apiOld = grepRepo(project.path_local, /panel\.maxone\.studio\/functions\/v1\/impressum/, 1);
-    if (apiNew.length) {
-      if (!hasOsLink()) return WARN(`API .one in ${apiNew[0]} — EU-Streitschlichtungs-OS-Link fehlt im Template (ec.europa.eu/consumers/odr)`);
-      return PASS(`API .one in ${apiNew[0]}`);
-    }
     if (apiOld.length) return WARN(`nutzt panel.maxone.studio (auf .one migrieren) — ${apiOld[0]}`);
-    if (project.impressum_local_intentional) {
-      if (!hasOsLink()) return WARN('lokal (bewusste Ausnahme) — EU-Streitschlichtungs-OS-Link fehlt (ec.europa.eu/consumers/odr)');
-      return PASS('lokal (bewusste Ausnahme — siehe Projekt-CLAUDE.md)');
+
+    const apiNew = grepRepo(project.path_local, /panel\.maxone\.one\/functions\/v1\/impressum/, 10);
+    const hasApi = apiNew.length > 0;
+
+    if (!hasApi && !project.impressum_local_intentional) {
+      const localImpressum = grepRepo(project.path_local, /\b(impressum|imprint)\b/i, 1);
+      if (localImpressum.length) return WARN(`Impressum lokal? siehe ${localImpressum[0]}`);
+      return SKIP('keine Impressum-Erwähnung gefunden');
     }
-    const localImpressum = grepRepo(project.path_local, /\b(impressum|imprint)\b/i, 1);
-    if (localImpressum.length) return WARN(`Impressum lokal? siehe ${localImpressum[0]}`);
-    return SKIP('keine Impressum-Erwähnung gefunden');
+
+    const apiNewPrimary = apiNew.find(f => /impressum|imprint/i.test(f)) ?? apiNew[0];
+    const location = hasApi ? `API .one in ${apiNewPrimary}` : 'lokal (bewusste Ausnahme)';
+
+    // EU-Streitschlichtungs-OS-Link (Art. 14 ODR-VO EU 524/2013)
+    const hasOsLink = grepRepo(project.path_local, /ec\.europa\.eu\/consumers\/odr/, 1).length > 0;
+    if (!hasOsLink) return WARN(`${location} — EU-Streitschlichtungs-OS-Link fehlt (ec.europa.eu/consumers/odr)`);
+
+    // Pflichtfelder-Check via Live-API (§ 5 TMG, rechtsformabhängig)
+    const apiData = await fetchImpressumApi();
+    if (!apiData) return PASS(`${location} — OS-Link ✓ (API nicht erreichbar, Pflichtfeld-Check übersprungen)`);
+
+    const isKapitalgesellschaft = !!(apiData.register_court && apiData.register_number);
+    const legalForm = isKapitalgesellschaft ? 'Kapitalgesellschaft' : 'Einzelunternehmen';
+
+    const impressumFiles = findImpressumFiles(project.path_local);
+    const tpl = impressumFiles.map(f => {
+      try { return readFileSync(f.abs, 'utf8'); } catch { return ''; }
+    }).join('\n');
+
+    const missing = [];
+    // §5 Abs. 1 Nr. 1 TMG — Name + Anschrift
+    if (!tpl.includes('legal_name')) missing.push('legal_name');
+    if (!tpl.includes('street')) missing.push('street');
+    if (!tpl.includes('zip') && !tpl.includes('city')) missing.push('zip/city');
+    // §5 Abs. 1 Nr. 2 TMG — schnelle elektronische Kommunikation
+    if (!tpl.includes('email') && !tpl.includes('phone')) missing.push('email/phone');
+    // §5 Abs. 1 Nr. 6 TMG — Steuer-ID, nur wenn API-Daten vorhanden
+    if (apiData.vat_id && !tpl.includes('vat_id')) missing.push('vat_id');
+    else if (apiData.tax_id && !apiData.vat_id && !tpl.includes('tax_id')) missing.push('tax_id');
+    // §5 Abs. 1 Nr. 4 TMG — Handelsregister (nur Kapitalgesellschaft)
+    if (isKapitalgesellschaft) {
+      if (!tpl.includes('register_court')) missing.push('register_court');
+      if (!tpl.includes('register_number')) missing.push('register_number');
+    }
+
+    if (missing.length > 0) {
+      return WARN(`${location} — Pflichtfelder fehlen im Template [${legalForm}]: ${missing.join(', ')}`);
+    }
+    return PASS(`${location} — alle §5-TMG-Pflichtfelder + OS-Link ✓ [${legalForm}]`);
   },
   '010-credits-api': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
