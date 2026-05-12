@@ -16,8 +16,7 @@ umgezogen.
 HTTP-01 koppelt alle Projekte am Account-Rate-Limit. Ein einzelner kaputter
 Container (falscher DNS-Eintrag, gekündigte Domain, etc.) kann das Lets-Encrypt-
 Kontingent sprengen und blockiert dann ALLE anderen Projekte auf demselben
-Server für bis zu eine Woche. Genau das ist am 2026-04-22 mit
-`autoconfig.altrading.eu` passiert. DNS-01 isoliert Projekte voneinander.
+Server für bis zu eine Woche. Genau das ist am 2026-04-22 mit einer Kunden-Subdomain passiert. DNS-01 isoliert Projekte voneinander.
 
 ## Wie anwenden
 

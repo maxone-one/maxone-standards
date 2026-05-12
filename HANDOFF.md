@@ -743,7 +743,6 @@ hat **eigene Memories**. Wichtige Punkte daher hier wiederholen:
   Server-Container heißen noch `vanfree-*` und `/opt/secrets/vanfree/` —
   Phase 2 wartet auf Domain-Kauf. FAIL auf `vanfree` 003-secrets-store ist
   daher **erwartetes Drift**, kein Bug.
-- **`altrading.eu`** ist seit 2026-04-24 archiviert — nicht reaktivieren.
 - **Schedule-Offers zurückhalten:** Keine "vielleicht später mal"-Schedule-
   Vorschläge ohne klaren Automatisierungs-Nutzen.
 - **Recherche-Behauptungen verifizieren:** Subagent-Reports zu
