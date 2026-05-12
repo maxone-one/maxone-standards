@@ -137,7 +137,7 @@ zeigen — das ist rechtlich unsicher.
 | snapflow.one | ✅ | ✅ `.one` | ✅ | `src/pages/legal/Impressum.tsx` |
 | repivot.in | ✅ | ✅ `.one` | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
 | vanfree | ✅ | ✅ `.one` | ✅ | `app/[locale]/impressum/page.tsx` |
-| stadtlahnflow | ✅ | lokal (`impressum_local_intentional`) | ✅ | `src/app/impressum/page.tsx` (SLF infra-unabhängig) |
+| stadtlahnflow | ✅ | ✅ `.one` | ✅ | `src/app/impressum/page.tsx` |
 | stadtpunkt | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
 | plansey-2026 | ✅ | ✅ `.one` | ✅ | `app/[locale]/imprint/page.tsx` |
 | zentinel | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |

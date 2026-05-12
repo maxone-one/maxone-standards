@@ -116,7 +116,6 @@ projects:
         avv_status: account-enabled
         evidence: Brevo DPA im Account hinterlegt
         reviewed_at: "2026-05-06"
-    impressum_local_intentional: true  # Infrastruktur-Unabhaengigkeit (siehe Projekt-CLAUDE.md)
     notes: "Kanonischer Name: stadtlahnflow. GitHub-Repo 2026-05-06 von maxone-one/stadtlahnfluss auf maxone-one/stadtlahnflow umbenannt. Legacy-Domains wie stadtlahnfluss.de redirecten auf stadtlahnflow.de; Container/Secrets bleiben historisch slf-*."
 
   - name: katchi
