@@ -141,7 +141,7 @@ zeigen — das ist rechtlich unsicher.
 | stadtpunkt | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
 | plansey-2026 | ✅ | ✅ `.one` | ✅ | `app/[locale]/imprint/page.tsx` |
 | zentinel | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
-| maxone.one | ✅ | lokal (hostet API selbst) | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.svelte` |
+| maxone.one | ✅ | ✅ `.one` | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.server.ts` |
 | voltfair.de | ✅ | lokal (eigene Seiten) | ✅ | `app/(public)/impressum/page.tsx` |
 | katchi | – | – | – | Projekt paused |
 | kitchen-station | – | – | – | Internes Tool |

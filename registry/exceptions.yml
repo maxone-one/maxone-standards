@@ -254,13 +254,6 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # maxone.one hat lokales Impressum in der Footer-Komponente — hostet selbst.
-  - project: maxone.one
-    standard: '009'
-    reason: Hostet eigene Website — Impressum lokal in Footer ist korrekt, kein API-Widget nötig.
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
 
   # voltfair hat lokales Impressum (/impressum Route) — eigene Rechtsseiten.
   - project: voltfair
