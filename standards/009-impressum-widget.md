@@ -19,13 +19,40 @@ https://panel.maxone.one/functions/v1/impressum
 > seit 2026-04-16 deprecated (Standard 008). Bei jedem Touch eines Projekts
 > die URL auf `.maxone.one` umstellen.
 
-## Warum
+## Pflicht-Bestandteile jeder Impressum-Seite
+
+Zusätzlich zu den dynamischen API-Feldern (Name, Adresse, Steuerdaten) MUSS
+jede Impressum-Seite einen **statischen EU-Streitschlichtungs-Block** enthalten.
+Die API liefert diesen Text bewusst nicht als Feld — er ist rechtlich statisch
+und gehört in das Template:
+
+```
+EU-Streitschlichtung
+
+Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung
+(OS) bereit: https://ec.europa.eu/consumers/odr/
+
+Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor
+einer Verbraucherschlichtungsstelle teilzunehmen.
+```
+
+**Rechtsgrundlage:** Art. 14 ODR-Verordnung (EU) 524/2013 — gilt für alle
+Online-Dienste, die Verbrauchern gegenüber tätig sind.
+
+Beide Sätze sind **Pflicht**:
+1. Der Link zur OS-Plattform (`https://ec.europa.eu/consumers/odr/`)
+2. Die Erklärung zur Nicht-Teilnahme
+
+## Warum zentrale API
 
 Stamm­daten, Geschäftsführer, Anschrift, USt-IdNr. ändern sich gelegentlich.
 Wenn jedes der 11+ Projekte eine eigene hardcoded Kopie hat, führt eine
 Aktualisierung zu Drift — manche Projekte bleiben auf altem Stand und sind
 dann **rechtlich nicht korrekt**. Mit zentraler API: einmal in Supabase
 ändern, alle Projekte ziehen frisch.
+
+Der EU-Streitschlichtungs-Block ist NICHT Teil der API, da er pro Betreiber
+identisch und zeitlos ist.
 
 ## Wie anwenden
 
@@ -47,40 +74,66 @@ async function getImpressum() {
 }
 ```
 
+Template-Pflichtblock (statisch, nach den dynamischen Feldern):
+
+```tsx
+<section>
+  <h2>EU-Streitschlichtung</h2>
+  <p>
+    Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung
+    (OS) bereit:{' '}
+    <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">
+      https://ec.europa.eu/consumers/odr/
+    </a>
+  </p>
+  <p>
+    Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor
+    einer Verbraucherschlichtungsstelle teilzunehmen.
+  </p>
+</section>
+```
+
 **Niemals:**
 - Impressum-Felder hardcoden (Geschäftsführer, Adresse, Steuer-IdNr., Email)
 - API-Call ohne Cache (jedes Request schlägt auf Supabase auf)
 - Auf `panel.maxone.studio` referenzieren — immer `.maxone.one` nutzen
+- Den EU-Streitschlichtungs-Block weglassen
 
 **Fallback:** Wenn API nicht erreichbar ist: lokale Kopie des letzten erfolg­
 reichen Responses zeigen + Fehler-Log. Niemals "Impressum nicht verfügbar"
 zeigen — das ist rechtlich unsicher.
 
-## Stand pro Projekt
+## Stand pro Projekt (Stand 2026-05-12)
 
-Initial-Audit 2026-04-27: 4 Projekte nutzten API mit `.studio` (Standard 008
-verletzt), 5 weitere hatten lokales/kein Impressum.
-
-Nach Migration 2026-04-27:
-
-| Projekt | Status | Quelle |
-|---|---|---|
-| snapflow.one | ✅ API `.one` | `src/pages/legal/Impressum.tsx` |
-| repivot.in | ✅ API `.one` | `frontend/src/pages/landing/Impressum.tsx` |
-| plansey-engaged | ✅ API `.one` | `src/pages/Impressum.tsx` |
-| vanfree | ✅ API `.one` + 1h Cache | `app/impressum/page.tsx` + `app/datenschutz/page.tsx` |
-| stadt-lahn-flow | ⚠ lokal in `lib/impressum-data.ts` | (bewusste Ausnahme — SLF infra-unabhängig) |
-| katchi | ⚠ Brand-Link, kein API-Call | (auf API umstellen wenn nächster Touch) |
-| voltfair.de | ⚠ lokal | (auf API umstellen) |
-| plansey | ⚠ Brand-Link, kein API-Call | (auf API umstellen) |
-| solarproof | – kein Impressum | (Brand-Site, evtl. nicht nötig) |
-| maxone.one | – hostet API selbst | – |
-| kitchen-station | – internes Tool | – |
+| Projekt | Impressum | API-Call | OS-Link | Quelle |
+|---|---|---|---|---|
+| snapflow.one | ✅ | ✅ `.one` | ✅ | `src/pages/legal/Impressum.tsx` |
+| repivot.in | ✅ | ✅ `.one` | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
+| vanfree | ✅ | ✅ `.one` | ✅ | `app/[locale]/impressum/page.tsx` |
+| stadtlahnflow | ✅ | lokal (`impressum_local_intentional`) | ✅ | `src/app/impressum/page.tsx` (SLF infra-unabhängig) |
+| stadtpunkt | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
+| plansey-2026 | ✅ | ✅ `.one` | ✅ | `app/[locale]/imprint/page.tsx` |
+| zentinel | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
+| maxone.one | ✅ | lokal (hostet API selbst) | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.svelte` |
+| voltfair.de | ✅ | lokal (eigene Seiten) | ✅ | `app/(public)/impressum/page.tsx` |
+| katchi | – | – | – | Projekt paused |
+| kitchen-station | – | – | – | Internes Tool |
+| solarproof | – | – | – | Static Site, kein Impressum |
+| vector | – | – | – | Infra-Projekt |
 
 ## Audit
 
 `scripts/audit.mjs` prüft pro Projekt:
-- Existiert eine Impressum-Route? (`*/impressum*`, `*/imprint*`)
-- Wenn ja: ruft sie `panel.maxone.one/functions/v1/impressum` auf?
-- Falls noch `panel.maxone.studio`: WARN (Migrations-Pflicht)
-- Falls hardcoded: FAIL
+
+1. **API-Call vorhanden?** — sucht `panel.maxone.one/functions/v1/impressum`
+   - Gefunden → PASS
+   - `panel.maxone.studio` → WARN (Migration fällig)
+   - `impressum_local_intentional: true` in Registry → PASS (bewusste lokale Ausnahme)
+
+2. **EU-Streitschlichtungs-Link vorhanden?** — sucht `ec.europa.eu/consumers/odr`
+   in allen Impressum-bezogenen Dateien des Projekts
+   - Fehlt in einem Projekt mit Impressum-Route → WARN
+
+Formale Ausnahmen (`registry/exceptions.yml`) für Projekte mit bewusst lokalen
+Impressum-Seiten (maxone.one, voltfair, plansey, zentinel) sind korrekt, solange
+die Seiten den OS-Link enthalten.

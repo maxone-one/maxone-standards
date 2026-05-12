@@ -262,22 +262,6 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # zentinel hat lokales Impressum in Footer — Admin-Tool mit eigenen Rechtsseiten.
-  - project: zentinel
-    standard: '009'
-    reason: "Eigene /impressum und /datenschutz Seiten in Footer — keine externe API-Einbettung. Widget bei Erweiterung."
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
-
-  # plansey hat lokales Impressum (/imprint Route) — eigene Rechtsseiten.
-  - project: plansey-2026
-    standard: '009'
-    reason: "Eigene /imprint und /privacy Seiten — keine externe API-Einbettung. Widget bei Erweiterung."
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
-
   # voltfair hat lokales Impressum (/impressum Route) — eigene Rechtsseiten.
   - project: voltfair
     standard: '009'
@@ -298,6 +282,17 @@ exceptions:
   - project: zentinel
     standard: '010'
     reason: Credits lokal in AdminSidebar (interne Admin-UI) — API-Migration bei nächstem UI-Sprint.
+    granted_at: '2026-05-12'
+    expires_until: '2026-11-12'
+    granted_by: max
+
+  # maxone.one nutzt LLM ausschliesslich fuer Audio (Groq Whisper STT + TTS via
+  # api.groq.com/openai/v1/audio/...). Kein Text-Generation, kein System-Prompt,
+  # kein Injection-Risiko. Approval-Queue-Pattern nicht anwendbar.
+  # Wenn Chat-/Completion-Features hinzukommen: Ausnahme entfernen + 025 implementieren.
+  - project: maxone.one
+    standard: '025'
+    reason: "LLM-Nutzung rein audio-basiert (Groq Whisper STT/TTS) — kein Text-Generation, kein System-Prompt-Injection-Risiko. Approval-Queue nicht anwendbar."
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max

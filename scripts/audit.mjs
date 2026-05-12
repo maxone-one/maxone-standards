@@ -188,12 +188,18 @@ const localChecks = {
     if (!project.path_local) return SKIP('kein path_local');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
     if (project.tags === 'internal') return SKIP('Internes Tool');
+
+    const hasOsLink = () => grepRepo(project.path_local, /ec\.europa\.eu\/consumers\/odr/, 1).length > 0;
+
     const apiNew = grepRepo(project.path_local, /panel\.maxone\.one\/functions\/v1\/impressum/, 1);
     const apiOld = grepRepo(project.path_local, /panel\.maxone\.studio\/functions\/v1\/impressum/, 1);
-    if (apiNew.length) return PASS(`API .one in ${apiNew[0]}`);
+    if (apiNew.length) {
+      if (!hasOsLink()) return WARN(`API .one in ${apiNew[0]} — EU-Streitschlichtungs-OS-Link fehlt im Template (ec.europa.eu/consumers/odr)`);
+      return PASS(`API .one in ${apiNew[0]}`);
+    }
     if (apiOld.length) return WARN(`nutzt panel.maxone.studio (auf .one migrieren) — ${apiOld[0]}`);
     if (project.impressum_local_intentional) {
-      // e.g. SLF: legal data must stay local for infra independence (see CLAUDE.md)
+      if (!hasOsLink()) return WARN('lokal (bewusste Ausnahme) — EU-Streitschlichtungs-OS-Link fehlt (ec.europa.eu/consumers/odr)');
       return PASS('lokal (bewusste Ausnahme — siehe Projekt-CLAUDE.md)');
     }
     const localImpressum = grepRepo(project.path_local, /\b(impressum|imprint)\b/i, 1);
