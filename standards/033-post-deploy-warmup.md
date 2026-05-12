@@ -18,17 +18,23 @@ build → ship → start NEXT slot → healthcheck OK
    → Traefik-Swap → alter Slot wartet 5 min als Rollback
 ```
 
-Drei Pflicht-Eigenschaften:
+Vier Pflicht-Eigenschaften:
 
 1. **Vor dem Swap, nicht danach.** Warm-Up läuft, solange Traffic noch
    auf dem alten Slot liegt — sonst sieht der erste User die Cold-Start-
    Latenz.
-2. **Intern, nicht extern.** Warm-Up trifft den Container über sein
+2. **Traefik-Netz trennen vor Health-Check.** Direkt nach `docker compose up -d`
+   MUSS der neue Container vom `coolify`-Netz getrennt werden:
+   `docker network disconnect coolify "<projekt>-app-$NEXT" 2>/dev/null || true`
+   Sonst routet Traefik automatisch sobald der Health-Check positiv ist —
+   **vor** dem Prewarm. Erst nach abgeschlossenem Prewarm wieder verbinden:
+   `docker network connect coolify "<projekt>-app-$NEXT"`
+   Dies ist das Kernmuster, das verhindert dass ein User den Cold-Start sieht
+   (Vorfall: stadtlahnflow.de 2026-05-12).
+3. **Intern, nicht extern.** Warm-Up trifft den Container über sein
    internes Netzwerk (`docker exec ... fetch http://localhost:<port>/...`
    oder `wget` aus einem Sidecar) — nicht über die öffentliche Domain.
-   Sonst läuft der Request über Traefik und landet wieder auf dem alten
-   Slot.
-3. **Vollständige Liste der heißen Routen.** Mindestens: `/`, alle
+4. **Vollständige Liste der heißen Routen.** Mindestens: `/`, alle
    Top-Level-Marketing-Pfade, alle Auth-Gates (`/login`, `/registrierung`).
    Nice-to-have: API-Health, Sitemap-Top-10. Faustregel: jede Route, die
    im ersten Klick eines neuen Users vorkommen kann.
@@ -59,7 +65,12 @@ gemeinsam liefern das Versprechen "User merkt nichts vom Deploy".
 ### Pattern 1 — Bash-Loop in `deploy.sh` (Empfohlen, SLF-Vorbild)
 
 ```bash
-# Nach Health-Check OK, vor Traefik-Swap:
+# Nach `$COMPOSE up -d` — sofort vom Traefik-Netz trennen:
+docker network disconnect coolify "${PROJEKT}-app-$NEXT" 2>/dev/null || true
+
+# Health-Check (Traefik sieht Container noch nicht) ...
+
+# Nach Health-Check OK — Prewarm intern:
 echo "▸ Prewarming $NEXT (alle Public-Routen)..."
 PREWARM_PATHS=(
   "/" "/login" "/registrierung" "/preise" "/features"
@@ -77,7 +88,9 @@ done
 wait
 echo "  ✓ Prewarm complete ($PREWARM_COUNT pages)"
 
-# Erst JETZT: Traefik-Swap
+# Erst JETZT: Traefik-Netz wieder verbinden → Traefik routet zu warmed Container
+docker network connect coolify "${PROJEKT}-app-$NEXT"
+sleep 3
 ```
 
 Vorteile:
