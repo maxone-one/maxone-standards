@@ -145,7 +145,7 @@ zeigen — das ist rechtlich unsicher.
 | voltfair.de | ✅ | lokal (eigene Seiten) | ✅ | `app/(public)/impressum/page.tsx` |
 | katchi | – | – | – | Projekt paused |
 | kitchen-station | – | – | – | Internes Tool |
-| solarproof | – | – | – | Static Site, kein Impressum |
+| solarproof | ✅ | ✅ `.one` | ✅ | `src/components/ImpressumOverlay.tsx` |
 | vector | – | – | – | Infra-Projekt |
 
 ## Audit
