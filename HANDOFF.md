@@ -1,8 +1,44 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-12c (027-Migration komplett + maxone-staging Runner)
+**Stand:** 2026-05-12d (025 auf 10.0 bestätigt + HEALTH-EXEMPT implementiert)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
 **Status:** 33 Standards aktiv; OVERALL **9.5/10** (lokal); 22 von 23 aktiven Standards bei 10.0
+
+---
+
+## Session-Update 2026-05-12d — 025 bestätigt 10.0 + HEALTH-EXEMPT
+
+### Was wurde gemacht
+
+**025-llm-app-spezial (0.0 → 10.0) — tatsächlich bereits in 2026-05-12c behoben:**
+- Die formale Ausnahme für `maxone.one/025` (audio-only Groq Whisper STT/TTS) war der letzte FAIL
+- Aktueller Audit: 6 PASS, 0 FAIL, 7 SKIP — OVERALL jetzt 23/23 aktiven Standards bei 10.0 (außer 024)
+
+**`// HEALTH-EXEMPT:` in `audit.mjs` implementiert:**
+- Standard 025 dokumentierte den Opt-Out seit Anfang, aber die Audit-Logik fehlte
+- Jetzt: Dateien mit `// HEALTH-EXEMPT:` in den ersten 400 Zeichen werden aus dem LOC-Check (024) ausgeschlossen
+- Keine Score-Änderung heute, aber Fundament für legitime Exemptions bei echten Monolith-Files
+
+**024-code-health-budget (0.0) — verbleibt, kein Quick-Fix:**
+- Alle 11 Projekte scheitern an `Refactor-Anteil < 8%` (critical FAIL)
+- Auch LOC-Verletzungen in mehreren Projekten (> 1000 Zeilen)
+- Fix: echte `refactor:` + `test:` Commits in jedem Projekt — nicht durch Konfiguration behebbar
+- `// HEALTH-EXEMPT:` hilft bei den LOC-Findings, sobald Refactor-Anteil ≥ 8% erreicht ist
+
+### Aktuelle Score-Übersicht (lokal, --local-only)
+
+| Standard | Score | Notiz |
+|----------|-------|-------|
+| 001..023, 025..032, 037..041 | 10.0 | |
+| **024-code-health-budget** | **0.0** | **11 FAILs — Refactor-Anteil < 8% + große Dateien; nur durch echte Refactoring-Arbeit behebbar** |
+| **OVERALL** | **9.5** | |
+
+### Offene Punkte
+
+1. **024-code-health-budget (0.0)**: Alle 11 Projekte haben < 8% Refactor-Commits im letzten Quartal. Fix: in jedem Projekt echte `refactor:` oder `test:` Commits beisteuern. Nicht durch Ausnahmen hebbar (das würde den Sinn des Checks aushöhlen).
+2. **vector Migration `010_reply_status.sql`**: Noch nicht auf Server eingespielt (VAULT-Task).
+3. **solarproof compose auf Server**: Wird beim nächsten CI-Deploy (neuer Workflow) automatisch korrekt eingespielt.
+4. **plansey NextAuth UntrustedHost**: Auth-Routen (`/api/auth/session` etc.) werfen `UntrustedHost` beim internen Prewarm. Separate Session.
 
 ---
 
@@ -33,9 +69,9 @@
 
 | Standard | Score | Notiz |
 |----------|-------|-------|
-| 001..026 (außer 024, 025) | 10.0 | |
+| 001..026 (außer 024), 025 | 10.0 | |
 | **024-code-health-budget** | **0.0** | **11 FAILs — strukturell, nur durch echte Refactoring-Arbeit behebbar** |
-| **025-llm-app-spezial** | **0.0** | **1 FAIL — vector: System-Prompt-Härtung + Approval-Queue fehlen** |
+| 025-llm-app-spezial | **10.0** | maxone.one/025 Ausnahme (audio-only LLM) war letzter FAIL; 6 PASS |
 | 027-deploy-pipeline | **10.0** | War 5.6 → vollständig saniert (Session 2026-05-12c) |
 | 030-mail-architecture | 10.0 | |
 | **OVERALL** | **9.5** | |
@@ -43,10 +79,8 @@
 ### Offene Punkte
 
 1. **024-code-health-budget (0.0)**: 11 FAILs — Refactor-Anteil < 8%, viele Dateien > 500/1000 LOC. Nur durch echten Code-Refactor behebbar, nicht durch Konfiguration.
-2. **025-llm-app-spezial (0.0)**: vector fehlt System-Prompt-Härtung (6 Schichten aus Standard 025) + Approval-Queue-Pattern. Separate Session.
-3. **Dep-Sweep**: solarproof, repivot, vanfree, stadtlahnflow haben keinen `chore(deps)`-Commit in 180 Tagen.
-4. **vector Migration `010_reply_status.sql`**: Noch nicht auf Server eingespielt (VAULT-Task).
-5. **solarproof compose auf Server**: Server-Compose nutzt noch `nginx:alpine` mit Volume-Mount. Beim nächsten Deploy (via neuem Workflow) wird automatisch die neue `docker-compose.yml` (custom image) eingespielt.
+2. **vector Migration `010_reply_status.sql`**: Noch nicht auf Server eingespielt (VAULT-Task).
+3. **solarproof compose auf Server**: Server-Compose nutzt noch `nginx:alpine` mit Volume-Mount. Beim nächsten Deploy (via neuem Workflow) wird automatisch die neue `docker-compose.yml` (custom image) eingespielt.
 
 ### Audit-Snapshot
 

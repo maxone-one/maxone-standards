@@ -1523,6 +1523,7 @@ const localChecks = {
           let text;
           try { text = readFileSync(full, 'utf8'); } catch { continue; }
           if (/@generated|This file is auto-generated/i.test(text.slice(0, 500))) continue;
+          if (/\/\/\s*HEALTH-EXEMPT:/i.test(text.slice(0, 400))) continue;
           const eff = text.split('\n').filter(l => l.trim() && !/^\s*(\/\/|#|\/\*|\*)/.test(l)).length;
           if (eff > 1000) veryLongFiles.push(`${full.replace(project.path_local, '').replace(/^[\\/]/, '')}:${eff}`);
           else if (eff > 500) longFiles.push(`${full.replace(project.path_local, '').replace(/^[\\/]/, '')}:${eff}`);
