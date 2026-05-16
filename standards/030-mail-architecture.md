@@ -91,11 +91,23 @@ die aus drei realen Vorfällen gewachsen sind:
   Architektur-Recherche wurde Brevo Events API geprüft → Antwort lag
   dort. Globale Regel + Memory erzwingt jetzt **Brevo-First**.
 
-**Gemeinsamer Nenner:** Alle vier Vorfälle entstanden, weil die
-Architektur-Trennung (Outbound=Brevo, Inbound+Sent=Stalwart) nicht
-internalisiert war — entweder im Code (Bug A/B) oder im Diagnose-
-Reflex (Vorfall 4). Ein Standard, den das Audit prüft, ist die
-einzige zuverlässige Verteidigung.
+### Vorfall 5 — 2026-05-16 Mailbox-Passwort-Desync + Ban-Zyklus
+- Passwort für `hey@viktoria-from.de` über Atelier-Endpunkt geändert.
+  Stalwart RocksDB aktualisiert, maxone-Supabase `email_accounts` nicht.
+- `email-client` MDN-Checker (IP `10.0.2.3`) authentifiziert sich alle ~3 Min
+  mit dem veralteten Passwort → 45+ `security.authentication-ban` Events
+  zwischen 15:41 und 21:34 UTC.
+- SnappyMail zeigte `AUTHENTICATIONFAILED` — Browser hatte ebenfalls das alte
+  Passwort gespeichert.
+- Stalwart-Neustart löscht den in-memory-Ban; ohne Store-Sync beginnt der
+  Zyklus 2 Minuten nach dem Neustart neu. Nicht unterbrechbar ohne Sync.
+- **Permanenter Fix:** Regel 23 (Bibel) + Standard 039.
+
+**Gemeinsamer Nenner:** Alle fünf Vorfälle entstanden, weil die
+Architektur-Trennung (Outbound=Brevo, Inbound+Sent=Stalwart) oder die
+Store-Konsistenz (Stalwart RocksDB ↔ maxone email_accounts) nicht
+internalisiert war — entweder im Code oder im Diagnose-Reflex. Ein Standard,
+den das Audit prüft, ist die einzige zuverlässige Verteidigung.
 
 ## Wie anwenden
 
@@ -262,8 +274,11 @@ verletzte Regel-Nummer (z.B. „Regel 19 verletzt").
 ## Cross-Reference
 
 - **Bibel-Original:** [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md)
-  (20 Regeln, 4 Vorfälle, lebendiges Dokument — bei jedem Update
+  (23 Regeln, 5 Vorfälle, lebendiges Dokument — bei jedem Update
   dort auch hier nachziehen)
+- **Standard 039:** `039-mailbox-password-sync.md` — Passwort-Desync-Muster
+  (Stalwart ↔ maxone email_accounts ↔ SnappyMail); Audit-Check für
+  Atelier-Endpunkte ohne Sync-Warnung
 - **Globale CLAUDE.md:** Sektion „Zentinel/Stalwart/Mail: Bibel ist
   Pflicht (OBERSTE PRIORITAET, 2026-04-27)" — Brevo-First-Reflex
 - **VULN-CATALOG:** neuer Eintrag B7 (Mail-Architektur-Drift)
