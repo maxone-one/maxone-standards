@@ -254,7 +254,7 @@ const localChecks = {
       }
     }
 
-    // Pflichtfelder-Check via Live-API (§ 5 TMG, rechtsformabhängig)
+    // Pflichtfelder-Check via Live-API (§ 5 DDG, rechtsformabhängig)
     const apiData = await fetchImpressumApi();
     if (!apiData) return PASS(`${location} — §36 VSBG ✓ (API nicht erreichbar, Pflichtfeld-Check übersprungen)`);
 
@@ -267,16 +267,17 @@ const localChecks = {
     }).join('\n');
 
     const missing = [];
-    // §5 Abs. 1 Nr. 1 TMG — Name + Anschrift
+    // §5 Abs. 1 Nr. 1 DDG — Name + Anschrift
     if (!tpl.includes('legal_name')) missing.push('legal_name');
     if (!tpl.includes('street')) missing.push('street');
     if (!tpl.includes('zip') && !tpl.includes('city')) missing.push('zip/city');
-    // §5 Abs. 1 Nr. 2 TMG — schnelle elektronische Kommunikation
+    // §5 Abs. 1 Nr. 2 DDG — schnelle elektronische Kommunikation
     if (!tpl.includes('email') && !tpl.includes('phone')) missing.push('email/phone');
-    // §5 Abs. 1 Nr. 6 TMG — Steuer-ID, nur wenn API-Daten vorhanden
+    // §5 Abs. 1 Nr. 6 DDG — Steuer-ID / USt-IdNr. / W-IdNr., nur wenn API-Daten vorhanden
     if (apiData.vat_id && !tpl.includes('vat_id')) missing.push('vat_id');
-    else if (apiData.tax_id && !apiData.vat_id && !tpl.includes('tax_id')) missing.push('tax_id');
-    // §5 Abs. 1 Nr. 4 TMG — Handelsregister (nur Kapitalgesellschaft)
+    else if (apiData.w_id_nr && !apiData.vat_id && !tpl.includes('w_id_nr')) missing.push('w_id_nr');
+    else if (apiData.tax_id && !apiData.vat_id && !apiData.w_id_nr && !tpl.includes('tax_id')) missing.push('tax_id');
+    // §5 Abs. 1 Nr. 4 DDG — Handelsregister (nur Kapitalgesellschaft)
     if (isKapitalgesellschaft) {
       if (!tpl.includes('register_court')) missing.push('register_court');
       if (!tpl.includes('register_number')) missing.push('register_number');

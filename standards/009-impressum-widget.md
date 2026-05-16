@@ -19,12 +19,88 @@ https://panel.maxone.one/functions/v1/impressum
 > seit 2026-04-16 deprecated (Standard 008). Bei jedem Touch eines Projekts
 > die URL auf `.maxone.one` umstellen.
 
-## Pflicht-Bestandteile jeder Impressum-Seite
+## Rechtliche Grundlagen (Stand 2026-05-16)
 
-Zusätzlich zu den dynamischen API-Feldern (Name, Adresse, Steuerdaten) MUSS
-jede Impressum-Seite einen **statischen §36-VSBG-Block** enthalten.
-Die API liefert diesen Text bewusst nicht als Feld — er ist rechtlich statisch
-und gehört in das Template:
+### Gesetzliche Basis — DDG ersetzt TMG (seit 14.05.2024)
+
+Das **Digitale-Dienste-Gesetz (DDG)** ist am 14. Mai 2024 in Kraft getreten
+und hat das Telemediengesetz (TMG) vollständig abgelöst. Die
+Impressumspflicht ist nun in **§ 5 DDG** geregelt (inhaltlich identisch
+mit §5 TMG — nur die Rechtsgrundlage ändert sich).
+
+**Folge für Impressum-Texte:** "Angaben gemäß §5 TMG" ist veraltet.
+Empfehlung: Gesetzesverweis weglassen (nicht verpflichtend) oder auf
+§5 DDG aktualisieren. Niemals §5 TMG neu einbauen.
+
+### Wer ist betroffen
+
+Jeder, der geschäftsmäßig einen digitalen Dienst (Website, App, Online-Shop)
+betreibt und dabei — auch nur gelegentlich — wirtschaftliche Ziele verfolgt.
+Privat-Seiten ohne jeglichen kommerziellen Zweck sind ausgenommen. Alle
+maxone-Projekte fallen unter die Pflicht.
+
+### Erreichbarkeit des Impressums
+
+Das Impressum muss **leicht erkennbar, unmittelbar erreichbar und ständig
+verfügbar** sein (§ 5 DDG). In der Praxis:
+- Direkt aus der Navigation erreichbar (max. 2 Klicks von jeder Seite)
+- Linktext eindeutig: "Impressum" oder "Kontakt/Impressum"
+- Kein versteckter Footer-Link in grauem Text auf grauem Grund
+- Kein PDF — HTML ist Pflicht (muss crawlbar und direkt verlinkbar sein)
+
+## Pflicht-Felder (§ 5 DDG, rechtsformabhängig)
+
+Die API liefert alle Daten — das Template **muss** sie rendern. Der Audit
+erkennt die Rechtsform aus der Live-API-Response und prüft entsprechend.
+
+### Alle Rechtsformen (Einzelunternehmen, GmbH, UG, AG, …)
+
+| API-Feld | Rechtsgrundlage | Wann Pflicht |
+|---|---|---|
+| `legal_name` | §5 Abs. 1 Nr. 1 DDG — vollständiger Name | immer |
+| `street`, `zip`, `city` | §5 Abs. 1 Nr. 1 DDG — ladungsfähige Anschrift | immer |
+| `email` | §5 Abs. 1 Nr. 2 DDG — schnelle elektronische Kommunikation | immer |
+| `phone` **oder** zweiter Kanal | §5 Abs. 1 Nr. 2 DDG | wenn kein Kontaktformular |
+| `vat_id` | §5 Abs. 1 Nr. 6 DDG — USt-IdNr. | wenn in API vorhanden |
+| `w_id_nr` | §5 Abs. 1 Nr. 6 DDG — Wirtschafts-Identifikationsnummer | wenn `vat_id` fehlt und `w_id_nr` in API vorhanden |
+| `tax_id` | §5 Abs. 1 Nr. 6 DDG — Steuernummer | wenn weder `vat_id` noch `w_id_nr` vorhanden |
+
+**Hinweis Telefonnummer:** EuGH (C-649/17) und BGH haben bestätigt, dass
+eine Telefonnummer nicht zwingend erforderlich ist, wenn ein zweiter
+schneller Kommunikationsweg existiert (funktionierendes Kontaktformular,
+Fax). Für Rechtssicherheit und zur Vermeidung von Abmahnungen wird die
+Angabe einer Telefonnummer dennoch empfohlen.
+
+### Neu: Wirtschafts-Identifikationsnummer (W-IdNr)
+
+Seit November 2024 vergibt das Bundeszentralamt für Steuern (BZSt)
+automatisch W-IdNr. an alle umsatzsteuerlich erfassten Unternehmen
+(Pflicht in §5 Abs. 1 Nr. 6 DDG).
+
+- **Format:** `DE` + 9 Ziffern + 5-stelliges Unterscheidungsmerkmal,
+  z.B. `DE976853412-00001`
+- **Hierarchie:** Hat das Unternehmen eine USt-IdNr. UND eine W-IdNr.,
+  reicht die Angabe **einer** der beiden im Impressum.
+- **Sobald zugeteilt:** muss im Impressum erscheinen — kein Aufschub.
+- **API-Feld:** `w_id_nr` in `company_info`-Tabelle und impressum-Edge-Function.
+  Sobald Max die W-IdNr. erhält: in Supabase eintragen, API liefert sie
+  automatisch an alle Projekte.
+
+### Zusätzlich für Kapitalgesellschaften (GmbH, UG, AG)
+
+Erkennung: API-Response enthält `register_court` **und** `register_number`.
+
+| API-Feld | Rechtsgrundlage | Pflicht |
+|---|---|---|
+| `register_court` + `register_number` | §5 Abs. 1 Nr. 4 DDG — Handelsregister | immer |
+| `legal_form` (GmbH, UG, AG, …) | §5 Abs. 1 Nr. 1 DDG — Rechtsform | immer |
+| Vertretungsberechtigte Person | §5 Abs. 1 Nr. 1 DDG — Geschäftsführer | immer |
+
+## Pflicht-Bestandteile jeder Impressum-Seite (statisch)
+
+Zusätzlich zu den dynamischen API-Feldern MUSS jede Impressum-Seite einen
+**statischen §36-VSBG-Block** enthalten. Die API liefert diesen Text
+bewusst nicht — er ist für alle Projekte identisch und rechtlich statisch:
 
 ```
 Verbraucherschlichtung
@@ -33,54 +109,41 @@ Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren
 vor einer Verbraucherschlichtungsstelle teilzunehmen.
 ```
 
-**Rechtsgrundlage:** §36 Abs. 1 VSBG — gilt für alle Unternehmer, die
-Verbrauchern gegenüber tätig sind und eine Website betreiben.
+**Rechtsgrundlage:** §36 Abs. 1 VSBG — gilt für alle Unternehmer mit Website.
 
-**WICHTIG — ODR-Link entfernen (abmahnfähig seit 20.07.2025):**
-Die EU-Plattform zur Online-Streitbeilegung (ec.europa.eu/consumers/odr)
-wurde am **20. Juli 2025** abgeschaltet. Die ODR-Verordnung (EU) 524/2013
-wurde durch VO (EU) 2024/3228 aufgehoben. Ein weiterhin sichtbarer Link zu
-dieser Plattform gilt als Irreführung des Verbrauchers (UWG) und ist
-abmahnfähig. Der Link **darf nicht mehr** im Impressum erscheinen — weder
-im Quellcode noch auf der gerenderten Seite.
+### Verbotener ODR-Link (abmahnfähig seit 20.07.2025)
 
-## Pflicht-Felder im Template (§ 5 TMG, rechtsformabhängig)
+Die EU-Plattform zur Online-Streitbeilegung (`ec.europa.eu/consumers/odr`)
+wurde am **20. Juli 2025** abgeschaltet (VO (EU) 2024/3228 hebt ODR-VO
+(EU) 524/2013 auf). Ein weiterhin angezeigter Link gilt als Irreführung
+nach UWG — **abmahnfähig**. Weder im Quellcode noch im gerenderten HTML
+darf der Link erscheinen.
 
-Die API liefert alle Daten — das Template **muss** sie auch rendern. Der Audit
-erkennt die Rechtsform automatisch aus der Live-API-Response und prüft die
-entsprechenden Felder.
+## Häufige Abmahngründe (Risiko-Checkliste)
 
-### Alle Rechtsformen (Einzelunternehmen, GmbH, UG, AG, …)
+Seit Umsetzung der EU-Richtlinie zur Stärkung des Verbraucherschutzes
+gilt fast **jeder Verstoß** gegen §5 DDG als abmahnfähig (kein
+Bagatell-Privileg mehr). Typische Angriffspunkte:
 
-| API-Feld | Rechtsgrundlage | Pflicht |
-|---|---|---|
-| `legal_name` | §5 Abs. 1 Nr. 1 TMG — Name | immer |
-| `street` | §5 Abs. 1 Nr. 1 TMG — Anschrift | immer |
-| `zip` + `city` | §5 Abs. 1 Nr. 1 TMG — Anschrift | immer |
-| `email` **oder** `phone` | §5 Abs. 1 Nr. 2 TMG — schnelle Kommunikation | mind. eines |
-| `vat_id` | §5 Abs. 1 Nr. 6 TMG — USt-IdNr. | wenn in API vorhanden |
-| `tax_id` | §5 Abs. 1 Nr. 6 TMG — Steuernummer | wenn `vat_id` fehlt und in API vorhanden |
-
-### Zusätzlich für Kapitalgesellschaften (GmbH, UG, AG)
-
-Erkennung: API-Response enthält `register_court` **und** `register_number`.
-
-| API-Feld | Rechtsgrundlage | Pflicht |
-|---|---|---|
-| `register_court` + `register_number` | §5 Abs. 1 Nr. 4 TMG — Handelsregister | immer |
-
-**Aktueller Stand (2026-05-12):** Einzelunternehmen — nur die universellen Felder werden geprüft.
+| Fehler | Risiko |
+|---|---|
+| Veraltete Adresse / E-Mail / Telefon | HOCH — sofort abmahnbar |
+| Fehlende oder falsche USt-IdNr / W-IdNr | HOCH |
+| ODR-Link noch vorhanden (seit 20.07.2025) | HOCH |
+| Impressum nicht innerhalb 2 Klicks erreichbar | MITTEL |
+| Nur PDF, kein HTML-Impressum | MITTEL |
+| §5 TMG statt §5 DDG erwähnt (wenn Gesetz genannt) | NIEDRIG |
+| Fehlende Angaben bei Kapitalgesellschaft (HRB, GF) | HOCH |
 
 ## Warum zentrale API
 
-Stamm­daten, Geschäftsführer, Anschrift, USt-IdNr. ändern sich gelegentlich.
-Wenn jedes der 11+ Projekte eine eigene hardcoded Kopie hat, führt eine
-Aktualisierung zu Drift — manche Projekte bleiben auf altem Stand und sind
-dann **rechtlich nicht korrekt**. Mit zentraler API: einmal in Supabase
-ändern, alle Projekte ziehen frisch.
+Stammdaten ändern sich (Adresse, Steuer-IdNr., W-IdNr., Geschäftsführer).
+Ohne zentrale API müssten 10+ Projekte einzeln aktualisiert werden — mit
+Drift-Risiko. Einmal in Supabase (`company_info`-Tabelle) ändern →
+alle Projekte liefern automatisch korrekten Stand.
 
-Der EU-Streitschlichtungs-Block ist NICHT Teil der API, da er pro Betreiber
-identisch und zeitlos ist.
+Der §36-VSBG-Block ist NICHT Teil der API — er ist identisch für alle
+Projekte und ändert sich nicht mit Stammdaten.
 
 ## Wie anwenden
 
@@ -90,15 +153,9 @@ identisch und zeitlos ist.
 // Beispiel Next.js App Router
 const IMPRESSUM_API = 'https://panel.maxone.one/functions/v1/impressum';
 
-let cache = null;
-let cacheUntil = 0;
-
 async function getImpressum() {
-  if (cache && Date.now() < cacheUntil) return cache;
   const res = await fetch(IMPRESSUM_API, { next: { revalidate: 3600 } });
-  cache = await res.json();
-  cacheUntil = Date.now() + 3600 * 1000;
-  return cache;
+  return res.json();
 }
 ```
 
@@ -115,34 +172,32 @@ Template-Pflichtblock (statisch, nach den dynamischen Feldern):
 ```
 
 **Niemals:**
-- Impressum-Felder hardcoden (Geschäftsführer, Adresse, Steuer-IdNr., Email)
-- API-Call ohne Cache (jedes Request schlägt auf Supabase auf)
-- Auf `panel.maxone.studio` referenzieren — immer `.maxone.one` nutzen
+- Impressum-Felder hardcoden (Adresse, Steuer-IdNr., E-Mail usw.)
+- API-Call ohne Cache (jedes Request belastet Supabase)
+- Auf `panel.maxone.studio` referenzieren — immer `.maxone.one`
 - Den §36-VSBG-Block weglassen
-- Den alten ODR-Link (`ec.europa.eu/consumers/odr`) anzeigen — abmahnfähig seit 20.07.2025
+- Den alten ODR-Link (`ec.europa.eu/consumers/odr`) anzeigen — abmahnfähig
 
-**Fallback:** Wenn API nicht erreichbar ist: lokale Kopie des letzten erfolg­
-reichen Responses zeigen + Fehler-Log. Niemals "Impressum nicht verfügbar"
-zeigen — das ist rechtlich unsicher.
+**Fallback:** Wenn API nicht erreichbar: lokale Kopie des letzten
+erfolgreichen Responses anzeigen + Fehler-Log. Niemals
+"Impressum nicht verfügbar" — das ist rechtlich unsicher.
 
 ## Stand pro Projekt (Stand 2026-05-16)
 
-⚠️ **Alle Projekte mit ODR-Link müssen migriert werden** — abmahnfähig seit 20.07.2025.
-
-| Projekt | Impressum | API-Call | ODR-Link entfernt | §36 VSBG | Quelle |
+| Projekt | Impressum | API-Call | ODR entfernt | §36 VSBG | Quelle |
 |---|---|---|---|---|---|
-| snapflow.one | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/pages/legal/Impressum.tsx` |
-| repivot.in | ✅ | ✅ `.one` | ❌ TODO | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
-| vanfree | ✅ | ✅ `.one` | ❌ TODO | ✅ | `app/[locale]/impressum/page.tsx` |
-| stadtlahnflow | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/app/impressum/page.tsx` |
-| stadtpunkt | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/routes/impressum/+page.svelte` |
-| plansey-2026 | ✅ | ✅ `.one` | ❌ TODO | ✅ | `app/[locale]/imprint/page.tsx` |
-| zentinel | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/routes/impressum/+page.svelte` |
-| maxone.one | ✅ | ✅ `.one` | ❌ TODO | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.server.ts` |
-| voltfair.de | ✅ | lokal (eigene Seiten) | ❌ TODO | ✅ | `app/(public)/impressum/page.tsx` |
+| snapflow.one | ✅ | ✅ `.one` | ✅ | ✅ | `src/pages/legal/Impressum.tsx` |
+| repivot.in | ✅ | ✅ `.one` | ✅ | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
+| vanfree | ✅ | ✅ `.one` | ✅ | ✅ | `app/[locale]/impressum/page.tsx` |
+| stadtlahnflow | ✅ | ✅ `.one` | ✅ | ✅ | `src/app/impressum/page.tsx` |
+| stadtpunkt | ✅ | ✅ `.one` | ✅ | ✅ | `src/routes/impressum/+page.svelte` |
+| plansey-2026 | ✅ | ✅ `.one` | ✅ | ✅ | `app/[locale]/imprint/page.tsx` |
+| zentinel | ✅ | ✅ `.one` | ✅ | ✅ | `src/routes/impressum/+page.svelte` |
+| maxone.one | ✅ | ✅ `.one` | ✅ | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.svelte` |
+| voltfair.de | ✅ | lokal | ✅ | ✅ | `app/(public)/impressum/page.tsx` |
+| solarproof | ✅ | ✅ `.one` | ✅ | ✅ | `src/components/ImpressumOverlay.tsx` |
 | katchi | – | – | – | – | Projekt paused |
 | kitchen-station | – | – | – | – | Internes Tool |
-| solarproof | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/components/ImpressumOverlay.tsx` |
 | vector | – | – | – | – | Infra-Projekt |
 
 ## Audit
@@ -161,11 +216,17 @@ zeigen — das ist rechtlich unsicher.
    `Streitbeilegungsverfahren` im Quellcode
    - Fehlt → WARN
 
-4. **Live-Check** (nur ohne `--local-only`) — ruft `https://<domain>/impressum`
-   ab und prüft das gerenderte HTML:
-   - Alter ODR-Link im HTML → **FAIL** (das ist die rechtlich relevante Prüfung)
+4. **Pflichtfelder im Template** (via Live-API-Response):
+   - `legal_name`, `street`, `zip`/`city`, `email`/`phone` → WARN wenn fehlt
+   - `vat_id` → WARN wenn API liefert, aber Template rendert nicht
+   - `w_id_nr` → WARN wenn API liefert, aber Template rendert nicht
+   - Kapitalgesellschaft: `register_court`, `register_number` → WARN wenn fehlt
+
+5. **Live-Check** (nur ohne `--local-only`) — ruft `https://<domain>/impressum`
+   ab und prüft gerendertes HTML:
+   - Alter ODR-Link im HTML → **FAIL** (rechtlich relevante Prüfung)
    - §36-VSBG-Erklärung fehlt im HTML → WARN
 
-Formale Ausnahmen (`registry/exceptions.yml`) für Projekte mit bewusst lokalen
-Impressum-Seiten (voltfair) sind korrekt, solange die Seiten keinen ODR-Link
-enthalten und die §36-VSBG-Erklärung zeigen.
+Formale Ausnahmen (`registry/exceptions.yml`) für Projekte mit bewusst
+lokalen Impressum-Seiten (voltfair) sind korrekt, solange die Seiten
+keinen ODR-Link enthalten und die §36-VSBG-Erklärung zeigen.
