@@ -227,13 +227,36 @@ const localChecks = {
     const apiNewPrimary = apiNew.find(f => /impressum|imprint/i.test(f)) ?? apiNew[0];
     const location = hasApi ? `API .one in ${apiNewPrimary}` : 'lokal (bewusste Ausnahme)';
 
-    // EU-Streitschlichtungs-OS-Link (Art. 14 ODR-VO EU 524/2013)
-    const hasOsLink = grepRepo(project.path_local, /ec\.europa\.eu\/consumers\/odr/, 1).length > 0;
-    if (!hasOsLink) return WARN(`${location} — EU-Streitschlichtungs-OS-Link fehlt (ec.europa.eu/consumers/odr)`);
+    // ODR-Link verboten seit 20.07.2025 (VO (EU) 2024/3228 — Plattform abgeschaltet, UWG-Irreführung)
+    const hasOldOdrLink = grepRepo(project.path_local, /ec\.europa\.eu\/consumers\/odr/, 1).length > 0;
+    if (hasOldOdrLink) return FAIL(`${location} — veralteter ODR-Link im Quellcode (ec.europa.eu/consumers/odr) — abmahnfähig seit 20.07.2025`);
+
+    // §36 VSBG — Teilnahme-Erklärung muss vorhanden sein (kein Link, nur Text)
+    const hasVsbg36 = grepRepo(project.path_local, /Verbraucherschlichtung|Streitbeilegungsverfahren/i, 1).length > 0;
+    if (!hasVsbg36) return WARN(`${location} — §36-VSBG-Erklärung fehlt (Verbraucherschlichtung/Streitbeilegungsverfahren)`);
+
+    // Live-Check: gerendertes HTML auf alten ODR-Link und §36-VSBG prüfen
+    if (!OFFLINE && project.domain) {
+      const impUrls = [`https://${project.domain}/impressum`, `https://${project.domain}/imprint`];
+      for (const impUrl of impUrls) {
+        try {
+          const res = await fetch(impUrl, { signal: AbortSignal.timeout(8000) });
+          if (!res.ok) continue;
+          const html = await res.text();
+          if (html.includes('ec.europa.eu/consumers/odr')) {
+            return FAIL(`${location} — LIVE ${impUrl}: veralteter ODR-Link im HTML — abmahnfähig seit 20.07.2025`);
+          }
+          if (!/Verbraucherschlichtung|Streitbeilegungsverfahren/i.test(html)) {
+            return WARN(`${location} — LIVE ${impUrl}: §36-VSBG-Erklärung nicht im HTML`);
+          }
+          break;
+        } catch { continue; }
+      }
+    }
 
     // Pflichtfelder-Check via Live-API (§ 5 TMG, rechtsformabhängig)
     const apiData = await fetchImpressumApi();
-    if (!apiData) return PASS(`${location} — OS-Link ✓ (API nicht erreichbar, Pflichtfeld-Check übersprungen)`);
+    if (!apiData) return PASS(`${location} — §36 VSBG ✓ (API nicht erreichbar, Pflichtfeld-Check übersprungen)`);
 
     const isKapitalgesellschaft = !!(apiData.register_court && apiData.register_number);
     const legalForm = isKapitalgesellschaft ? 'Kapitalgesellschaft' : 'Einzelunternehmen';
@@ -262,7 +285,7 @@ const localChecks = {
     if (missing.length > 0) {
       return WARN(`${location} — Pflichtfelder fehlen im Template [${legalForm}]: ${missing.join(', ')}`);
     }
-    return PASS(`${location} — alle §5-TMG-Pflichtfelder + OS-Link ✓ [${legalForm}]`);
+    return PASS(`${location} — alle §5-TMG-Pflichtfelder + §36 VSBG ✓ [${legalForm}]`);
   },
   '010-credits-api': (project) => {
     if (!project.path_local) return SKIP('kein path_local');

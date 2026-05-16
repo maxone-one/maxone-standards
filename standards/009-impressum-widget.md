@@ -22,26 +22,27 @@ https://panel.maxone.one/functions/v1/impressum
 ## Pflicht-Bestandteile jeder Impressum-Seite
 
 Zusätzlich zu den dynamischen API-Feldern (Name, Adresse, Steuerdaten) MUSS
-jede Impressum-Seite einen **statischen EU-Streitschlichtungs-Block** enthalten.
+jede Impressum-Seite einen **statischen §36-VSBG-Block** enthalten.
 Die API liefert diesen Text bewusst nicht als Feld — er ist rechtlich statisch
 und gehört in das Template:
 
 ```
-EU-Streitschlichtung
+Verbraucherschlichtung
 
-Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung
-(OS) bereit: https://ec.europa.eu/consumers/odr/
-
-Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor
-einer Verbraucherschlichtungsstelle teilzunehmen.
+Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren
+vor einer Verbraucherschlichtungsstelle teilzunehmen.
 ```
 
-**Rechtsgrundlage:** Art. 14 ODR-Verordnung (EU) 524/2013 — gilt für alle
-Online-Dienste, die Verbrauchern gegenüber tätig sind.
+**Rechtsgrundlage:** §36 Abs. 1 VSBG — gilt für alle Unternehmer, die
+Verbrauchern gegenüber tätig sind und eine Website betreiben.
 
-Beide Sätze sind **Pflicht**:
-1. Der Link zur OS-Plattform (`https://ec.europa.eu/consumers/odr/`)
-2. Die Erklärung zur Nicht-Teilnahme
+**WICHTIG — ODR-Link entfernen (abmahnfähig seit 20.07.2025):**
+Die EU-Plattform zur Online-Streitbeilegung (ec.europa.eu/consumers/odr)
+wurde am **20. Juli 2025** abgeschaltet. Die ODR-Verordnung (EU) 524/2013
+wurde durch VO (EU) 2024/3228 aufgehoben. Ein weiterhin sichtbarer Link zu
+dieser Plattform gilt als Irreführung des Verbrauchers (UWG) und ist
+abmahnfähig. Der Link **darf nicht mehr** im Impressum erscheinen — weder
+im Quellcode noch auf der gerenderten Seite.
 
 ## Pflicht-Felder im Template (§ 5 TMG, rechtsformabhängig)
 
@@ -105,17 +106,10 @@ Template-Pflichtblock (statisch, nach den dynamischen Feldern):
 
 ```tsx
 <section>
-  <h2>EU-Streitschlichtung</h2>
+  <h2>Verbraucherschlichtung</h2>
   <p>
-    Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung
-    (OS) bereit:{' '}
-    <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">
-      https://ec.europa.eu/consumers/odr/
-    </a>
-  </p>
-  <p>
-    Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor
-    einer Verbraucherschlichtungsstelle teilzunehmen.
+    Wir sind nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren
+    vor einer Verbraucherschlichtungsstelle teilzunehmen.
   </p>
 </section>
 ```
@@ -124,43 +118,54 @@ Template-Pflichtblock (statisch, nach den dynamischen Feldern):
 - Impressum-Felder hardcoden (Geschäftsführer, Adresse, Steuer-IdNr., Email)
 - API-Call ohne Cache (jedes Request schlägt auf Supabase auf)
 - Auf `panel.maxone.studio` referenzieren — immer `.maxone.one` nutzen
-- Den EU-Streitschlichtungs-Block weglassen
+- Den §36-VSBG-Block weglassen
+- Den alten ODR-Link (`ec.europa.eu/consumers/odr`) anzeigen — abmahnfähig seit 20.07.2025
 
 **Fallback:** Wenn API nicht erreichbar ist: lokale Kopie des letzten erfolg­
 reichen Responses zeigen + Fehler-Log. Niemals "Impressum nicht verfügbar"
 zeigen — das ist rechtlich unsicher.
 
-## Stand pro Projekt (Stand 2026-05-12)
+## Stand pro Projekt (Stand 2026-05-16)
 
-| Projekt | Impressum | API-Call | OS-Link | Quelle |
-|---|---|---|---|---|
-| snapflow.one | ✅ | ✅ `.one` | ✅ | `src/pages/legal/Impressum.tsx` |
-| repivot.in | ✅ | ✅ `.one` | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
-| vanfree | ✅ | ✅ `.one` | ✅ | `app/[locale]/impressum/page.tsx` |
-| stadtlahnflow | ✅ | ✅ `.one` | ✅ | `src/app/impressum/page.tsx` |
-| stadtpunkt | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
-| plansey-2026 | ✅ | ✅ `.one` | ✅ | `app/[locale]/imprint/page.tsx` |
-| zentinel | ✅ | ✅ `.one` | ✅ | `src/routes/impressum/+page.svelte` |
-| maxone.one | ✅ | ✅ `.one` | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.server.ts` |
-| voltfair.de | ✅ | lokal (eigene Seiten) | ✅ | `app/(public)/impressum/page.tsx` |
-| katchi | – | – | – | Projekt paused |
-| kitchen-station | – | – | – | Internes Tool |
-| solarproof | ✅ | ✅ `.one` | ✅ | `src/components/ImpressumOverlay.tsx` |
-| vector | – | – | – | Infra-Projekt |
+⚠️ **Alle Projekte mit ODR-Link müssen migriert werden** — abmahnfähig seit 20.07.2025.
+
+| Projekt | Impressum | API-Call | ODR-Link entfernt | §36 VSBG | Quelle |
+|---|---|---|---|---|---|
+| snapflow.one | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/pages/legal/Impressum.tsx` |
+| repivot.in | ✅ | ✅ `.one` | ❌ TODO | ✅ | `frontend/src/pages/landing/Impressum.tsx` |
+| vanfree | ✅ | ✅ `.one` | ❌ TODO | ✅ | `app/[locale]/impressum/page.tsx` |
+| stadtlahnflow | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/app/impressum/page.tsx` |
+| stadtpunkt | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/routes/impressum/+page.svelte` |
+| plansey-2026 | ✅ | ✅ `.one` | ❌ TODO | ✅ | `app/[locale]/imprint/page.tsx` |
+| zentinel | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/routes/impressum/+page.svelte` |
+| maxone.one | ✅ | ✅ `.one` | ❌ TODO | ✅ | `apps/umbrella/src/routes/(marketing)/impressum/+page.server.ts` |
+| voltfair.de | ✅ | lokal (eigene Seiten) | ❌ TODO | ✅ | `app/(public)/impressum/page.tsx` |
+| katchi | – | – | – | – | Projekt paused |
+| kitchen-station | – | – | – | – | Internes Tool |
+| solarproof | ✅ | ✅ `.one` | ❌ TODO | ✅ | `src/components/ImpressumOverlay.tsx` |
+| vector | – | – | – | – | Infra-Projekt |
 
 ## Audit
 
 `scripts/audit.mjs` prüft pro Projekt:
 
 1. **API-Call vorhanden?** — sucht `panel.maxone.one/functions/v1/impressum`
-   - Gefunden → PASS
+   - Gefunden → Basis-Anforderung erfüllt
    - `panel.maxone.studio` → WARN (Migration fällig)
-   - `impressum_local_intentional: true` in Registry → PASS (bewusste lokale Ausnahme)
+   - `impressum_local_intentional: true` in Registry → akzeptiert
 
-2. **EU-Streitschlichtungs-Link vorhanden?** — sucht `ec.europa.eu/consumers/odr`
-   in allen Impressum-bezogenen Dateien des Projekts
-   - Fehlt in einem Projekt mit Impressum-Route → WARN
+2. **Alter ODR-Link verboten** — sucht `ec.europa.eu/consumers/odr` im Quellcode
+   - Gefunden → **FAIL** (abmahnfähig seit 20.07.2025)
+
+3. **§36-VSBG-Erklärung vorhanden?** — sucht `Verbraucherschlichtung` oder
+   `Streitbeilegungsverfahren` im Quellcode
+   - Fehlt → WARN
+
+4. **Live-Check** (nur ohne `--local-only`) — ruft `https://<domain>/impressum`
+   ab und prüft das gerenderte HTML:
+   - Alter ODR-Link im HTML → **FAIL** (das ist die rechtlich relevante Prüfung)
+   - §36-VSBG-Erklärung fehlt im HTML → WARN
 
 Formale Ausnahmen (`registry/exceptions.yml`) für Projekte mit bewusst lokalen
-Impressum-Seiten (maxone.one, voltfair, plansey, zentinel) sind korrekt, solange
-die Seiten den OS-Link enthalten.
+Impressum-Seiten (voltfair) sind korrekt, solange die Seiten keinen ODR-Link
+enthalten und die §36-VSBG-Erklärung zeigen.
