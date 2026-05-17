@@ -17,7 +17,7 @@ wirken, obwohl sie zum selben Produkt gehören.
 Jedes Projekt wählt **eine** der beiden Strategien und nutzt sie konsequent auf
 allen Dashboard-Seiten. Mischen ist verboten.
 
-**Strategie A — Full-width** (empfohlen für daten-/admin-lastige Apps wie vanfree, voltfair):
+**Strategie A — Full-width (Standard, Default für neue Projekte):**
 
 ```tsx
 <div className="w-full px-4 py-6 md:px-6 md:py-8">
@@ -25,13 +25,21 @@ allen Dashboard-Seiten. Mischen ist verboten.
 </div>
 ```
 
-**Strategie B — Constrained** (empfohlen für content-/formular-lastige Apps wie plansey):
+Skaliert auf grossen Monitoren ohne ungenutzte Seitenraender, passt zu
+daten- und admin-lastigen Apps (vanfree, voltfair, snapflow). Ohne expliziten
+Gegen-Grund: A nehmen.
+
+**Strategie B — Constrained (begründete Ausnahme):**
 
 ```tsx
 <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8">
   {/* Seiteninhalt */}
 </div>
 ```
+
+Nur wenn das Projekt überwiegend Lesetext, Formulare oder narrative Flows
+zeigt (z.B. plansey) und schmalere Zeilen die Lesbarkeit messbar verbessern.
+Die Wahl B muss im Projekt-CLAUDE.md / README dokumentiert sein.
 
 **Ausnahme** (in beiden Strategien erlaubt): Detail-/Formular-Seiten mit
 einem einzelnen Objekt im Fokus dürfen `max-w-3xl` für bessere Lesbarkeit.
