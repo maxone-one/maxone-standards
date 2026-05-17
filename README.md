@@ -47,6 +47,83 @@ node scripts/audit.mjs --project=snapflow.one
 node scripts/apply-template.mjs --template=docker-compose.blue-green --project=plansey
 ```
 
+## Standards nach Kategorie
+
+### 🚀 Deploy & Infrastruktur
+| Nr. | Name |
+|-----|------|
+| 001 | Blue/Green Deployment |
+| 002 | Kein Build auf Prod |
+| 003 | Zentraler Secrets-Store |
+| 004 | TLS via DNS-01 |
+| 006 | HANDOFF.md |
+| 007 | Pfade & Naming |
+| 008 | Domain-Policy |
+| 026 | Self-Hosted First |
+| 027 | Deploy-Pipeline |
+| 028 | Container-Misconfig |
+| 033 | Post-Deploy Warmup |
+
+### 🔒 Security & Compliance
+| Nr. | Name |
+|-----|------|
+| 017 | DSGVO Tracker-Audit |
+| 019 | Cert & DNS Reality |
+| 020 | Pentest Light |
+| 022 | Secret-Scan |
+| 023 | Static Analysis |
+| 029 | Indirect Prompt Injection |
+| 035 | Wahrhaftige Unterschrift |
+| 041 | AVV/DPA-Registry |
+
+### 📋 Prozess & Qualität
+| Nr. | Name |
+|-----|------|
+| 005 | Test-First |
+| 013 | Launch-Gate-Review |
+| 014 | Sunset |
+| 015 | Concept-Gate |
+| 018 | Bundle-Drift-Audit |
+| 021 | Re-Review-Reminder |
+| 024 | Code-Health-Budget |
+| 036 | Spec-Archive |
+| 037 | Tech-Stack-Currency |
+| 038 | Cross-Project-Broadcast |
+
+### 🧱 Code-Architektur & UI
+| Nr. | Name |
+|-----|------|
+| 010 | Credits-API |
+| 011 | Vector-Chat-Widget |
+| 012 | Footer-Standard |
+| 016 | Stack-Whitelist |
+| 025 | LLM-App-Spezial |
+| 032 | Supabase SSR Auth |
+| 044 | SSoT & kein Hardcode |
+| 045 | Dashboard-Layout |
+
+### 🌐 Text, Sprache & Marke
+| Nr. | Name |
+|-----|------|
+| 009 | Impressum-Widget |
+| 040 | Deutsche Umlaute |
+
+### 📡 Observability & Betrieb
+| Nr. | Name |
+|-----|------|
+| 031 | Routine-Platform |
+| 034 | Cost-Caps & Budget-Alerts |
+| 042 | Version-Marker |
+
+### 📬 Mail & Kommunikation
+| Nr. | Name |
+|-----|------|
+| 030 | Mail-Architektur |
+| 039 | Mailbox-Password-Sync |
+| 043 | Cron-Email-Dedup |
+
+---
+
 ## Nicht-Ziele
 
 - Keine Runtime-Logik, kein Code der gedeployed wird
