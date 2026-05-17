@@ -53,6 +53,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [031-routine-platform.md](031-routine-platform.md) — Routine-Platform: Cron/Reminder/Watchdog-Routinen NUR auf Heartbeat-Plattform (GH Actions schedule, systemd-Timer, pg_cron) oder via 24/7-Agent (VECTOR) — niemals IDE-/User-NUC-/Claude-Sitzungs-abhängig
 - [032-supabase-ssr-auth.md](032-supabase-ssr-auth.md) — Supabase SSR Auth Middleware-Matcher: broad Negative-Lookahead-Pattern, niemals selektive Pfad-Liste — sonst sterben Sessions nach ~1h Idle / bei Deploys (SLF-Vorfall 2026-04-28)
 - [033-post-deploy-warmup.md](033-post-deploy-warmup.md) — Post-Deploy-Warmup: Health-Check + erste Page-Renders gegen den NEUEN Container, BEVOR Traefik geswappt wird
+- [042-version-marker.md](042-version-marker.md) — Version-Marker: `BUILD_ID` als ENV im Container + `/api/version` Endpoint + sichtbarer Banner im Footer (Drift-Check + Bug-Report-Begleiter)
 
 **Kosten & Budget:**
 - [034-cost-caps-and-budget-alerts.md](034-cost-caps-and-budget-alerts.md) — Drei Verteidigungslinien gegen API-Kostenüberraschungen (Provider-Cap + Code-Cap + Wiederholungs-Marker) + Privat-DM-Alert; SLF Places-API-Vorfall 2026-05-02 (715 EUR)
