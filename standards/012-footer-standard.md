@@ -2,83 +2,115 @@
 
 **Status:** active
 **Seit:** 2026-04-27
+**Aktualisiert:** 2026-05-17 — Mega/Slim-Trennung, Version-Marker (→ 042), "maxone studio" → "maxone"
 **Gilt für:** alle Customer-facing Projekte
 
 ## Regel
 
-Jedes Customer-facing Projekt hat einen Footer mit fester Struktur. Die
-Implementierung ist pro Framework angepasst (React/Svelte/Astro/...), die
+Jedes Customer-facing Projekt hat einen Footer. Zwei Varianten — welche eine
+**Seite** bekommt, hängt vom Seiten-Typ ab, nicht vom Projekt:
+
+| Variante | Wann |
+|----------|------|
+| **Mega** | Vollwertige Seiten mit Inhalt (Landingpages, Feature-Seiten, Marketing) |
+| **Slim** | Platzhalter-Seiten, einfache Login-Flows, App-Bereiche ohne eigenen Footer |
+
+Die Implementierung ist pro Framework angepasst (React/Svelte/…), die
 **Inhalts-Struktur** ist überall identisch.
 
-## Warum
+## Mega — Pflicht-Inhalt
 
-Aktuell hat jedes Projekt einen eigenen Footer mit eigener Struktur, eigenen
-Links, eigener Attribution. Bei Audit-Recherche 2026-04-27 gefunden: 9
-Footer-Komponenten, alle anders strukturiert. Das ist:
-- Schlechtes Branding (kein Wiedererkennungswert über Projekte)
-- Compliance-Risiko (manche Footer haben /datenschutz, andere nicht)
-- Wartungs-Albtraum (jede Änderung an "Powered by"-Text ist 9× Arbeit)
-
-## Pflicht-Inhalt
-
-**3 Spalten oder 1 Spalte (responsive):**
+**3–5 Spalten (responsive, auf Mobile gestapelt):**
 
 1. **Brand & Kurz-Info**
    - Logo + Projekt-Name
    - 1–2 Sätze Beschreibung
-   - Optional: "Made in Germany 🇩🇪"
+   - 🇩🇪 "Gehostet in Deutschland" (Pflicht bei EU-Kunden)
 
-2. **Navigation**
-   - Hauptlinks des Projekts (wie im Header, gekürzt)
+2. **Navigation** (1–3 projekt-spezifische Spalten)
+   - Hauptlinks des Projekts, strukturiert nach Thema
+   - Spaltenbezeichnung in `h3`/`h4`
 
-3. **Rechtliches**
-   - `/impressum` (Pflicht)
-   - `/datenschutz` (Pflicht)
-   - `/agb` falls Verträge
-   - `/credits` (siehe Standard 010)
+3. **Rechtliches** (eigene Spalte, immer ganz rechts)
+   - `/impressum` — Pflicht
+   - `/datenschutz` — Pflicht
+   - `/agb` oder `/nutzungsbedingungen` — falls Verträge vorhanden
 
-**Bottom-Bar (separater Bereich):**
-- `© <Jahr> <Projekt-Name>` — Jahr dynamisch aus `new Date().getFullYear()`
-- "Entwickelt von [maxone studio](https://maxone.one)" — mit Link
-- Optional: Build-ID / Version (für Debugging)
+**Bottom-Bar:**
+- `© <Jahr> <Projekt-Name>` — Jahr dynamisch via `new Date().getFullYear()`
+- "Entwickelt von [maxone](https://maxone.one)" — mit Link, kleiner Text
+- Version-Marker (→ Standard 042): `v: <BUILD_ID.slice(0,8)>` als `<a>` auf GitHub-Commit
+
+## Slim — Pflicht-Inhalt
+
+**Einzeilig (auf Mobile zweizeilig):**
+
+```
+© 2026 ProjektName  ·  Impressum  ·  Datenschutz  [· weitere Legal]
+                                    Entwickelt von maxone  ·  v: abc12345
+```
+
+- `© <Jahr> <Projekt-Name>` — Pflicht
+- `/impressum` — Pflicht
+- `/datenschutz` — Pflicht
+- "Entwickelt von [maxone](https://maxone.one)" — Pflicht
+- Version-Marker (→ Standard 042) — Pflicht wenn `NEXT_PUBLIC_BUILD_ID` gesetzt
 
 ## Hide-Logik
 
-Footer wird **nicht** angezeigt auf:
+Footer (beide Varianten) wird **nicht** angezeigt auf:
 - `/admin/*`, `/dashboard/*`, `/portal/*` — interne Bereiche
-- `/onboarding/*` — Wizards (verwirrt)
-- Print-Views (`@media print { footer { display: none; } }`)
+- `/onboarding/*` — Wizards
+- Print-Views: `@media print { footer { display: none !important; } }`
 
-Pattern (analog zu `stadt-lahn-flow/GlobalFooter.tsx`): ein Wrapper, der via
-`EXCLUDED_PREFIXES` entscheidet, ob gerendert wird.
+Pattern: `GlobalFooter`-Wrapper mit `EXCLUDED_PREFIXES`-Array entscheidet
+per Route, ob gerendert wird. Skelett: `templates/footer/GlobalFooter.tsx`.
 
-## Wie anwenden
+## Attribution
 
-Pro-Framework-Skelett liegt in [templates/footer/](../templates/footer/):
-- `Footer.tsx` (React)
-- `GlobalFooter.tsx` (Wrapper mit Hide-Logik)
-- `Footer.svelte` (Svelte/SvelteKit)
-- `Footer.astro` (Astro)
+- **"Entwickelt von maxone"** — für B2B-Projekts-Footer (plansey, voltfair, repivot, snapflow, …)
+- **"Ein Projekt von maxone.one"** — wenn die Verbindung zu maxone Marketing-Wert hat (SLF, katchi)
+- **NIEMALS "maxone studio"** — Wortmarke tot seit 2026-05-12
 
-Skelett kopieren, Brand-Texte austauschen, Navigation einsetzen, fertig.
-Niemals von Grund auf neu schreiben.
+## Version-Marker
 
-## Stand pro Projekt (2026-04-27)
+Version wird aus `NEXT_PUBLIC_BUILD_ID` (Next.js) bzw. `PUBLIC_BUILD_ID` (SvelteKit)
+gelesen — zur Build-Zeit eingebacken. Falls Projekt semver-basiert (`FULL_VERSION` aus
+`lib/version.ts`): semver-String ist ebenfalls konform. Details: Standard 042.
 
-Alle Customer-facing Projekte haben einen Footer, aber Drift ist erheblich.
-Migration zum Standard erfolgt **bei nächstem Touch** des jeweiligen Projekts —
-nicht als Big-Bang.
+## Skelette
+
+Skelette in [`templates/footer/`](../templates/footer/):
+
+| Datei | Inhalt |
+|-------|--------|
+| `Footer.tsx` | Mega — React (Next.js/Vite/RR) |
+| `FooterSlim.tsx` | Slim — React |
+| `GlobalFooter.tsx` | Wrapper mit Hide-Logik |
+| `Footer.svelte` | Mega — SvelteKit |
+| `FooterSlim.svelte` | Slim — SvelteKit |
+
+Skelett kopieren, Brand-Texte austauschen, Navigation einsetzen. Niemals neu erfinden.
 
 ## Audit
 
 `scripts/audit.mjs` prüft pro Projekt:
+
 - Existiert eine Footer-Komponente? (`Footer.{tsx,svelte,astro,vue}`)
 - Enthält sie Links zu `/impressum` und `/datenschutz`?
-- Enthält sie "maxone studio" oder einen Link zu maxone.one?
+- Enthält sie einen Link zu `maxone.one`?
 - Enthält sie `new Date().getFullYear()` (kein hardcoded Jahr)?
+- Version-Marker: → prüft Standard 042
 
-## Offen für Max
+## Stand (2026-05-17)
 
-- Soll "Made in Germany" Pflicht oder optional sein?
-- Wie soll die "Entwickelt von"-Attribution genau aussehen — Link, Logo, Text?
-- Bei Kundenprojekten: Footer-Attribution erlaubt oder nur dezent?
+| Projekt | Variante | Version | Konform |
+|---------|----------|---------|---------|
+| stadtlahnflow | Mega | ✅ NEXT_PUBLIC_BUILD_ID | ✅ |
+| voltfair | Mega | ✅ APP_VERSION (semver) | ✅ |
+| repivot | Mega | ✅ FULL_VERSION (semver) | ✅ |
+| snapflow | Mega | ✅ FULL_VERSION (semver) | ✅ |
+| plansey | Mega | ⚠️ fehlt noch | → wird migriert |
+| maxone.one | Mega | ⚠️ fehlt noch | → nächster Touch |
+| vanfree | Slim (public) | ✅ NEXT_PUBLIC_BUILD_ID | ✅ |
+| stadtpunkt | Slim | ⚠️ fehlt noch | → nächster Touch |

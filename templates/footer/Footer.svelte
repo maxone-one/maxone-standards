@@ -63,16 +63,26 @@
       </div>
     </div>
 
-    <div class="mt-10 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
+    <div class="mt-10 pt-6 border-t border-border flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
       <span>© {year} <!-- PROJEKT_BRAND --></span>
-      <a
-        href="https://maxone.one"
-        target="_blank"
-        rel="noreferrer noopener"
-        class="text-muted-foreground/60 hover:text-muted-foreground transition-colors text-xs"
-      >
-        Entwickelt von maxone studio
-      </a>
+      <span class="flex items-center gap-3">
+        <a
+          href="https://maxone.one"
+          target="_blank"
+          rel="noreferrer noopener"
+          class="opacity-50 hover:opacity-80 transition-opacity"
+        >
+          Entwickelt von maxone
+        </a>
+        <!-- Version-Marker (Standard 042): PUBLIC_BUILD_ID via $env/static/public -->
+        <!-- {#if buildId && buildId !== 'dev'} -->
+        <!--   <a href="https://github.com/maxone-one/REPO/commit/{buildId}" -->
+        <!--      target="_blank" rel="noopener noreferrer" -->
+        <!--      class="font-mono opacity-30 hover:opacity-60 transition-opacity"> -->
+        <!--     v: {buildId.slice(0, 8)} -->
+        <!--   </a> -->
+        <!-- {/if} -->
+      </span>
     </div>
   </div>
 </footer>
