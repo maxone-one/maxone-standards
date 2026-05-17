@@ -252,6 +252,13 @@ projects:
         avv_status: standard-terms
         evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
         reviewed_at: "2026-05-04"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (Kontaktformular, Status-Benachrichtigungen)
+        personal_data: E-Mail-Adressen, Namen, Nachrichteninhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt (geteilt mit maxone.one-Konto)
+        reviewed_at: "2026-05-18"
     notes: "Grafikerin-/Sponsor-Produktionsprozess. Sales-Funnel und Admin-Slot-View liegen im maxone.one Repo; dieses Repo betreibt stadtpunkt.maxone.one."
 
   - name: kitchen-station
@@ -370,6 +377,13 @@ projects:
         avv_status: standard-terms
         evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
         reviewed_at: "2026-04-27"
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (E-Mail-Sequenzen via Edge Function)
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt; BREVO_API_KEY in /opt/secrets/snapflow/
+        reviewed_at: "2026-05-18"
     warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
     version_endpoint: /version.json  # Standard 042: Static SPA — kein /api/version möglich, nginx serviert version.json aus dist/
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
