@@ -101,6 +101,7 @@ node scripts/apply-template.mjs --template=docker-compose.blue-green --project=p
 | 032 | Supabase SSR Auth |
 | 044 | SSoT & kein Hardcode |
 | 045 | Dashboard-Layout |
+| 046 | DevPanel |
 
 ### 🌐 Text, Sprache & Marke
 | Nr. | Name |
