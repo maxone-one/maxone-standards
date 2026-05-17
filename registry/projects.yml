@@ -34,6 +34,9 @@
 #                             keinen Post-Deploy-Warm-Up brauchen (Static SPAs ohne SSR,
 #                             pure-API-Container ohne User-Frontend). Default = audit
 #                             erwartet Warm-Up-Pattern in deploy.sh.
+#   version_endpoint        — (optional, Standard 042) Pfad des Version-Endpoints.
+#                             Default: /api/version. Static-SPA-Projekte ohne Server:
+#                             /version.json (wird beim Build erzeugt).
 #   data_processors         — (optional, Standard 041; Pflicht vor Live-Gang bei
 #                             personenbezogenen Daten) Liste externer Auftragsverarbeiter.
 #                             Jeder Eintrag: { service, purpose, personal_data, region,
@@ -368,6 +371,7 @@ projects:
         evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
         reviewed_at: "2026-04-27"
     warmup_required: false  # Standard 033: Static SPA via nginx, kein SSR
+    version_endpoint: /version.json  # Standard 042: Static SPA — kein /api/version möglich, nginx serviert version.json aus dist/
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
 
   - name: zentinel

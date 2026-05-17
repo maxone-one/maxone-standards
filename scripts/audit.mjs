@@ -1808,6 +1808,120 @@ const localChecks = {
     if (warns.length) return WARN(warns.map(f => f.msg).join('; '));
     return PASS('Dep-Kadenz ok (chore(deps) in den letzten 90 Tagen)');
   },
+
+  // Standard 042 — Version-Marker: BUILD_ID ENV + /api/version Endpoint + Footer-Banner.
+  // Drei Konsumenten: SSH-Drift-Check (ENV), externer Probe via Watchdog (Endpoint),
+  // Bug-Report-Begleiter (Banner). Alle drei muessen denselben SHA tragen.
+  // Local-Teile: Workflow-grep + Dockerfile-grep (immer).
+  // Live-Teile: HTTP-Checks + SSH-Drift (nur wenn !OFFLINE).
+  '042-version-marker': async (project) => {
+    if (project.status === 'paused' || project.status === 'sunset')
+      return SKIP(`status=${project.status}`);
+    if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.server) return SKIP('kein Container-Deploy');
+
+    const tags = Array.isArray(project.tags) ? project.tags : [project.tags].filter(Boolean);
+    const isInfra = tags.includes('infra');
+    const isInternal = tags.includes('internal');
+
+    const warns = [];
+    const fails = [];
+
+    // 1. Workflow setzt BUILD_ID=
+    const workflowDir = join(project.path_local, '.github', 'workflows');
+    let workflowHasBuildId = false;
+    if (existsSync(workflowDir)) {
+      let wfFiles;
+      try { wfFiles = readdirSync(workflowDir); } catch { wfFiles = []; }
+      for (const f of wfFiles) {
+        if (!f.endsWith('.yml') && !f.endsWith('.yaml')) continue;
+        try {
+          const txt = readFileSync(join(workflowDir, f), 'utf8');
+          if (/BUILD_ID=/i.test(txt)) { workflowHasBuildId = true; break; }
+        } catch { /* ignore */ }
+      }
+    }
+    if (!workflowHasBuildId) warns.push('Workflow: kein BUILD_ID= build-arg');
+
+    // 2. Dockerfile hat ARG + ENV BUILD_ID
+    const dockerfileCandidates = ['Dockerfile', 'dockerfile', 'Dockerfile.prod'];
+    let dockerfileHasBuildId = false;
+    for (const df of dockerfileCandidates) {
+      const dp = join(project.path_local, df);
+      if (!existsSync(dp)) continue;
+      try {
+        const txt = readFileSync(dp, 'utf8');
+        if (/ARG\s+BUILD_ID/i.test(txt) && /ENV\s+BUILD_ID/i.test(txt)) {
+          dockerfileHasBuildId = true; break;
+        }
+      } catch { /* ignore */ }
+    }
+    if (!dockerfileHasBuildId) warns.push('Dockerfile: kein ARG+ENV BUILD_ID');
+
+    // 3+4+5. Live-Checks (nur wenn online und Domain vorhanden)
+    if (!OFFLINE && project.domain) {
+      const versionPath = project.version_endpoint ?? '/api/version';
+      const versionUrl = `https://${project.domain}${versionPath}`;
+
+      let endpointBuildId = null;
+      try {
+        const res = await fetch(versionUrl, { signal: AbortSignal.timeout(8000) });
+        if (!res.ok) {
+          fails.push(`${versionPath} HTTP ${res.status}`);
+        } else {
+          let json;
+          try { json = await res.json(); } catch { json = null; }
+          if (!json || typeof json !== 'object') {
+            warns.push(`${versionPath}: kein JSON`);
+          } else if (!json.build_id) {
+            warns.push(`${versionPath}: Feld build_id fehlt`);
+          } else {
+            endpointBuildId = json.build_id;
+          }
+        }
+      } catch (e) {
+        const msg = e.name === 'TimeoutError' ? 'Timeout' : e.message.slice(0, 60);
+        fails.push(`${versionPath}: ${msg}`);
+      }
+
+      // 4. Banner im Homepage-HTML (entfaellt bei infra/internal)
+      if (!isInfra && !isInternal) {
+        try {
+          const res = await fetch(`https://${project.domain}/`, { signal: AbortSignal.timeout(8000) });
+          if (res.ok) {
+            const html = await res.text();
+            const hasBanner = /v:\s*[a-f0-9]{6,8}/i.test(html)
+              || /build:\s*[a-f0-9]{6,8}/i.test(html)
+              || /version:\s*[a-f0-9]{6,8}/i.test(html);
+            if (!hasBanner) warns.push('Footer: kein Version-Banner (v:/Build:/version: + hex-SHA)');
+          }
+        } catch { /* Homepage-Erreichbarkeit pruefen andere Checks */ }
+      }
+
+      // 5. SSH-Drift: Container-ENV vs Endpoint
+      if (endpointBuildId && project.container) {
+        try {
+          const slot = project.deploy === 'blue-green' ? '-blue' : '';
+          const cname = `${project.container}${slot}`;
+          const envOut = ssh(project.server,
+            `docker inspect ${cname} --format '{{range .Config.Env}}{{println .}}{{end}}' 2>/dev/null | grep '^BUILD_ID=' || echo 'BUILD_ID=__notfound__'`
+          );
+          const envBuildId = envOut.trim().replace(/^BUILD_ID=/, '');
+          if (envBuildId === '__notfound__') {
+            warns.push('Container-ENV: BUILD_ID nicht gesetzt');
+          } else if (envBuildId && envBuildId !== endpointBuildId) {
+            fails.push(`Drift: Container BUILD_ID=${envBuildId} ≠ Endpoint build_id=${endpointBuildId}`);
+          }
+        } catch (e) {
+          warns.push(`SSH-Drift-Check: ${e.message.slice(0, 60)}`);
+        }
+      }
+    }
+
+    if (fails.length) return FAIL(fails.join('; ') + (warns.length ? ` (+${warns.length} WARN)` : ''));
+    if (warns.length) return WARN(warns.join('; '));
+    return PASS('BUILD_ID ENV + version-Endpoint + Footer-Banner');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
@@ -2063,6 +2177,7 @@ const sshChecks = {
       }
     }
   },
+
 };
 
 // --- Runner ---
