@@ -39,6 +39,12 @@ Misconfig-Klassen frei. **Hard-Fails:**
    das legitim, alle anderen nicht).
 7. **`env_file:` muss auf `/opt/secrets/<projekt>/keys.env` zeigen** —
    nicht auf `.env` im Repo (Standard 003), nicht inline.
+8. **Healthcheck-Endpoint darf kein SSR-Pfad sein** — Root `/` oder
+   andere vollständig gerenderte Seiten als Healthcheck-URL sind verboten.
+   Next.js SSR kann 5–7 s dauern und übersteigt den Standard-Timeout von
+   5 s → CI-Rollback, obwohl der Container gesund ist. Erlaubte Endpunkte:
+   `/api/version`, `/api/health`, `/health`, `/healthz` oder ein
+   vergleichbarer statischer Endpunkt (kein SSR, kein DB-Query).
 
 ## Warum
 
@@ -57,6 +63,10 @@ Misconfig-Klassen frei. **Hard-Fails:**
   Inline-Secrets in `environment:`-Block des Compose / Cloud-Run-YAMLs.
 - **OOM-Klasse** (CLAUDE.md, mehrfach) — Build auf Prod-Server killt
   alle anderen Container; `mem_limit:` ist die letzte Linie davor.
+- **vanfree Healthcheck-Timeout 2026-05-17** — Healthcheck gegen `/`
+  (Next.js SSR) brauchte 6,3 s im Container; Timeout war 5 s. CI rollte
+  mehrere Deploys zurück, obwohl der Container tatsächlich gesund war.
+  Fix: `/api/version` (0,3 s). Lehre → Warning #8.
 
 **Schließt einen dokumentierten Blindspot:** das Memory
 `project_audit_compose_blindspot.md` weist explizit darauf hin, dass
@@ -178,6 +188,8 @@ hart ab; trivy ist die "weiche" Tiefenprüfung.
      `# audit: docker-socket-required` → **WARN**
    - `env_file:` zeigt nicht auf `/opt/secrets/<projekt>/keys.env`
      → **WARN** (Pattern wird gegen `secrets_dir` aus Registry geprüft)
+   - `healthcheck.test` enthält `localhost:\d+/'` oder `localhost:\d+/"` 
+     (Root-Pfad ohne Sub-Pfad) → **WARN**
 4. **Aggregat:**
    - PASS = keine FAIL, keine WARN
    - WARN = nur WARN

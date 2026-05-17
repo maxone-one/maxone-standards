@@ -22,6 +22,8 @@ services:
     networks:
       - coolify
     healthcheck:
+      # WICHTIG: NIEMALS Root-Pfad (/) verwenden — SSR kann 5–7s dauern, Timeout ist 5s → CI-Rollback
+      # Stattdessen: /api/version, /api/health, /health oder ein anderer statischer Endpunkt (kein SSR)
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 5s
@@ -48,6 +50,7 @@ services:
     networks:
       - coolify
     healthcheck:
+      # WICHTIG: NIEMALS Root-Pfad (/) verwenden — SSR kann 5–7s dauern, Timeout ist 5s → CI-Rollback
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 5s
