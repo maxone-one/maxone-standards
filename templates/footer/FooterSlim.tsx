@@ -38,7 +38,7 @@ export function FooterSlim() {
             rel="noopener noreferrer"
             className="opacity-50 hover:opacity-80 transition-opacity"
           >
-            Entwickelt von maxone
+            Entwickelt von maxone.one
           </a>
           {buildId && buildId !== "dev" && (
             <a

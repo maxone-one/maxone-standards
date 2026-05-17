@@ -72,7 +72,7 @@
           rel="noreferrer noopener"
           class="opacity-50 hover:opacity-80 transition-opacity"
         >
-          Entwickelt von maxone
+          Entwickelt von maxone.one
         </a>
         <!-- Version-Marker (Standard 042): PUBLIC_BUILD_ID via $env/static/public -->
         <!-- {#if buildId && buildId !== 'dev'} -->

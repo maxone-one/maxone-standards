@@ -39,7 +39,7 @@
         rel="noopener noreferrer"
         class="opacity-50 hover:opacity-80 transition-opacity"
       >
-        Entwickelt von maxone
+        Entwickelt von maxone.one
       </a>
       {#if buildId && buildId !== 'dev'}
         <a
