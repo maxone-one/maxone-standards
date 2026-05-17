@@ -12,9 +12,20 @@ wirken, obwohl sie zum selben Produkt gehören.
 
 ## Pflicht-Regeln
 
-### 1. Content-Wrapper
+### 1. Content-Wrapper — Strategie pro Projekt
 
-Jede Dashboard-Seite hat genau einen äußeren Wrapper:
+Jedes Projekt wählt **eine** der beiden Strategien und nutzt sie konsequent auf
+allen Dashboard-Seiten. Mischen ist verboten.
+
+**Strategie A — Full-width** (empfohlen für daten-/admin-lastige Apps wie vanfree, voltfair):
+
+```tsx
+<div className="w-full px-4 py-6 md:px-6 md:py-8">
+  {/* Seiteninhalt */}
+</div>
+```
+
+**Strategie B — Constrained** (empfohlen für content-/formular-lastige Apps wie plansey):
 
 ```tsx
 <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8">
@@ -22,9 +33,16 @@ Jede Dashboard-Seite hat genau einen äußeren Wrapper:
 </div>
 ```
 
-- `max-w-7xl` als Standard-Maximum (≈ 1280 px)
-- `max-w-5xl` für schmale Info-/Detail-Seiten (ein Formular, ein Objekt)
-- Kein `max-w-4xl` oder `max-w-6xl` — nur diese zwei Stufen
+**Ausnahme** (in beiden Strategien erlaubt): Detail-/Formular-Seiten mit
+einem einzelnen Objekt im Fokus dürfen `max-w-3xl` für bessere Lesbarkeit.
+Dies muss eine bewusste Entscheidung sein, nicht ein dritter Default —
+sichtbar an dokumentiertem Kommentar oder konsistenter Anwendung über
+alle solchen Seiten.
+
+**Verboten:**
+- Innerhalb desselben Projekts beide Strategien mischen
+- `max-w-4xl`, `max-w-5xl`, `max-w-6xl` als Default (nur als Detail-Ausnahme oben)
+- Wrapper komplett weglassen (führt zu Inhalt ohne Padding bis zum Browser-Rand)
 
 ### 2. Seiten-Heading
 
@@ -100,6 +118,42 @@ Für Tabellen, Listen, Detail-Panels:
 - Innerhalb einer Sektion: `gap-4` (16 px)
 - Kein `space-y-4` auf Seitenebene, kein `gap-6` auf Karten-Ebene
 
+### 7. Loading States — Skeleton statt Spinner
+
+Beim initialen Laden von Daten zeigen wir **Skeleton-Loader** (Platzhalter
+in Form der späteren Karten), keine isolierten Spinner. Nutzer sehen die
+Seitenstruktur sofort und die gefühlte Ladezeit sinkt.
+
+```tsx
+{isLoading ? (
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: 3 }).map((_, i) => (
+      <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />
+    ))}
+  </div>
+) : (
+  <StatGrid data={data} />
+)}
+```
+
+Spinner sind nur für **kurze**, **inline** Aktionen erlaubt (Button-Submit,
+optimistische Updates).
+
+### 8. Mobile Bottom-Spacing bei Bottom-Nav
+
+Projekte mit einer Mobile-Bottom-Nav (vanfree, snapflow) müssen im
+scrollbaren Content-Container Padding nach unten lassen, sonst überdeckt
+die Nav den letzten Karten-Rand:
+
+```tsx
+<main className="flex-1 overflow-y-auto pb-14 md:pb-0">
+  {/* Content */}
+</main>
+```
+
+`pb-14` (56 px) entspricht der Standard-Höhe der Mobile-Nav. Projekte mit
+höherer Nav passen entsprechend an.
+
 ## Erlaubte Abweichungen
 
 - Projekte mit eigenem Design-System (z.B. abweichende Brand-Farbe) dürfen
@@ -137,7 +191,9 @@ als Vorlage nehmen.
    direktes grep-Pattern möglich; visueller Review bei Launch-Gate (→ 013)
 2. Gibt es `grid-cols-5` oder `grid-cols-6` auf Dashboard-Seiten? → WARN
 3. Gibt es `p-4` und `p-6` auf derselben Dashboard-Seite? → WARN
-4. Gibt es Dashboard-Seiten ohne `max-w-` Constraint? → WARN
+4. Mischt das Projekt Strategie A (full-width) und B (max-w-7xl) innerhalb
+   der Dashboard-Routen? → WARN
+5. Hat das Projekt eine `MobileBottomNav` aber kein `pb-14` im Scroll-Container? → WARN
 
 ## Verwandte Standards
 
