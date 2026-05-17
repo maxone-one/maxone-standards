@@ -38,12 +38,19 @@
 #                             Default: /api/version. Static-SPA-Projekte ohne Server:
 #                             /version.json (wird beim Build erzeugt).
 #   data_processors         — (optional, Standard 041; Pflicht vor Live-Gang bei
-#                             personenbezogenen Daten) Liste externer Auftragsverarbeiter.
+#                             personenbezogenen Daten) Liste externer Auftragsverarbeiter
+#                             (Richtung 1: Max ist Verantwortlicher, Dienst ist Processor).
 #                             Jeder Eintrag: { service, purpose, personal_data, region,
 #                             avv_status, evidence, reviewed_at, subprocessors,
 #                             transfer_basis }. Erlaubte avv_status-Werte:
 #                             signed | account-enabled | standard-terms | not-required |
 #                             missing | unknown.
+#   outbound_avv            — (optional, Standard 041; Pflicht bei tags: customer)
+#                             AVVs, die Max als Auftragsverarbeiter an Kunden ausstellt
+#                             (Richtung 2: Kunde ist Verantwortlicher, Max ist Processor).
+#                             Jeder Eintrag: { client, contact, avv_status, evidence,
+#                             reviewed_at, notes }. Erlaubte avv_status-Werte:
+#                             signed | sent | missing | not-required.
 
 projects:
   - name: maxone.one
@@ -119,6 +126,13 @@ projects:
         avv_status: account-enabled
         evidence: Brevo DPA im Account hinterlegt
         reviewed_at: "2026-05-06"
+    outbound_avv:
+      - client: "Stadtlahnflow-Betreiber / Auftraggeber"
+        contact: null
+        avv_status: missing
+        evidence: null
+        reviewed_at: "2026-05-18"
+        notes: "AVV noch nicht erstellt. Max betreibt die Plattform im Auftrag der Organisation und verarbeitet deren Nutzerdaten — DSGVO Art. 28 greift. AVV muss vor nächstem Datenschutz-Review unterzeichnet vorliegen."
     notes: "Kanonischer Name: stadtlahnflow. GitHub-Repo 2026-05-06 von maxone-one/stadtlahnfluss auf maxone-one/stadtlahnflow umbenannt. Legacy-Domains wie stadtlahnfluss.de redirecten auf stadtlahnflow.de; Container/Secrets bleiben historisch slf-*."
 
   - name: katchi
@@ -259,6 +273,13 @@ projects:
         avv_status: account-enabled
         evidence: Brevo DPA im Account hinterlegt (geteilt mit maxone.one-Konto)
         reviewed_at: "2026-05-18"
+    outbound_avv:
+      - client: "Stadtpunkt-Auftraggeber / Grafikerin"
+        contact: null
+        avv_status: missing
+        evidence: null
+        reviewed_at: "2026-05-18"
+        notes: "AVV noch nicht erstellt. Max betreibt die Plattform im Auftrag der Auftraggeberin und verarbeitet Einreichungs- und Kontaktdaten — DSGVO Art. 28 greift. AVV muss vor nächstem Datenschutz-Review unterzeichnet vorliegen."
     notes: "Grafikerin-/Sponsor-Produktionsprozess. Sales-Funnel und Admin-Slot-View liegen im maxone.one Repo; dieses Repo betreibt stadtpunkt.maxone.one."
 
   - name: kitchen-station

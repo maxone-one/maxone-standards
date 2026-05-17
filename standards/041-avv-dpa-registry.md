@@ -2,9 +2,15 @@
 
 **Status:** active
 **Seit:** 2026-05-08
-**Gilt fuer:** alle Projekte, die personenbezogene Daten durch externe Dienstleister verarbeiten lassen
+**Gilt fuer:** alle Projekte, die personenbezogene Daten durch externe Dienstleister verarbeiten lassen ODER die im Auftrag eines Kunden personenbezogene Daten verarbeiten
 
 ## Regel
+
+Dieser Standard deckt **beide Richtungen** der DSGVO Art. 28-Pflicht ab.
+
+---
+
+### Richtung 1: Max ist Verantwortlicher — externe Auftragsverarbeiter
 
 Jeder externe Dienstleister, der personenbezogene Daten im Auftrag eines
 Maxone-Projekts verarbeitet, MUSS vor Live-Gang in `registry/projects.yml`
@@ -26,31 +32,70 @@ personenbezogene Daten verarbeitet. Wenn ein Dienst kein Auftragsverarbeiter ist
 (z. B. eigenstaendiger Verantwortlicher wie manche Payment-Anbieter), muss das
 explizit als `avv_status: not-required` begruendet werden.
 
+---
+
+### Richtung 2: Max ist Auftragsverarbeiter — AVV an Kunden
+
+Wenn Max eine Plattform im Auftrag einer Kundenorganisation betreibt und dabei
+personenbezogene Daten der Kunden-Nutzer verarbeitet, ist Max Auftragsverarbeiter.
+Der Kunde ist Verantwortlicher. Max MUSS diesem Kunden einen AVV ausstellen.
+
+Typische Erkennungsmerkmale (`tags: customer` in der Registry):
+- Plattform wird fuer eine bestimmte Organisation/Gemeinde/Firma betrieben
+- Nutzer der Plattform sind Klienten/Buerger/Mitarbeiter dieser Organisation
+- Max kontrolliert die Infrastruktur, der Auftraggeber definiert den Zweck
+
+Fuer jede solche Beziehung muss in `registry/projects.yml` ein
+`outbound_avv`-Eintrag angelegt werden:
+
+```yaml
+outbound_avv:
+  - client: "Kundenname / Organisation"
+    contact: "Ansprechpartner oder E-Mail"
+    avv_status: signed        # signed | sent | missing | not-required
+    evidence: "Ablageort des unterzeichneten AVV (z. B. Google Drive-Pfad)"
+    reviewed_at: "YYYY-MM-DD"
+    notes: "Optionale Anmerkung"
+```
+
+Erlaubte `avv_status`-Werte fuer `outbound_avv`:
+
+- `signed` — AVV beidseitig unterzeichnet, liegt im Archiv
+- `sent` — AVV wurde an Kunden versandt, Gegenzeichnung steht aus
+- `missing` — AVV wurde noch nicht erstellt; nicht live-faehig
+- `not-required` — Kein Auftragsverarbeitungsverhaeltnis (Begruendung in `notes`)
+
+Projekte mit `tags: product`, `brand`, `infra` oder `internal` benoetigen
+`outbound_avv` nur, wenn sie nachweislich B2B-Kunden haben, die eigene
+Kundendaten ueber die Plattform verarbeiten lassen. In diesem Fall explizit
+eintragen; andernfalls Feld weglassen.
+
+---
+
 ## Warum
 
-DSGVO Art. 28 verlangt, dass Verarbeitung durch Auftragsverarbeiter durch einen
-bindenden Vertrag oder ein anderes Rechtsinstrument geregelt ist. Der Vertrag
-muss unter anderem Gegenstand, Dauer, Art und Zweck der Verarbeitung,
-Datenkategorien, Betroffenengruppen sowie Rechte und Pflichten des
-Verantwortlichen festlegen.
+DSGVO Art. 28 verlangt fuer **jede** Auftragsverarbeitung einen bindenden Vertrag —
+unabhaengig davon, ob Max Auftraggeber oder Auftragnehmer ist. Der Vertrag muss
+Gegenstand, Dauer, Art und Zweck der Verarbeitung, Datenkategorien,
+Betroffenengruppen sowie Rechte und Pflichten des Verantwortlichen festlegen.
 
 In Vibe-Coding- und SaaS-Setups entstehen AVV-Luecken besonders leicht:
 
 - ein neuer Mail-, Analytics-, AI-, Hosting- oder Storage-Dienst wird schnell
-  eingebaut, aber nicht vertraglich geprueft
-- der Dienst hat Subprozessoren oder Drittlandtransfer, die nicht in der
-  Datenschutzerklaerung landen
-- die technische Integration ist sichtbar, der Vertragsstatus aber nur im Kopf
-  oder in einem Account-Menue
+  eingebaut, aber nicht vertraglich geprueft (Richtung 1)
+- eine Kundenplattform geht live, ohne dass der Kunde einen AVV von Max erhalten
+  hat — obwohl Max Nutzerdaten des Kunden verarbeitet (Richtung 2)
 - bei Sunset wird der Dienst gekuendigt, aber AVV-/Datenloeschpflichten werden
   nicht nachgezogen
 
 Dieser Standard macht AVV nicht zu einer Chat-Erinnerung, sondern zu einer
-pruefbaren Registry-Pflicht.
+pruefbaren Registry-Pflicht — in beiden Richtungen.
+
+---
 
 ## Wie anwenden
 
-**1. In `registry/projects.yml`:**
+**1. `data_processors` in `registry/projects.yml` (Richtung 1):**
 
 ```yaml
 data_processors:
@@ -65,7 +110,7 @@ data_processors:
     transfer_basis: EU-only
 ```
 
-**2. Erlaubte `avv_status`-Werte:**
+**2. Erlaubte `avv_status`-Werte (Richtung 1):**
 
 - `signed` — individueller AVV/DPA abgeschlossen
 - `account-enabled` — AVV im Anbieter-Account akzeptiert/aktiviert
@@ -74,22 +119,32 @@ data_processors:
 - `missing` — nicht live-faehig, bevor geklaert
 - `unknown` — nicht live-faehig, bevor geklaert
 
-**3. Typische Kandidaten:**
+**3. `outbound_avv` in `registry/projects.yml` (Richtung 2):**
+
+```yaml
+outbound_avv:
+  - client: "Stadtlahnflow-Betreiber"
+    contact: "ansprechpartner@beispiel.de"
+    avv_status: signed
+    evidence: "Google Drive / Vertraege / Stadtlahnflow-AVV-2026-05.pdf"
+    reviewed_at: "2026-05-18"
+```
+
+**4. Typische Kandidaten Richtung 1:**
 
 - Hosting/VPS/Storage: Hetzner, Cloudflare, AWS, Azure, GCP
 - Datenbank/Auth: Supabase Cloud, Firebase, Neon, PlanetScale
 - Mail/CRM: Brevo, Mailchimp, SendGrid, Postmark
-- Payment: Stripe, PayPal, Mollie (Rolle pruefen: haeufig eigener
-  Verantwortlicher plus Auftragsverarbeitung fuer Teilfunktionen)
-- Analytics/Monitoring: Sentry, Datadog, Plausible/Umami Cloud, Google
-  Analytics
-- AI-/LLM-APIs: OpenAI, Anthropic, OpenRouter, sonstige Modellanbieter
+- Payment: Mollie (Rolle pruefen: haeufig eigener Verantwortlicher plus
+  Auftragsverarbeitung fuer Teilfunktionen)
+- Analytics/Monitoring: Sentry, Datadog, Plausible/Umami Cloud
+- AI-/LLM-APIs: Anthropic, OpenAI, OpenRouter, sonstige Modellanbieter
 - Forms/Automation: Typeform, Zapier, Make, Google Workspace, Microsoft 365
 
-**4. Gate-Verknuepfung:**
+**5. Gate-Verknuepfung:**
 
-- Standard 015 `CONCEPT.md`: geplante `data_processors` bereits in Section
-  "Externe Dienste" entwerfen
+- Standard 015 `CONCEPT.md`: geplante `data_processors` und `outbound_avv` bereits
+  in Section "Externe Dienste" entwerfen
 - Standard 013 `LAUNCH-REVIEW.md`: vor Live-Gang gegen `registry/projects.yml`
   abgleichen
 - Standard 014 Sunset: AVV-/DPA-Kuendigung, Datenloeschung und Exportpflichten
@@ -99,9 +154,13 @@ data_processors:
 - Standard 017 DSGVO-Tracker: Tracker-Inventar und AVV-Registry muessen
   dieselben externen Dienste nennen
 
+---
+
 ## Audit
 
 `scripts/audit.mjs` prueft pro Projekt mit `status: live` oder `status: dev`:
+
+**Richtung 1 (`data_processors`):**
 
 - `data_processors` fehlt komplett -> **WARN**
 - `data_processors: []` bei Customer-/Product-/Brand-Projekt mit Domain ->
@@ -112,9 +171,19 @@ data_processors:
 - unbekannter `avv_status` -> **WARN**
 - `reviewed_at` aelter als 12 Monate -> **WARN**
 
+**Richtung 2 (`outbound_avv`):**
+
+- Projekt hat `tags: customer` und Live-Status, aber kein `outbound_avv` -> **WARN**
+- `outbound_avv`-Eintrag ohne `client`, `avv_status`, `evidence` oder
+  `reviewed_at` -> **WARN**
+- `avv_status: missing` bei Live-Projekt -> **FAIL**
+- `reviewed_at` aelter als 12 Monate -> **WARN**
+
 Das Audit ersetzt keine juristische Pruefung. Es erzwingt nur, dass die Pruefung
 nicht vergessen und nicht zwischen Chat, Account-Menues und Markdown verstreut
 wird.
+
+---
 
 ## Quellen
 
