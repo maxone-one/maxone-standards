@@ -1922,6 +1922,87 @@ const localChecks = {
     if (warns.length) return WARN(warns.join('; '));
     return PASS('BUILD_ID ENV + version-Endpoint + Footer-Banner');
   },
+
+  // Standard 043 — Cron-E-Mail-Dedup-Schutz.
+  // Jeder Cron-Job der E-Mails sendet und einen Dedup-Marker schreibt,
+  // muss den Counter ERST nach erfolgreichem DB-Write inkrementieren.
+  // Anti-Muster: if (insertErr) { log; } totals.sent++  ← kein continue
+  // Korrekt:     if (insertErr) { log; continue; } totals.sent++
+  '043-cron-email-dedup': (project) => {
+    if (!project.path_local || !existsSync(project.path_local)) return SKIP('kein path_local');
+
+    const cronDir = join(project.path_local, 'app', 'api', 'cron');
+    if (!existsSync(cronDir)) return SKIP('kein app/api/cron');
+
+    function findRouteFiles(dir) {
+      const files = [];
+      try {
+        for (const entry of readdirSync(dir, { withFileTypes: true })) {
+          const p = join(dir, entry.name);
+          if (entry.isDirectory()) files.push(...findRouteFiles(p));
+          else if (entry.isFile() && /^route\.tsx?$/.test(entry.name)) files.push(p);
+        }
+      } catch {}
+      return files;
+    }
+
+    const violations = [];
+
+    for (const file of findRouteFiles(cronDir)) {
+      let content;
+      try { content = readFileSync(file, 'utf8'); } catch { continue; }
+
+      // Nur Dateien mit sendEmail-Aufruf sind relevant
+      if (!content.includes('sendEmail')) continue;
+
+      // Nur Dateien mit Dedup-Write und Counter-Increment
+      const hasDedupWrite = /email_sequences|retention_emails_sent|reminder_sent_\d+d/.test(content);
+      if (!hasDedupWrite) continue;
+
+      const hasCounter = /totals\.sent\+\+|results\.\w+\+\+/.test(content);
+      if (!hasCounter) continue;
+
+      // Zeile-für-Zeile: Error-Blöcke um Dedup-Writes prüfen
+      const lines = content.split('\n');
+      const rel = file.slice(project.path_local.length + 1).replace(/\\/g, '/');
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+
+        // Erkenne Fehler-Check nach einem Dedup-Write
+        // Vorausschau: die letzten 6 Zeilen enthalten einen Dedup-Write-Marker
+        if (!/if\s*\(.*([Ee]rr|\.error)/.test(line)) continue;
+        const context = lines.slice(Math.max(0, i - 6), i).join('\n');
+        if (!/email_sequences|retention_emails_sent|reminder_sent_\d+d/.test(context)) continue;
+
+        // Block-Inhalt sammeln (einfache Klammer-Zählung)
+        if (!line.includes('{')) continue;
+        let depth = 0;
+        let blockLines = [];
+        for (let j = i; j < lines.length && (depth > 0 || j === i); j++) {
+          for (const ch of lines[j]) {
+            if (ch === '{') depth++;
+            else if (ch === '}') depth--;
+          }
+          blockLines.push(lines[j]);
+          if (depth === 0 && j > i) break;
+        }
+        const blockContent = blockLines.join('\n');
+        const blockEnd = i + blockLines.length;
+
+        if (blockContent.includes('continue')) continue; // korrekt bewacht
+
+        // Prüfe ob in den nächsten 5 Zeilen nach dem Block ein Counter steht
+        const after = lines.slice(blockEnd, Math.min(blockEnd + 5, lines.length)).join('\n');
+        if (/totals\.sent\+\+|results\.\w+\+\+/.test(after)) {
+          violations.push(`${rel}:${i + 1} — Dedup-Error-Block ohne \`continue\` vor Counter-Increment`);
+        }
+      }
+    }
+
+    if (violations.length) return FAIL(violations.join('; '));
+    return PASS('alle Cron-Dedup-Error-Blöcke korrekt mit continue bewacht');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
