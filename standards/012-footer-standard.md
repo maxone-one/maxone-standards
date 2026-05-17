@@ -7,13 +7,16 @@
 
 ## Regel
 
-Jedes Customer-facing Projekt hat einen Footer. Zwei Varianten — welche eine
-**Seite** bekommt, hängt vom Seiten-Typ ab, nicht vom Projekt:
+Jedes Customer-facing Projekt hat einen Footer. Zwei Varianten — welche ein
+**Projekt** bekommt, wird einmalig entschieden und gilt dann auf **allen** Seiten
+des Projekts identisch:
 
 | Variante | Wann |
 |----------|------|
-| **Mega** | Vollwertige Seiten mit Inhalt (Landingpages, Feature-Seiten, Marketing) |
-| **Slim** | Platzhalter-Seiten, einfache Login-Flows, App-Bereiche ohne eigenen Footer |
+| **Mega** | Vollwertige Produkte mit Marketing-Seiten und Inhalt |
+| **Slim** | Web-Apps, interne Tools, Platzhalter-Projekte |
+
+**Niemals Mega und Slim gemischt innerhalb eines Projekts.** Entweder oder.
 
 Die Implementierung ist pro Framework angepasst (React/Svelte/…), die
 **Inhalts-Struktur** ist überall identisch.
