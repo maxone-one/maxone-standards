@@ -115,5 +115,5 @@ Skelett kopieren, Brand-Texte austauschen, Navigation einsetzen. Niemals neu erf
 | snapflow | Mega | ✅ FULL_VERSION (semver) | ✅ |
 | plansey | Mega | ⚠️ fehlt noch | → wird migriert |
 | maxone.one | Mega | ⚠️ fehlt noch | → nächster Touch |
-| vanfree | Slim (public) | ✅ NEXT_PUBLIC_BUILD_ID | ✅ |
+| vanfree | Mega | ✅ NEXT_PUBLIC_BUILD_ID | ✅ |
 | stadtpunkt | Slim | ⚠️ fehlt noch | → nächster Touch |
