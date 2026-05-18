@@ -1,8 +1,8 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18b (Migrations-Sprint 002/027 — no-build-on-prod)
+**Stand:** 2026-05-18c (Migrations-Sprint 002/027 abgeschlossen)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 live; Migrations-Sprint offen
+**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 live; 027 = 10.0/10 ✅
 
 ---
 
@@ -134,12 +134,30 @@ Nach der Migration: für jeden migrierten Workflow den FAIL entfernen, Exception
 Aktuell haben stadtlahnflow und voltfair Ausnahmen in `registry/exceptions.yml` mit Kommentar
 „blockiert auf GitHub-Secrets-Setup" — diese nach Migration entfernen.
 
-### Offene Punkte (dieser Sprint)
+### Migrations-Ergebnis (2026-05-18c)
 
-1. **17 Projekte migrieren** (Phase 1–3 oben) — Hauptarbeit
-2. **`registry/exceptions.yml` aufräumen**: stadtlahnflow, voltfair, katchi, snapflow Ausnahmen entfernen nach Migration
-3. **Audit-Baseline nach Migration** neu einfrieren: `node scripts/audit.mjs --root=/opt > audits/audit-2026-05-18b.txt`
-4. **HANDOFF.md** Stand aktualisieren wenn Phase 1 abgeschlossen
+**7 Projekte tatsächlich migriert** (von 17 gelisteten — Rest war bereits korrekt oder hat keine Workflows):
+
+| Projekt | Repo | Pattern | Status |
+|---|---|---|---|
+| `stadtlahnflow` | `maxone-one/stadt-lahn-flow` | ubuntu-latest → GHCR → deploy on maxone-prod | ✅ |
+| `voltfair` | `maxone-one/voltfair` | ubuntu-latest → docker save/gzip/ssh → voltfair-cli | ✅ |
+| `viktoria-from` | `maxone-one/viktoria-from` | ubuntu-latest → GHCR → deploy on maxone-prod | ✅ |
+| `kitchen-station` | `maxone-one/kitchen-station` | ubuntu-latest → GHCR → deploy on maxone-prod | ✅ |
+| `zrow` | `maxone-one/zrow` | ubuntu-latest → GHCR → deploy on maxone-prod | ✅ |
+| `trader` | `maxone-one/trader` | ubuntu-latest → GHCR → deploy on maxone-prod | ✅ |
+| `visual-engine` | `maxone-one/visual-engine` | ubuntu-latest → GHCR (3 Images) → deploy on maxone-prod | ✅ |
+
+**audit.mjs Fixes:**
+- `047-disk-guard`: comment-line-Filter verhindert false positive auf `--until=` in Kommentaren
+- `027-deploy-pipeline` (`sshImageTransfer`): erkennt jetzt auch `docker/build-push-action` + `docker pull ghcr.io`
+- `registry/exceptions.yml`: stadtlahnflow/027 und voltfair/027 entfernt
+
+**Audit-Ergebnis 027 nach Sprint:** 10.0/10 (7 PASS, 0 WARN, 0 FAIL, 6 SKIP)
+
+### Offene Punkte
+
+Keine Sprint-Punkte mehr offen. Bestehende Dauerthemen aus 2026-05-12d weiterhin gültig (024-code-health-budget, Refactor-Anteil).
 
 ---
 
