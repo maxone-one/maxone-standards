@@ -1,36 +1,183 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18 (Standard 047 — disk-guard)
+**Stand:** 2026-05-18b (Migrations-Sprint 002/027 — no-build-on-prod)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 neu, Audit-Check live
+**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 live; Migrations-Sprint offen
 
 ---
 
-## Session-Update 2026-05-18 — Standard 047 Disk-Guard
+## Session-Update 2026-05-18b — Migrations-Sprint: no-build-on-prod (002/027)
+
+### Hintergrund — Warum jetzt
+
+Disk-Full-Incident 2026-05-18 02:52 UTC (dokumentiert in Session-Update 047 unten).
+Root cause: **17 Projekte bauen Docker-Images direkt auf maxone-prod** — Verstoß gegen
+Standard 002 und 027. Disk-Guard (047) ist die Notbremse, aber nicht die echte Lösung.
+
+**Audit-Ergebnis 2026-05-18 via SSH (runner _work-Scan):**
+
+| Projekt | Workflow | runs-on | docker build | Priorität |
+|---|---|---|---|---|
+| `stadtlahnflow` | deploy.yml | `[self-hosted, maxone-prod]` | 2× `--no-cache` | 🔴 Hoch — häufige Deploys |
+| `getsnapflow` | deploy.yml | `[self-hosted, maxone-prod]` | ja | 🔴 Hoch |
+| `kitchen-station` | deploy.yml | `[self-hosted, maxone-prod]` | ja | 🟡 Mittel |
+| `pivotin` | deploy.yml | `[self-hosted, maxone-prod]` | ja | 🟡 Mittel |
+| `plansey-2026` | deploy.yml | `[self-hosted, maxone-prod]` | ja | 🟡 Mittel |
+| `viktoria-from` | deploy.yml | `[self-hosted, maxone-prod]` | ja | 🟡 Mittel |
+| `wired-team` | build.yml | `[self-hosted, maxone-prod]` | ja | 🟡 Mittel |
+| `voltfair` | deploy-app.yml | `[self-hosted, maxone-deploy]` | ja | 🔴 Hoch — max. Traffic |
+| `katchi` | deploy.yml | `self-hosted` (round-robin) | ja | 🟡 Mittel |
+| `stadtlahnfluss` | deploy.yml | `self-hosted` (round-robin) | 2× `--no-cache` | 🔴 Hoch |
+| `trader` | deploy.yml | `self-hosted` (round-robin) | ja | 🟡 Mittel |
+| `vector` | deploy.yml | `self-hosted` (round-robin) | ja | 🟡 Mittel |
+| `visual-engine` | deploy.yml | `[self-hosted, Linux, X64]` | 3× | 🟡 Mittel |
+| `vox` | deploy-visor-web.yml | `self-hosted` (round-robin) | ja | 🟡 Mittel |
+| `zrow` | deploy-dashboard.yml | `self-hosted` (round-robin) | ja | 🟢 Niedrig |
+| `zync` | deploy-dashboard.yml | `self-hosted` (round-robin) | ja | 🟢 Niedrig |
+| `planexo.io` | deploy.yml | `self-hosted` (round-robin) | ja | 🟢 Niedrig (Archiv?) |
+
+### Referenz-Implementation: vanfree (bereits korrekt)
+
+`vanfree/.github/workflows/deploy.yml` ist das Vorbild für alle Migrationen:
+
+```yaml
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest          # ← Build auf GitHub-hosted Runner
+    steps:
+      - uses: docker/build-push-action@v7
+        with:
+          push: true
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Transfer image to server via docker save/load
+        run: |
+          docker pull ghcr.io/${{ env.IMAGE_NAME }}:latest
+          docker save ghcr.io/${{ env.IMAGE_NAME }}:latest | gzip | \
+            ssh -i ~/.ssh/deploy_key "$SERVER_USER@$SERVER_HOST" "gunzip | docker load"
+
+      - name: Deploy on server (true Blue/Green)
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          script: |
+            cd /opt/<projekt>
+            docker compose --profile $INACTIVE up -d --force-recreate
+            # ... health-check, prewarm, swap ...
+```
+
+**Kern-Unterschied zur alten Variante:**
+- `runs-on: ubuntu-latest` statt `runs-on: [self-hosted, maxone-prod]`
+- `NEXT_PUBLIC_*` Secrets müssen als GitHub-Secrets hinterlegt werden (nicht aus `.env.local` gelesen)
+- Image wird via GHCR transferiert, kein lokaler Build-Cache auf Prod
+
+### Migrations-Schritte pro Projekt (Template)
+
+Für jedes Projekt gilt dieselbe Abfolge:
+
+1. **GitHub Secrets setzen** (einmalig, pro Projekt):
+   - `SSH_PRIVATE_KEY` / `SERVER_HOST` / `SERVER_USER` (oft schon vorhanden)
+   - Alle `NEXT_PUBLIC_*` Build-Args aus `/opt/<projekt>/.env.local` ablesen und als Secret anlegen
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Minimum)
+
+2. **Workflow umschreiben** (`deploy.yml`):
+   - Job 1: `runs-on: ubuntu-latest` — checkout, build, push zu GHCR
+   - Job 2: `runs-on: [self-hosted, maxone-prod]` — nur `docker save | ssh | docker load` + `compose up`
+   - Build-Args kommen aus Secrets, nicht aus `/opt/.env.local`
+
+3. **Testen** via `gh workflow run deploy.yml --ref main`
+
+4. **Audit-Check** nach Migration: `node scripts/audit.mjs --project=<name> --standard=027`
+
+### Blocker und Besonderheiten
+
+| Blocker | Betroffene Projekte | Lösung |
+|---|---|---|
+| `NEXT_PUBLIC_*` nicht als GitHub-Secret vorhanden | alle | Manuel aus `.env.local` auf maxone-prod ablesen, eintragen |
+| Build braucht Supabase-URL (runtime auf Prod) | stadtlahnflow, getsnapflow, stadtlahnfluss | Als `NEXT_PUBLIC_SUPABASE_URL` Secret hinterlegen |
+| Zwei Images pro Projekt (App + Crawler) | stadtlahnflow, stadtlahnfluss | Beide als separate GHCR-Tags builden |
+| `vector` hat spezielle Blue/Green-Logik (Telegram 409) | vector | Exception in 027 bereits dokumentiert; migrate trotzdem |
+| `voltfair` nutzt `maxone-deploy`-Label (= maxone-prod) | voltfair | voltfair-cli könnte Build-Runner sein; prüfen ob voltfair-cli frei von Live-Containern |
+| `planexo.io` ggf. archiviert | planexo.io | Status prüfen, ggf. Workflow deaktivieren |
+
+### Migrations-Reihenfolge (empfohlen)
+
+**Phase 1 — Hoch-Frequenz zuerst (Disk-Druck-Treiber):**
+1. `stadtlahnflow` — 2 Builds pro Deploy, häufige Deploys
+2. `stadtlahnfluss` — identisch
+3. `voltfair` — größtes Projekt, viel Traffic
+
+**Phase 2 — maxone-prod-gepinnte Projekte:**
+4. `getsnapflow`
+5. `viktoria-from`
+6. `plansey-2026`
+7. `kitchen-station`
+8. `pivotin`
+9. `wired-team`
+
+**Phase 3 — round-robin (unkritischer, landen nicht immer auf maxone-prod):**
+10. `vector`
+11. `visual-engine`
+12. `katchi`
+13. `trader`
+14. `vox`
+15. `zrow`
+16. `zync`
+17. `planexo.io` (Status erst prüfen)
+
+### Audit-Check zu schärfen (027-deploy-pipeline)
+
+`scripts/audit.mjs`, Check `027-deploy-pipeline`: bereits erkennt `runs-on: self-hosted + docker build = FAIL`.
+Nach der Migration: für jeden migrierten Workflow den FAIL entfernen, Exception aus `registry/exceptions.yml` löschen.
+
+Aktuell haben stadtlahnflow und voltfair Ausnahmen in `registry/exceptions.yml` mit Kommentar
+„blockiert auf GitHub-Secrets-Setup" — diese nach Migration entfernen.
+
+### Offene Punkte (dieser Sprint)
+
+1. **17 Projekte migrieren** (Phase 1–3 oben) — Hauptarbeit
+2. **`registry/exceptions.yml` aufräumen**: stadtlahnflow, voltfair, katchi, snapflow Ausnahmen entfernen nach Migration
+3. **Audit-Baseline nach Migration** neu einfrieren: `node scripts/audit.mjs --root=/opt > audits/audit-2026-05-18b.txt`
+4. **HANDOFF.md** Stand aktualisieren wenn Phase 1 abgeschlossen
+
+---
+
+## Session-Update 2026-05-18 — Standard 047 Disk-Guard (inkl. Rollout alle Server)
 
 ### Was wurde gemacht
 
-**Anlass:** disk-full-Vorfall auf maxone-prod 2026-05-18 02:52 UTC. Drei Fixes
-wurden direkt auf dem Server eingespielt; danach als Standard kodifiziert.
+**Anlass:** disk-full-Vorfall auf maxone-prod 2026-05-18 02:52 UTC.
 
-**Drei Fixes (alle bereits live auf maxone-prod):**
+**Drei Fixes kodifiziert:**
 1. `docker builder prune -af` ohne `--until=`-Filter (vorher: `--until=24h` übersprang frischen Cache)
 2. Cleanup-Cron alle 4h statt täglich (`/etc/cron.d/docker-cleanup`)
 3. `/opt/disk-guard.sh` alle 10 Min via crontab — Notfall-Bremse bei >80% Disk
 
+**Rollout auf alle Docker-Server (inkl. zweite Runde dieser Session):**
+
+| Server | `/opt/_ops/docker-cleanup.sh` | `/etc/cron.d/docker-cleanup` | `/opt/disk-guard.sh` | crontab `*/10` | Audit |
+|---|---|---|---|---|---|
+| maxone-prod | ✅ | ✅ 4h | ✅ 80% | ✅ | ✅ via `vector` |
+| voltfair-cli | ✅ | ✅ 4h | ✅ 80% | ✅ | ✅ via `voltfair` |
+| maxone-staging | ✅ | ✅ 4h | ✅ 80% | ✅ | — (kein Registry-Eintrag) |
+| maxone-watchdog | ✅ | ✅ 4h | ✅ 80% | ✅ | — (kein Registry-Eintrag) |
+
+Alert-Scripts lesen aus `/opt/secrets/global/sentinel.env` — auf voltfair-cli, staging, watchdog existiert diese Datei nicht → Prune läuft, Telegram-Alert schweigt.
+Hostname-Hardcode `(maxone-prod)` in disk-guard.sh durch `$(hostname -s)` ersetzt.
+
 **Neuer Standard:** `standards/047-disk-guard.md`
 
-**Neuer Audit-Check:** `047-disk-guard` in `sshChecks` (via `vector`-Projekt, läuft einmalig auf maxone-prod)
-- FAIL: `/opt/_ops/docker-cleanup.sh` fehlt ODER enthält `--until=` ODER kein `builder prune -af`
-- FAIL: `/etc/cron.d/docker-cleanup` fehlt ODER kein 4h-Schedule
-- FAIL: `/opt/disk-guard.sh` fehlt ODER kein 80%-Schwellwert
-- WARN: crontab hat disk-guard.sh nicht alle 10 Min
+**Audit-Check `047-disk-guard`** (SSH, Sentinel-Projekte):
+- maxone-prod → `vector`: 10.0/10 PASS
+- voltfair-cli → `voltfair`: 10.0/10 PASS
+- Gesamt: 10.0/10
 
 **README:** 047 unter „Infrastruktur & Deploy" eingetragen.
 
 ### Offene Punkte
 
-Keine neuen. Bestehende offene Punkte aus 2026-05-12d bleiben gültig (siehe unten).
+Keine. Bestehende offene Punkte aus 2026-05-12d bleiben gültig (siehe unten).
 
 ---
 
