@@ -1,8 +1,39 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18m (024: stadtlahnflow + voltfair WARN — alle Projekte ≥ WARN)
+**Stand:** 2026-05-18n (051: DB-Isolation Standard hinzugefügt)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **~5.0/10** (war 4.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 36 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **~5.0/10**; 051 = neu
+
+---
+
+## Session-Update 2026-05-18n — 051: DB-Isolation Standard
+
+**Standard 051 (`051-db-isolation.md`) erstellt** nach Entdeckung eines Architektur-Fehlers:
+mehrere Projekte teilen sich dieselbe Supabase-Instanz.
+
+**Verstöße identifiziert:**
+- `repivot` → teilt `panel.maxone.one` mit `maxone.one` (Migration ausstehend)
+- `plansey-2026` → verbindet direkt auf `supabase-db:5432` (maxone.one DB-Container!) — **kritisch, expires 2026-08-18**
+- `vector` → teilt `panel.maxone.one` (ausgenommen: Infra-Agent, read-only Monitoring)
+
+**Umgesetzt:**
+- `standards/051-db-isolation.md`: Regel, Isolation-Typen, Migrations-Leitfaden, bekannte Verstöße
+- `registry/projects.yml`: `supabase_url`-Feld bei allen 14 Projekten eingetragen
+- `registry/exceptions.yml`: 3 neue Ausnahmen (vector, repivot, plansey-2026)
+- `scripts/audit.mjs`: per-project Feld-Check + global Duplikat-Detection in Report-Section
+
+**Audit-Output 051:** Per-Projekt alle PASS/SKIP (Exceptions greifen). Global zeigt korrekt die Verletzung:
+```
+FAIL  https://panel.maxone.one
+      Projekte teilen diese DB: maxone.one, repivot, vector
+```
+
+**Nächste Schritte für 051:**
+- `repivot` → eigene Supabase-Instanz aufsetzen (bis 2026-11-18)
+- `plansey-2026` → **DRINGEND** — direkte DB-Container-Verbindung trennen (bis 2026-08-18)
+- `snapflow` → `supabase_url` verifizieren (VITE_SUPABASE_URL baked-in, nicht aus .env lesbar)
+- `stadtpunkt` → DB-Situation klären (nutzt es maxone.one Supabase?)
+- `zentinel` → nach Monorepo-Entkopplung eigene Instanz planen
 
 ---
 
