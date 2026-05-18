@@ -216,7 +216,24 @@ jobs:
   deploy:
     if: github.ref == 'refs/heads/release'
     runs-on: [self-hosted, maxone-prod]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Verify release is a merge from main
+        run: |
+          git fetch origin main --quiet
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "release enthaelt Commits die nicht in main sind — direkter Push verboten"
+            exit 1
+          fi
 ```
+
+**Warum `--is-ancestor HEAD origin/main`:**
+Prüft ob jeder Commit in `release` auch in `main` existiert. Bei direktem Push
+auf `release` (Commits die `main` nicht kennt) schlägt der Check fehl und der
+Deploy bricht ab — bevor irgendein Image gezogen oder ein Container gestartet
+wird. Ersetzt GitHub Branch-Protection (Free-Plan, private Repos).
 
 Referenz: `.github/workflows/deploy.yml` in `stadtlahnflow`.
 
@@ -233,6 +250,9 @@ const STORAGE_POS = "devpanel-pos"; // Kollision bei mehreren Projekten im Brows
 // Anti-Pattern: StagingBanner.tsx (2026-05-18 in SLF entfernt)
 
 // IS_STAGING nicht als NEXT_PUBLIC_ — bricht Image-Sharing zwischen Staging und Prod
+
+// Kein direkter Push auf release
+git push origin release  // ← verboten, nur Merge von main
 ```
 
 ## Audit-Checks
@@ -243,6 +263,7 @@ const STORAGE_POS = "devpanel-pos"; // Kollision bei mehreren Projekten im Brows
 4. Sind Storage-Keys ohne Projekt-Prefix? → WARN
 5. Bei Branch-Split-Projekten: Ist `isStaging` im Context-Response? → WARN wenn fehlt
 6. Ist `IS_STAGING` als `NEXT_PUBLIC_IS_STAGING` deklariert? → FAIL
+7. Bei Branch-Split: Fehlt der `Verify release is a merge from main`-Step im deploy-Job? → FAIL
 
 ## Verwandte Standards
 
