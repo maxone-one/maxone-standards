@@ -217,6 +217,14 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
+  # voltfair env_file nutzt .env (relativ → /opt/voltfair/.env auf Server).
+  - project: voltfair
+    standard: '028'
+    reason: "env_file=.env (relativ, nicht /opt/secrets/voltfair/keys.env). Migration auf /opt/secrets/ bei nächstem Infra-Sprint."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
   # repivot env_file nutzt relative Pfade im Repo-Root.
   - project: repivot
     standard: '028'
