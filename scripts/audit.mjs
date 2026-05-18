@@ -2006,6 +2006,20 @@ const localChecks = {
     if (violations.length) return FAIL(violations.join('; '));
     return PASS('alle Cron-Dedup-Error-Blöcke korrekt mit continue bewacht');
   },
+
+  '048-plan-tracker': (project) => {
+    if (project.status !== 'live' && project.status !== 'dev') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.path_local) return SKIP('kein path_local');
+    const planPath = join(project.path_local, 'PLAN.md');
+    if (!existsSync(planPath)) return FAIL('PLAN.md fehlt im Repo-Root');
+    const text = readFileSync(planPath, 'utf8');
+    const hasOffen = /^##\s+Noch offen/m.test(text);
+    const hasErledigt = /^##\s+Erledigt/m.test(text);
+    if (!hasOffen && !hasErledigt) return FAIL('PLAN.md: "## Noch offen" und "## Erledigt" fehlen');
+    if (!hasOffen) return FAIL('PLAN.md: "## Noch offen" fehlt');
+    if (!hasErledigt) return FAIL('PLAN.md: "## Erledigt" fehlt');
+    return PASS('PLAN.md ✓');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.

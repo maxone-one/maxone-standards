@@ -16,6 +16,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 **Tests & Doku:**
 - [005-test-first.md](005-test-first.md) — Smoke + Unit Tests bevor "ist live" gemeldet wird
 - [006-handoff-md.md](006-handoff-md.md) — Jedes Projekt hat HANDOFF.md auf dem Server
+- [048-plan-tracker.md](048-plan-tracker.md) — PLAN.md mit "## Noch offen" + "## Erledigt" in jedem aktiven Projekt
 
 **Naming & Domains:**
 - [007-paths-naming.md](007-paths-naming.md) — Pfade und Container-Naming-Konventionen
