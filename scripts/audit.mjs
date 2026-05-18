@@ -2020,6 +2020,35 @@ const localChecks = {
     if (!hasErledigt) return FAIL('PLAN.md: "## Erledigt" fehlt');
     return PASS('PLAN.md ✓');
   },
+
+  // Standard 049 — Admin App Launcher
+  '049-admin-app-launcher': (project) => {
+    if (!project.path_local) return SKIP('kein path_local');
+    // Nur Projekte mit Admin-Bereich prüfen
+    const projectDir = project.path_local;
+    const hasAdminDir =
+      existsSync(join(projectDir, 'src/routes/(admin)')) ||
+      existsSync(join(projectDir, 'app/(admin)')) ||
+      existsSync(join(projectDir, 'app/(dashboard)/admin'));
+    if (!hasAdminDir) return SKIP('kein Admin-Bereich erkannt');
+
+    // AppLauncher-Komponente suchen
+    const launcherPatterns = [
+      'src/lib/components/admin/AppLauncher.svelte',
+      'src/components/admin/AppLauncher.tsx',
+      'src/components/AppLauncher.tsx',
+      'components/admin/AppLauncher.tsx',
+    ];
+    const hasLauncher = launcherPatterns.some(p => existsSync(join(projectDir, p)));
+    if (!hasLauncher) return WARN('AppLauncher-Komponente fehlt (049-admin-app-launcher)');
+
+    // Sicherstellen dass match()-Pattern verwendet wird
+    const launcherFile = launcherPatterns.find(p => existsSync(join(projectDir, p)));
+    const src = readFileSync(join(projectDir, launcherFile), 'utf8');
+    if (!src.includes('match')) return WARN('AppLauncher: kein match()-Pattern für Active-State');
+
+    return PASS('AppLauncher ✓');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
