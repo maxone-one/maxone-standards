@@ -2259,34 +2259,43 @@ const sshChecks = {
     }
   },
 
-  // Standard 047 — Disk-Guard: drei Pflichten auf maxone-prod.
-  // Läuft einmalig via vector-Projekt (primäres Ops-Projekt auf maxone-prod).
+  // Standard 047 — Disk-Guard: drei Pflichten auf allen Docker-Servern.
+  // Sentinel-Projekte pro Server (einmalig, nicht für jedes Projekt):
+  //   maxone-prod  → vector
+  //   voltfair-cli → voltfair
+  //   maxone-staging + maxone-watchdog: nicht in Registry, kein Audit-Check.
   '047-disk-guard': (project) => {
-    if (project.name !== 'vector') return SKIP('Infra-Check läuft einmal via vector');
-    if (project.server !== 'maxone-prod') return SKIP('nur maxone-prod');
+    const SENTINEL = { 'maxone-prod': 'vector', 'voltfair-cli': 'voltfair' };
+    const sentinel = SENTINEL[project.server];
+    if (!sentinel) return SKIP(`Server ${project.server ?? 'null'} nicht in 047-Scope`);
+    if (project.name !== sentinel) return SKIP(`Infra-Check läuft einmal via ${sentinel}`);
+
+    const srv = project.server;
     try {
       // 1. docker-cleanup.sh: vollständiger Prune ohne --until= Filter
-      const cleanupSh = ssh('maxone-prod', 'cat /opt/_ops/docker-cleanup.sh 2>/dev/null || echo __MISSING__');
+      const cleanupSh = ssh(srv, 'cat /opt/_ops/docker-cleanup.sh 2>/dev/null || echo __MISSING__');
       if (cleanupSh.includes('__MISSING__')) return FAIL('/opt/_ops/docker-cleanup.sh fehlt');
       if (!cleanupSh.includes('builder prune -af')) return FAIL('docker-cleanup.sh: kein "builder prune -af"');
-      if (cleanupSh.includes('--until=')) return FAIL('docker-cleanup.sh: --until= Filter noch aktiv (Vorfall-Ursache 2026-05-18)');
+      // Nur non-comment Zeilen prüfen (Kommentar "no --until=" ist erlaubt)
+      const cleanupCode = cleanupSh.split('\n').filter(l => !/^\s*#/.test(l)).join('\n');
+      if (cleanupCode.includes('--until=')) return FAIL('docker-cleanup.sh: --until= Filter noch aktiv (Vorfall-Ursache 2026-05-18)');
 
       // 2. Cron alle 4 Stunden (nicht täglich)
-      const cronD = ssh('maxone-prod', 'cat /etc/cron.d/docker-cleanup 2>/dev/null || echo __MISSING__');
+      const cronD = ssh(srv, 'cat /etc/cron.d/docker-cleanup 2>/dev/null || echo __MISSING__');
       if (cronD.includes('__MISSING__')) return FAIL('/etc/cron.d/docker-cleanup fehlt');
       if (!/\*\/4/.test(cronD) && !/0 \*\/4/.test(cronD)) return FAIL('docker-cleanup cron.d: kein 4h-Schedule (täglich zu selten)');
 
       // 3. disk-guard.sh: 80%-Schwellwert
-      const guardSh = ssh('maxone-prod', 'cat /opt/disk-guard.sh 2>/dev/null || echo __MISSING__');
+      const guardSh = ssh(srv, 'cat /opt/disk-guard.sh 2>/dev/null || echo __MISSING__');
       if (guardSh.includes('__MISSING__')) return FAIL('/opt/disk-guard.sh fehlt');
       if (!guardSh.includes('THRESHOLD=80') && !/gt\s+80/.test(guardSh)) return FAIL('disk-guard.sh: kein 80%-Schwellwert');
 
       // 4. Crontab: disk-guard alle 10 Min
-      const crontab = ssh('maxone-prod', 'crontab -l 2>/dev/null');
+      const crontab = ssh(srv, 'crontab -l 2>/dev/null');
       if (!crontab.includes('disk-guard.sh')) return FAIL('root-crontab: disk-guard.sh fehlt');
       if (!/\*\/10.*disk-guard/.test(crontab)) return WARN('root-crontab: disk-guard.sh nicht alle 10 Min');
 
-      return PASS('cleanup 4h ohne --until + disk-guard 10min@80%');
+      return PASS(`${srv}: cleanup 4h ohne --until + disk-guard 10min@80%`);
     } catch (e) {
       return WARN(`SSH-Fehler: ${e.message.slice(0, 80)}`);
     }
