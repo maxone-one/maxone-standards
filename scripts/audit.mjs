@@ -2049,6 +2049,18 @@ const localChecks = {
 
     return PASS('AppLauncher ✓');
   },
+
+  // Standard 050 — Bug Registry
+  '050-bug-registry': (project) => {
+    if (project.status !== 'live' && project.status !== 'dev') return SKIP(`status=${project.status ?? 'null'}`);
+    if (!project.path_local) return SKIP('kein path_local');
+    const bugsPath = join(project.path_local, 'BUGS.md');
+    if (!existsSync(bugsPath)) return WARN('BUGS.md fehlt im Repo-Root');
+    const text = readFileSync(bugsPath, 'utf8');
+    if (!/^##\s+Aktive Bugs/m.test(text)) return WARN('BUGS.md: "## Aktive Bugs"-Sektion fehlt');
+    if (!/^##\s+Geschlossene Bugs/m.test(text)) return WARN('BUGS.md: "## Geschlossene Bugs"-Sektion fehlt');
+    return PASS('BUGS.md ✓');
+  },
 };
 
 // Standard 028 — Container-Misconfig: gemeinsame Compose-Analyse.
