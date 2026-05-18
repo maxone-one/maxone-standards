@@ -387,6 +387,14 @@ exceptions:
     expires_until: '2026-11-18'
     granted_by: max
 
+  # stadtpunkt teilt panel.maxone.one mit maxone.one — Migration auf eigene Supabase-Instanz ausstehend.
+  - project: stadtpunkt
+    standard: '051'
+    reason: "Teilt panel.maxone.one mit maxone.one — eigene Supabase-Instanz ausstehend (Migration-Sprint nötig)."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
   # plansey-2026 verbindet direkt auf supabase-db:5432 (maxone.one DB-Container).
   # Dies ist ein FAIL — direkte Container-DB-Verbindung. Migration dringend.
   - project: plansey-2026

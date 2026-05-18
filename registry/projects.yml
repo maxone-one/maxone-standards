@@ -259,7 +259,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: stadtpunkt-app
-    supabase_url: null  # internes Tool ohne eigene DB (nutzt maxone.one-Supabase oder keins) — zu verifizieren
+    supabase_url: https://panel.maxone.one  # VIOLATION-051: teilt maxone.one Supabase — Migration ausstehend
     path_local: c:\Users\max\Projects\stadtpunkt
     path_server: /opt/stadtpunkt
     secrets_dir: stadtpunkt
@@ -391,7 +391,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: snapflow-app
-    supabase_url: null  # VITE_SUPABASE_URL baked in build — zu verifizieren ob eigene Instanz oder geteilt
+    supabase_url: https://api.snapflow.one
     path_local: c:\Users\max\Projects\snapflow.one
     compose_file: infra/docker-compose.yml
     path_server: /opt/snapflow
