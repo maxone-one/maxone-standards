@@ -1,8 +1,36 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18c (Migrations-Sprint 002/027 abgeschlossen)
+**Stand:** 2026-05-18d (Standard 048 Plan-Tracker live)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 live; 027 = 10.0/10 ✅
+**Status:** 35 Standards aktiv; OVERALL **9.5/10** (lokal); 048 = 10.0/10 ✅; 047 = 10.0/10 ✅; 027 = 10.0/10 ✅
+
+---
+
+## Session-Update 2026-05-18d — Standard 048 Plan-Tracker
+
+### Was wurde gemacht
+
+**Neuer Standard `048-plan-tracker.md`:**
+- Jedes Projekt mit `status: live` oder `status: dev` führt `PLAN.md` im Repo-Root
+- Zwei Pflicht-Abschnitte: `## Noch offen` und `## Erledigt`
+- Timing-Regel: PLAN.md wird aktualisiert **bevor** der erste Code einer freigegebenen Idee geändert wird
+- Leere Abschnitte sind gültig (Migration-freundlich: 30-Sekunden-Setup)
+- Kein PRD nötig — PLAN.md ist das einzige Planungsdokument wenn kein CONCEPT.md vorhanden ist
+
+**Audit-Check `048-plan-tracker` in `scripts/audit.mjs`** (localChecks):
+- FAIL wenn PLAN.md fehlt
+- FAIL wenn `## Noch offen` oder `## Erledigt` fehlen
+- SKIP für `status: paused/sunset`
+- Ergebnis: 12 PASS, 1 SKIP (katchi=paused) — **10.0/10**
+
+**PLAN.md in alle 12 aktiven Projekte eingespielt und gepusht:**
+maxone.one, stadtlahnflow, repivot, vanfree, plansey-2026, stadtpunkt, kitchen-station, voltfair, solarproof, vector, snapflow, zentinel
+
+**README.md:** 048 unter "Tests & Doku" eingetragen.
+
+### Offene Punkte
+
+Keine 048-spezifischen offenen Punkte. Bestehende Dauerthemen aus 2026-05-18c weiterhin gültig (024-code-health-budget, 0.0).
 
 ---
 
