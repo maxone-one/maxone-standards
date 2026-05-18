@@ -1,8 +1,47 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18e (gs-lohra zur Registry hinzugefügt — 14 Projekte)
+**Stand:** 2026-05-18f (024 verbessert: plansey PASS + HEALTH-EXEMPT voltfair)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.5/10** (lokal); 048 = 10.0/10 ✅; 047 = 10.0/10 ✅; 027 = 10.0/10 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **0.9/10** (war 0.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18f — 024 Code-Health-Budget teilweise verbessert
+
+### Was wurde gemacht
+
+**plansey-2026: 024 jetzt PASS** (war FAIL). 6 genuine `refactor:`-Commits in einer Session:
+1. `QuickCard` aus `dashboard/page.tsx` → `components/dashboard/QuickCard.tsx`
+2. `WeddingCard` + `getDaysUntilWedding` → `components/dashboard/WeddingCard.tsx`
+3. `Role` type + `ROLES` config → `lib/roles.ts` (shared in auth/register + künftig dashboard)
+4. `getNextStatus` + `getStatusIcon` → `lib/task-utils.ts` (aus TasksView.tsx)
+5. `usePasswordToggle` hook → `lib/hooks/usePasswordToggle.ts` (shared in login + register)
+6. `SetupWeddingBanner` → `components/dashboard/SetupWeddingBanner.tsx`
+
+Resultat: Refactor-Anteil 16.7% (≥ 15% = PASS). plansey als einziges Projekt bei 024 PASS.
+
+**voltfair.de: HEALTH-EXEMPT auf zwei Dateien:**
+- `lib/seo/cities.ts` — statische Stadtdaten (1177 effective lines, jetzt exempt)
+- `lib/stalwart/jmap.ts` — JMAP-Protokoll-Implementation RFC 8620/8621 (872 lines, jetzt exempt)
+
+**Audit 024 nach Session:** 1 PASS / 0 WARN / 10 FAIL / 3 SKIP → **Score 0.9/10** (war 0.0)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Größte LOC-Verletzungen |
+|---------|-----------------|-------------------------|
+| maxone.one | 4% (< 8%) | keine |
+| stadtlahnflow | 2% | OutreachTabs.tsx:1873, TemplateActivePlan.tsx:1677, [slug]/page.tsx:1079 |
+| repivot | 2% | Dashboard.tsx:669 |
+| vanfree | 4% | HerstellerForm.tsx:556, katalog/page.tsx:563 |
+| stadtpunkt | 0% | EditorV3.svelte:1422, +page.svelte:2129/2495 |
+| kitchen-station | 1% | — |
+| voltfair | 5% | admin/page.tsx:651, stromtarif/leads/page.tsx:644 |
+| solarproof | 2% | pdf.ts:772, MeilensteinDiagnose.tsx:558 |
+| vector | 3% | web-reasoner.ts:1520, bot.ts:525 |
+| snapflow | 2% | FormEditor.tsx:1085, ActionDayDialog.tsx:820, WaitlistTable.tsx:771 |
+
+HEALTH-EXEMPT hilft bei LOC-Findings wenn echte Daten-/Protokoll-Dateien. Refactor-% ist git-historisch und wächst nur organisch.
 
 ---
 
