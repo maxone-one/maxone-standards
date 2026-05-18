@@ -60,6 +60,7 @@ projects:
     deploy: blue-green
     container: maxone-v2
     path_local: c:\Users\max\Projects\maxone.one
+    dockerfile_path: apps/umbrella/Dockerfile
     path_server: /opt/maxone-v2
     secrets_dir: maxone
     status: live
@@ -165,6 +166,7 @@ projects:
     deploy: blue-green
     container: repivot-backend
     path_local: c:\Users\max\Projects\repivot.in
+    dockerfile_path: backend/Dockerfile
     compose_file: docker-compose.prod.yml
     path_server: /opt/repivot
     secrets_dir: repivot

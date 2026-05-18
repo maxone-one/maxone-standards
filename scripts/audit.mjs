@@ -1844,7 +1844,10 @@ const localChecks = {
     if (!workflowHasBuildId) warns.push('Workflow: kein BUILD_ID= build-arg');
 
     // 2. Dockerfile hat ARG + ENV BUILD_ID
-    const dockerfileCandidates = ['Dockerfile', 'dockerfile', 'Dockerfile.prod'];
+    // Prüft erst project.dockerfile_path (Registry-Override), dann Standard-Kandidaten im Root.
+    const dockerfileCandidates = project.dockerfile_path
+      ? [project.dockerfile_path]
+      : ['Dockerfile', 'dockerfile', 'Dockerfile.prod'];
     let dockerfileHasBuildId = false;
     for (const df of dockerfileCandidates) {
       const dp = join(project.path_local, df);
