@@ -411,6 +411,30 @@ projects:
     version_endpoint: /version.json  # Standard 042: Static SPA — kein /api/version möglich, nginx serviert version.json aus dist/
     notes: Server-Pfad /opt/snapflow (nicht /opt/snapflow.one — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29).
 
+  - name: gs-lohra
+    workspace: grundschule-lohra-webseite
+    domain: gs-lohra.maxone.one
+    server: maxone-prod
+    deploy: single
+    container: gs-lohra
+    path_local: c:\Users\max\Projects\grundschule-lohra-webseite
+    path_server: /opt/gs-lohra
+    secrets_dir: gs-lohra
+    status: live
+    tags: customer
+    external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
+    last_review_date: "2026-05-18"
+    warmup_required: false  # Static SPA via nginx, kein SSR
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-05-18"
+    notes: "Grundschule Lohra Webseite. Statische SPA (Vite+Svelte), nginx:alpine-Container. Deploy: npm build auf ubuntu-latest + rsync via SSH. Kein Docker-Image-Build — kein GHCR, kein docker save/load. Repo: maxone-one/grundschule-lohra-webseite, branch master."
+
   - name: zentinel
     workspace: zentinel
     domain: zentinel.maxone.one

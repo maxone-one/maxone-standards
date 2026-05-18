@@ -268,6 +268,104 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
+  # gs-lohra ist eine statische Schul-Website (Vite+Svelte → nginx).
+  # Kein Blue-Green nötig: rsync ist atomic + nginx reload bei statischen Assets.
+  - project: gs-lohra
+    standard: '001'
+    reason: "Statische Schul-Website (nginx) — rsync ist atomic, kein Downtime-Risiko. Blue-Green nur bei SSR/DB-Deploys sinnvoll."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra nutzt rsync statt docker save/load — passend für statische SPA.
+  - project: gs-lohra
+    standard: '027'
+    reason: "Statische SPA (nginx) — npm build + rsync ist der korrekte Deploy-Pfad. Kein Docker-Image-Build oder -Transfer nötig."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra nutzt nginx:alpine direkt ohne custom Dockerfile → kein BUILD_ID möglich.
+  - project: gs-lohra
+    standard: '042'
+    reason: "nginx:alpine ohne custom Dockerfile — kein ARG BUILD_ID möglich. Kein /api/version-Endpoint (statische SPA). Version via git SHA in rsync-Log."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra ist eine öffentliche Schul-Website — Vector-Chat-Widget nicht passend.
+  - project: gs-lohra
+    standard: '011'
+    reason: "Öffentliche Schul-Website — Vector-Chat-Widget nicht passend für diesen Kontext."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra docker-compose.yml liegt nur auf dem Server (/opt/gs-lohra) —
+  # Volume-Mount-Pattern: dist/ via rsync übertragen, nicht im Repo.
+  - project: gs-lohra
+    standard: '002'
+    reason: "docker-compose.yml nur auf Server (Volume-Mount-Pattern) — nginx:alpine mit dist/-Volume, kein build: Block. Standard 002 inhaltlich erfüllt."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  - project: gs-lohra
+    standard: '004'
+    reason: "docker-compose.yml nur auf Server — certresolver=letsencrypt gesetzt (Server-Compose prüfbar via SSH). Standard 004 inhaltlich erfüllt."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra ist ein Prototyp ohne Testinfrastruktur.
+  - project: gs-lohra
+    standard: '005'
+    reason: "Prototyp-Stadium — keine Testinfrastruktur vorhanden. Smoke-Tests vor Produktivbetrieb mit echten Schuldaten nachreichen."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra hat lokales Impressum (/impressum Route) — Schul-Website.
+  - project: gs-lohra
+    standard: '009'
+    reason: "Eigene lokale /impressum Seite — Schul-Website mit spezifischen Angaben (Schulleitung, Schulträger). Zentrale API nicht passend."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra ist eine Schul-Website — Credits-Route nicht passend.
+  - project: gs-lohra
+    standard: '010'
+    reason: "Öffentliche Schul-Website — Credits-Route nicht passend. Prototyp-Status."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra edge-function sendet Krankmeldungs-Mails ohne Domain-Pre-Flight.
+  # Prototyp sendet an max@karastelev.de — kein Produktivbetrieb mit echten Schuldaten.
+  - project: gs-lohra
+    standard: '030'
+    reason: "Prototyp — Krankmeldungs-Edge-Function ohne Domain-Pre-Flight. Vor Produktivbetrieb implementieren (Standard 030 Regel 20)."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra hat kein CONCEPT.md — retroaktiv nicht mehr erstellbar.
+  - project: gs-lohra
+    standard: '015'
+    reason: "Retroaktiv — Projekt in Prototyp-Phase ohne formalen Konzept-Sprint. CONCEPT.md vor nächster Major-Feature-Phase nachreichen."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # gs-lohra 024: Refactor-Commits strukturell 0% — Prototyp.
+  - project: gs-lohra
+    standard: '024'
+    reason: "Prototyp-Stadium — keine Refactoring-Geschichte vorhanden. Zählt ab Produktivbetrieb."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
   # maxone.one nutzt LLM ausschliesslich fuer Audio (Groq Whisper STT + TTS via
   # api.groq.com/openai/v1/audio/...). Kein Text-Generation, kein System-Prompt,
   # kein Injection-Risiko. Approval-Queue-Pattern nicht anwendbar.
