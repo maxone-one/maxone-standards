@@ -59,6 +59,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: maxone-v2
+    supabase_url: https://panel.maxone.one
     path_local: c:\Users\max\Projects\maxone.one
     dockerfile_path: apps/umbrella/Dockerfile
     path_server: /opt/maxone-v2
@@ -97,6 +98,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: slf-app
+    supabase_url: http://slf-kong:8000
     path_local: c:\Users\max\Projects\stadt-lahn-flow
     path_server: /opt/stadtlahnflow
     secrets_dir: slf
@@ -142,6 +144,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: katchi-app
+    supabase_url: https://udxbbpschalnhxnlaiyi.supabase.co
     path_local: c:\Users\max\Projects\katchi
     path_server: /opt/katchi
     secrets_dir: katchi
@@ -165,6 +168,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: repivot-backend
+    supabase_url: https://panel.maxone.one  # VIOLATION-051: teilt maxone.one Supabase — Migration ausstehend
     path_local: c:\Users\max\Projects\repivot.in
     dockerfile_path: backend/Dockerfile
     compose_file: docker-compose.prod.yml
@@ -190,6 +194,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: vanfree-app
+    supabase_url: https://api.vanfree.de
     path_local: c:\Users\max\Projects\vanfree
     compose_file: ops/docker-compose.app.yml
     path_server: /opt/vanfree
@@ -225,6 +230,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: plansey-app
+    supabase_url: null  # VIOLATION-051: verbindet direkt auf supabase-db:5432 (maxone.one DB-Container!) — Migration dringend
     path_local: c:\Users\max\Projects\plansey-2026
     path_server: /opt/plansey-2026
     compose_file: docker-compose.prod.yml
@@ -253,6 +259,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: stadtpunkt-app
+    supabase_url: null  # internes Tool ohne eigene DB (nutzt maxone.one-Supabase oder keins) — zu verifizieren
     path_local: c:\Users\max\Projects\stadtpunkt
     path_server: /opt/stadtpunkt
     secrets_dir: stadtpunkt
@@ -290,6 +297,7 @@ projects:
     server: maxone-prod
     deploy: single
     container: kitchen-station-app
+    supabase_url: null  # internes Kiosk-Tool ohne eigene Datenbank
     path_local: c:\Users\max\Projects\Kitchen Station
     path_server: /opt/kitchen-station
     secrets_dir: kitchen-station
@@ -307,6 +315,7 @@ projects:
     server: voltfair-cli
     deploy: single
     container: null
+    supabase_url: https://api.voltfair.de
     path_local: c:\Users\max\Projects\voltfair.de
     path_server: /opt/voltfair
     secrets_dir: voltfair
@@ -344,6 +353,7 @@ projects:
     server: null
     deploy: null
     container: null
+    supabase_url: null  # statische Website ohne DB
     path_local: c:\Users\max\Projects\SolarProof
     path_server: null
     status: live
@@ -358,6 +368,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: vector
+    supabase_url: https://panel.maxone.one  # Infra-Agent: eigene DB = panel.maxone.one; cross-project read-only via exceptions.yml
     path_local: c:\Users\max\Projects\vector
     path_server: /opt/vector
     secrets_dir: vector
@@ -380,6 +391,7 @@ projects:
     server: maxone-prod
     deploy: blue-green
     container: snapflow-app
+    supabase_url: null  # VITE_SUPABASE_URL baked in build — zu verifizieren ob eigene Instanz oder geteilt
     path_local: c:\Users\max\Projects\snapflow.one
     compose_file: infra/docker-compose.yml
     path_server: /opt/snapflow
@@ -417,6 +429,7 @@ projects:
     server: maxone-prod
     deploy: single
     container: gs-lohra
+    supabase_url: null  # statische Schul-Website ohne eigene Datenbank
     path_local: c:\Users\max\Projects\grundschule-lohra-webseite
     path_server: /opt/gs-lohra
     secrets_dir: gs-lohra
@@ -441,6 +454,7 @@ projects:
     server: maxone-prod
     deploy: null
     container: null
+    supabase_url: null  # nutzt maxone.one Supabase via Monorepo-Kopplung — wird nach Entkopplung eigene Instanz brauchen
     path_local: c:\Users\max\Projects\Zentinel
     compose_file: zentinel/vigil/docker-compose.yml
     path_server: null

@@ -366,6 +366,36 @@ exceptions:
     expires_until: '2026-11-18'
     granted_by: max
 
+  # --- Standard 051: DB-Isolation ---
+
+  # vector ist ein Infra-Ops-Agent — er aggregiert read-only Daten aus mehreren
+  # Projekten (SLF, vanfree, voltfair) und nutzt panel.maxone.one als eigene
+  # primäre DB. Kein Cross-Projekt-Schreiben; Ausnahme gilt nur solange
+  # vector ausschließlich read-only Monitoring-Zugriff auf Fremd-DBs hält.
+  - project: vector
+    standard: '051'
+    reason: "Infra-Ops-Agent mit read-only Monitoring-Zugriff auf mehrere Projekt-DBs. Kein Schreiben auf Fremd-Instanzen. Langfristig: API-basierter Datenzugriff statt direkter DB-URLs."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # repivot teilt panel.maxone.one mit maxone.one — Migration auf eigene Supabase-Instanz ausstehend.
+  - project: repivot
+    standard: '051'
+    reason: "Teilt panel.maxone.one mit maxone.one — eigene Supabase-Instanz ausstehend (Migration-Sprint nötig)."
+    granted_at: '2026-05-18'
+    expires_until: '2026-11-18'
+    granted_by: max
+
+  # plansey-2026 verbindet direkt auf supabase-db:5432 (maxone.one DB-Container).
+  # Dies ist ein FAIL — direkte Container-DB-Verbindung. Migration dringend.
+  - project: plansey-2026
+    standard: '051'
+    reason: "DATABASE_URL zeigt direkt auf supabase-db:5432 (maxone.one DB-Container) — kritische Verletzung. Eigene DB-Instanz muss vor nächstem Datenschutz-Review bereitstehen."
+    granted_at: '2026-05-18'
+    expires_until: '2026-08-18'
+    granted_by: max
+
   # maxone.one nutzt LLM ausschliesslich fuer Audio (Groq Whisper STT + TTS via
   # api.groq.com/openai/v1/audio/...). Kein Text-Generation, kein System-Prompt,
   # kein Injection-Risiko. Approval-Queue-Pattern nicht anwendbar.

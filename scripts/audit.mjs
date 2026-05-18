@@ -2050,6 +2050,18 @@ const localChecks = {
     return PASS('AppLauncher ✓');
   },
 
+  // Standard 051 — DB-Isolation (per-project: Feld vorhanden?)
+  // Cross-project Duplikat-Check läuft nach runChecks() im Haupt-Report.
+  '051-db-isolation': (project) => {
+    // supabase_url muss explizit im Registry-Eintrag stehen (null = keine DB, string = URL)
+    if (!('supabase_url' in project)) {
+      return WARN('supabase_url fehlt in projects.yml — Feld eintragen (null wenn keine DB)');
+    }
+    const url = project.supabase_url;
+    if (url === null || url === undefined) return PASS('keine DB (supabase_url: null)');
+    return PASS(`eigene DB: ${String(url).split('#')[0].trim()}`);
+  },
+
   // Standard 050 — Bug Registry
   '050-bug-registry': (project) => {
     if (project.status !== 'live' && project.status !== 'dev') return SKIP(`status=${project.status ?? 'null'}`);
@@ -2463,6 +2475,25 @@ async function main() {
 
   const total = local.results.pass + local.results.fail + local.results.warn + local.results.skip
               + ssh.results.pass + ssh.results.fail + ssh.results.warn + ssh.results.skip;
+
+  // Standard 051 — Cross-project Duplikat-Check (läuft einmal über alle Projekte)
+  const supabaseUrlMap = new Map(); // url -> [projectName]
+  for (const p of registry) {
+    if (p.supabase_url && typeof p.supabase_url === 'string') {
+      const url = p.supabase_url.split('#')[0].trim(); // YAML-Kommentare abschneiden
+      if (!supabaseUrlMap.has(url)) supabaseUrlMap.set(url, []);
+      supabaseUrlMap.get(url).push(p.name);
+    }
+  }
+  const sharedUrls = [...supabaseUrlMap.entries()].filter(([, names]) => names.length > 1);
+  if (sharedUrls.length > 0) {
+    console.log('\n--- [051-db-isolation] Geteilte Supabase-URLs (VIOLATION) ---');
+    for (const [url, names] of sharedUrls) {
+      console.log(`  FAIL  ${url}`);
+      console.log(`        Projekte teilen diese DB: ${names.join(', ')}`);
+      console.log(`        → Jedes Projekt braucht eine eigene Instanz (Standard 051)`);
+    }
+  }
 
   console.log('\n--- Summary ---');
   console.log(`  Total:   ${total}`);
