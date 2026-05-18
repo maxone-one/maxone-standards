@@ -1,8 +1,34 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18d (Standard 048 Plan-Tracker live)
+**Stand:** 2026-05-18e (gs-lohra zur Registry hinzugefügt — 14 Projekte)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; OVERALL **9.5/10** (lokal); 048 = 10.0/10 ✅; 047 = 10.0/10 ✅; 027 = 10.0/10 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.5/10** (lokal); 048 = 10.0/10 ✅; 047 = 10.0/10 ✅; 027 = 10.0/10 ✅
+
+---
+
+## Session-Update 2026-05-18e — gs-lohra zur Registry hinzugefügt
+
+### Was wurde gemacht
+
+**gs-lohra** (`grundschule-lohra-webseite`) in `registry/projects.yml` aufgenommen (14. Projekt):
+- Domain: gs-lohra.maxone.one, Server: maxone-prod, Container: gs-lohra (nginx:alpine)
+- Stack: Astro+Svelte SPA mit Supabase Edge Function (Krankmeldungsformular → Brevo)
+- Deploy: ubuntu-latest → npm build → rsync via SSH (kein Docker-Image-Transfer — korrekt für static site)
+
+**Formale Exceptions** (`registry/exceptions.yml`): 001, 002, 004, 005, 009, 010, 011, 015, 024, 027, 030, 042 — alle Prototyp-bedingt oder strukturell nicht anwendbar für statische SPA.
+
+**Compliance-Artefakte** in gs-lohra-Repo committed:
+- `PLAN.md` — Standard 048
+- `LAUNCH-REVIEW.md` — Standard 013 retroaktiver Sign-Off
+- `Footer.astro` — maxone.one Attribution (Standard 012)
+- `HANDOFF.md` auf Server (/opt/gs-lohra/)
+
+**Audit: gs-lohra = 10.0/10 lokal** (0 FAIL, 0 WARN).
+
+**Offene Punkte (gs-lohra, vor Produktivbetrieb mit echten Schuldaten):**
+- Brevo-Domain-Pre-Flight in `edge-function/index.ts` implementieren (030)
+- Rate-Limiting + Input-Sanitizing für Krankmeldungsformular (DSGVO Art. 9 — Gesundheitsdaten)
+- Datenschutz-Folgeabschätzung (Art. 35 DSGVO)
 
 ---
 
