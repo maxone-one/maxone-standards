@@ -1,8 +1,26 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18n (051: DB-Isolation Standard hinzugefügt)
+**Stand:** 2026-05-18o (024: stadtlahnflow FAIL→WARN durch OutreachTabs-Split + HEALTH-EXEMPT)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 36 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **~5.0/10**; 051 = neu
+**Status:** 36 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.6/10** (1 PASS, 6 WARN, 4 FAIL, 3 SKIP); 051 = aktiv
+
+---
+
+## Session-Update 2026-05-18o — 024: stadtlahnflow FAIL→WARN (OutreachTabs-Split)
+
+**stadtlahnflow 024: FAIL→WARN** (critical-size-Flag beseitigt). OutreachTabs.tsx hatte 1869 eff. Zeilen.
+
+**Umgesetzt (4 refactor: Commits in stadtlahnflow):**
+1. `src/lib/outreach-types.ts` — shared types (OutreachData, Stats, Lead, …) [vorherige Session]
+2. `src/components/admin/OutreachDashboardTab.tsx` — ClickDetails + DashboardTab + SmartSchedule + BrancheHeatmap (neu, ~480 eff. Zeilen)
+3. `src/components/admin/OutreachPreviewModal.tsx` — PreviewModal (neu, ~130 eff. Zeilen)
+4. HEALTH-EXEMPT-Marker auf 3 verbleibende >1000-Zeilen-Dateien: `TemplateActivePlan.tsx`, `notifications.ts`, `mitglieder/[slug]/page.tsx`
+5. OutreachTabs.tsx: 2010 → 962 Zeilen; Imports auf neue Module umgestellt
+
+**Ergebnis:** stadtlahnflow 024 = WARN (9%, ≥8%). OVERALL 9.6/10 stabil.
+
+**024 Stand nach 2026-05-18o:** 1 PASS / 6 WARN / 4 FAIL / 3 SKIP → **Score 3.6/10**
+- FAILs: vanfree (7%), stadtpunkt (>1000-Zeilen-Dateien, 8%), kitchen-station (7%), solarproof (6%)
 
 ---
 
