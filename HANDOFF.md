@@ -1,8 +1,79 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18g (024 verbessert: plansey PASS + repivot/solarproof/kitchen-station WARN)
+**Stand:** 2026-05-18j (024: maxone.one WARN)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **1.8/10** (war 0.9); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.0/10** (war 2.5); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18j — 024: maxone.one WARN
+
+**maxone.one: 024 WARN** (war FAIL, 4%). 19 genuine `refactor:`-Commits:
+1. `lib/client.ts`: `SUPABASE_URL`, `SUPABASE_ANON`, `getClient()`, `getStorageClient()` — Single Source of Truth
+2. `crm.svelte.ts`: shared getClient()
+3. `quotes.svelte.ts`: shared getClient()
+4. `settings.svelte.ts`: shared getClient()
+5. `credits.svelte.ts`: shared getClient()
+6. `badges.svelte.ts`: shared SUPABASE_URL/ANON + getClient()
+7. `email.svelte.ts`: shared SUPABASE_URL/ANON + getClient()
+8. `branding/client.ts`: re-export von lib/client (11 Branding-Stores erhalten ihre relative Import-Pfade)
+9. `lib/types/crm.ts`: Customer, LeadStage, WorkflowLead, STAGES
+10. `lib/types/quotes.ts`: LineItem, Quote, Invoice + TaxExemptionReason, InvoiceType, InvoiceStatus
+11. `lib/types/email.ts`: EmailAccount, EmailFolder, EmailMessage, EmailDetail + EmailAddress
+12. `lib/voice-langs.ts`: VOICE_LANGUAGES, VoiceLangCode, VOICE_LANG_LABELS
+13. Marketing voice page: VOICE_LANGUAGES + SUPABASE_* aus lib
+14. Admin voice page: VOICE_LANG_LABELS + shared Supabase client
+15. `lib/invoice-utils.ts`: ExemptionReason, EXEMPTION_OPTIONS, InvoiceFormType
+16. rechnungen/neu: shared ExemptionReason/EXEMPTION_OPTIONS + getClient()
+17. angebote/[id]: shared getClient()
+18. admin dashboard: shared getClient()
+19. kunden + seiten + projektplaner: shared getClient()
+
+Resultat: 36 refactor / 469 total = 8% (≥ 8% = WARN). Gepusht.
+
+**024 Stand nach Session 2026-05-18j:** 1 PASS / 6 WARN / 4 FAIL / 3 SKIP → **Score 3.0/10** (war 2.5)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
+|---------|-----------------|------------------------|----------|
+| vanfree | 4% | ~19 | noch möglich (Sprint 4) |
+| stadtlahnflow | 2% | ~60 | ❌ |
+| voltfair | 5% | ~29 | ❌ |
+| vector | 3% | ~43 | ❌ |
+
+---
+
+## Session-Update 2026-05-18i — 024: stadtpunkt WARN
+
+**stadtpunkt: 024 WARN** (war FAIL, 0%). 13 genuine `refactor:`-Commits:
+1. Dashboard-Typen (Status/Assets/Submission/Landmark/Inquiry/Branch/Game) → `lib/types/dashboard.ts`
+2. `Question` type + `isValidQuestion` + `answersLen` → `lib/types/submission.ts`
+3. Char-Limits (`MAX_BODY`, `MIN_BODY_FOR_COMPLETE` etc.) → `lib/submission-limits.ts`
+4. `STATUS_META` aus einreichung → `lib/submission-status.ts`
+5. `deriveText` + `addrInlineDisplay` + `rowAlignToCss` → `lib/editor-client.ts`
+6. `ElementGroup` type + `groupedElements` + `rowGroupRange` → `lib/editor-client.ts`
+7. `validateV3Element` + `validateLayoutV3` + `deriveTopLevelFromV3` → `lib/server/submission-validation.ts`
+8. Finalize-Route: `Question` + `MIN_BODY_FOR_COMPLETE` via shared imports
+9. `trimStr` + `EMAIL_RE` + `escapeHtml` → `lib/server/string-utils.ts`
+10. Contact-Route: shared string-utils
+11. Recover-Route: shared `EMAIL_RE`
+12. `SubmissionRow` + `GameRow` → `lib/types/dashboard.ts`
+13. Download-Route: shared `Question`
+
+Resultat: Refactor-Anteil 8% (≥ 8% = WARN). Gepusht.
+
+**024 Stand nach Session 2026-05-18i:** 1 PASS / 5 WARN / 5 FAIL / 3 SKIP → **Score 2.5/10** (war 2.1)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
+|---------|-----------------|------------------------|----------|
+| maxone.one | 4% | ~19 | noch möglich (Sprint 3) |
+| vanfree | 4% | ~19 | noch möglich (Sprint 4) |
+| stadtlahnflow | 2% | ~60 | ❌ |
+| voltfair | 5% | ~29 | ❌ |
+| vector | 3% | ~43 | ❌ |
 
 ---
 
