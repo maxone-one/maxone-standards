@@ -1,8 +1,49 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18j (024: maxone.one WARN)
+**Stand:** 2026-05-18k (024: vanfree WARN)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.0/10** (war 2.5); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.5/10** (war 3.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18k — 024: vanfree WARN
+
+**vanfree: 024 WARN** (war FAIL, 3%). 23 genuine `refactor:`-Commits:
+1. `lib/utils/download.ts`: `downloadFile` + `downloadBlobWithBom` — shared utility
+2. `BomStep.tsx`: migriert auf shared `downloadFile`
+3. `CsvImportPanel.tsx`: migriert auf shared `downloadBlobWithBom`
+4. `lib/bom/actuator-labels.ts`: `ACTUATOR_LABEL_KEYS` + `ACTUATOR_CATEGORY`
+5. `BomStep.tsx`: migriert auf `actuator-labels` module
+6. `lib/bom/types.ts`: `CatalogProduct` + `FunctionMapping` interfaces
+7. `product-catalog.ts`: importiert aus `bom/types` und re-exportiert
+8. `lib/pioneer/pulse-styles.ts`: `SOURCE_STYLES` Record
+9. `MyPioneerStatus.tsx`: migriert auf `pulse-styles`
+10. `lib/hersteller/catalog-form.ts`: `ProductEntry`, `CSV_HEADERS`, `CSV_LABELS`, `HERSTELLER_CATEGORIES`, `PROTOCOLS`
+11. `HerstellerForm.tsx`: migriert auf `catalog-form`
+12. `lib/roadmap/config.ts`: `TYPE_CONFIG`, `STATUS_COLORS`, `RANK_MEDALS`
+13. `RoadmapClient.tsx`: migriert auf `roadmap/config`
+14. `lib/pioneer/pulse-config.ts`: `PULSE_SOURCES`, `PulseSource`
+15. `lib/catalog/csv-import-types.ts`: `CsvImportPhase`, `ParsedState`, `DatanormState`, `DoneState`
+16. `PulseAwardForm.tsx` + `CsvImportPanel.tsx`: migriert auf shared modules
+17. `lib/hersteller/types.ts`: `HerstellerProduct`, `HerstellerSubmission`, `SUBMISSION_STATUS_COLORS`
+18. `lib/hersteller/export.ts`: `exportSubmissionsCsv()` utility
+19. `HerstellerAdmin.tsx`: migriert auf `hersteller/types` + `hersteller/export`
+20. `lib/protokolle/config.ts`: `AdapterType`, `ProtocolStatus`, `ADAPTER_LABELS`, `STATUS_LABELS`
+21. `protokolle/page.tsx`: migriert auf `protokolle/config`
+22. `lib/dashboard/protocol-config.ts` + `lib/pioneer/leaderboard-config.ts`: protocol badge + pioneer leaderboard configs
+23. `dashboard/page.tsx` + `pioneers/page.tsx` + `lib/admin/config.ts` + `admin/katalog/page.tsx`: migriert
+
+Resultat: 38 refactor / 468 total = 8.1% (≥ 8% = WARN). Gepusht.
+
+**024 Stand nach Session 2026-05-18k:** 1 PASS / 7 WARN / 3 FAIL / 3 SKIP → **Score 3.5/10** (war 3.0)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
+|---------|-----------------|------------------------|----------|
+| stadtlahnflow | 2% | ~60 | ❌ |
+| voltfair | 5% | ~29 | ❌ |
+| vector | 3% | ~43 | ❌ |
 
 ---
 
@@ -37,7 +78,7 @@ Resultat: 36 refactor / 469 total = 8% (≥ 8% = WARN). Gepusht.
 
 | Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
 |---------|-----------------|------------------------|----------|
-| vanfree | 4% | ~19 | noch möglich (Sprint 4) |
+| vanfree | ~~4%~~ **WARN** | ✅ Sprint 4 erledigt | ✅ |
 | stadtlahnflow | 2% | ~60 | ❌ |
 | voltfair | 5% | ~29 | ❌ |
 | vector | 3% | ~43 | ❌ |
