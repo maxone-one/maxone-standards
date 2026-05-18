@@ -1,8 +1,51 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18f (024 verbessert: plansey PASS + HEALTH-EXEMPT voltfair)
+**Stand:** 2026-05-18g (024 verbessert: plansey PASS + repivot/solarproof/kitchen-station WARN)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **0.9/10** (war 0.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **1.8/10** (war 0.9); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18g — 024 weiter verbessert: repivot + kitchen-station + solarproof
+
+### Was wurde gemacht
+
+**repivot.in: 024 WARN** (war FAIL, 2%). 5 genuine `refactor:`-Commits:
+1. Score-Utilities (`scoreColor/scoreBg/scoreBarColor`) → `lib/score.ts`
+2. TypeScript-Interfaces (`Analysis`, `Suggestion`, `TargetRole` etc.) → `types/dashboard.ts`
+3. `SectionCard`-Component → `components/dashboard/SectionCard.tsx` (4× wiederholte Karten)
+4. `KeywordTag`-Component → `components/common/KeywordTag.tsx` (2× dupliziertes Keyword-Rendering)
+5. `JobPostingParser`-Component → `components/dashboard/JobPostingParser.tsx` (eigener State)
+
+Resultat: Refactor-Anteil 8.4% (≥ 8% = WARN). Dashboard.tsx: 708 → 396 Zeilen.
+
+**kitchen-station: 024 WARN** (war FAIL, 1%). 6 genuine `refactor:`-Commits im Kotlin/Android-Code:
+1. `UpdateManifest` data class → eigene `UpdateManifest.kt`
+2. `NetworkUtils.localIpv4()` → `NetworkUtils.kt` (aus KioskBridge)
+3. `KioskWebViewClient` → eigene Klasse (aus anonymem WebViewClient in MainActivity)
+4. `applyImmersiveMode()` → `ImmersiveMode.kt` als AppCompatActivity-Extension
+5. `applyKioskDefaults()` → `WebViewSettings.kt` als WebSettings-Extension
+6. `SpotifyDeepLink.isOAuthCallback()` → `SpotifyDeepLink.kt` (URL-Check 2× dupliziert)
+
+Resultat: Refactor-Anteil 8.1% (≥ 8% = WARN).
+
+**solarproof: 024 WARN** (aus Vorherige Session — HEALTH-EXEMPT + 4 refactor-Commits).
+
+**024 Stand nach Session 2026-05-18g:** 1 PASS / 3 WARN / 7 FAIL / 3 SKIP → **Score 1.8/10** (war 0.9)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
+|---------|-----------------|------------------------|----------|
+| maxone.one | 4% | ~19 | ❌ |
+| stadtlahnflow | 2% | ~25 + massive LOC | ❌ |
+| vanfree | 4% | ~19 | ❌ |
+| stadtpunkt | 0% | ~13 + massive Svelte | ❌ |
+| voltfair | 5% | ~29 | ❌ |
+| vector | 3% | ~43 | ❌ |
+| snapflow | 2% | ~30 + massive LOC | ❌ |
+
+Alle verbleibenden FAIL-Projekte brauchen zu viele Commits für eine Session. 024 wächst nur organisch.
 
 ---
 
