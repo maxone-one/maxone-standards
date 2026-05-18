@@ -130,25 +130,6 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # stadtlahnflow baut Docker-Image auf dem self-hosted prod-Runner, weil
-  # NEXT_PUBLIC_* Build-Args aus /opt/stadtlahnflow/.env.local kommen.
-  # Migration auf ubuntu-latest blockiert durch fehlende GitHub-Secrets.
-  - project: stadtlahnflow
-    standard: '027'
-    reason: "Build auf maxone-prod-Runner — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets NEXT_PUBLIC_SUPABASE_URL/ANON_KEY nötig."
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
-
-  # voltfair baut Docker-Image auf dem self-hosted maxone-deploy-Runner (= maxone-prod).
-  # NEXT_PUBLIC_* Build-Args kommen aus /opt/.env.local auf dem Server.
-  # Migration auf ubuntu-latest blockiert durch fehlende GitHub-Secrets.
-  - project: voltfair
-    standard: '027'
-    reason: "Build auf maxone-deploy-Runner (= maxone-prod) — NEXT_PUBLIC_* aus /opt/.env.local; Migration auf ubuntu-latest: GitHub-Secrets nötig."
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
 
   # vanfree hat keine Footer-Komponente — wird in nächstem UI-Sprint nachgerüstet.
   - project: vanfree
