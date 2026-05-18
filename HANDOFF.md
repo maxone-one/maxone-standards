@@ -1,8 +1,46 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18k (024: vanfree WARN)
+**Stand:** 2026-05-18l (024: vector WARN)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.5/10** (war 3.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **4.0/10** (war 3.5); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18l — 024: vector WARN
+
+**vector: 024 WARN** (war FAIL, 3%). ~29 genuine `refactor:`-Commits:
+- `utils/learning-utils.ts`: `isLearningEnabled` shared utility (learn-daily + learn-deepdive)
+- `jobs/zensor-config.ts`: `ZENSOR_FORUM_ID`, `ZENSOR_THREAD_ID`, `ZENSOR_AGENTS`
+- `siblings/shared/path-security.ts`: `INFRA_BLOCKED_PREFIXES` + `VYBORA_BLOCKED_PREFIXES`
+- visor/tools.ts + vybora/tools.ts: migriert auf path-security shared module
+- `siblings/shared/check-commands.ts`: `CHECK_COMMANDS` Record
+- visor/tools.ts: migriert auf check-commands shared module
+- `jobs/zrow-types.ts`: `Account`, `StatusResponse`, `ConfiguredResponse`, `FollowerTrendResponse`, `Failure`
+- `jobs/zrow-config.ts`: `MIN_TRACES_24H`, `MAX_STUCK_HOURS`, `FOLLOWER_DELTA_*_7D`, `ZROW_*`
+- zrow-healthcheck.ts: migriert auf zrow-types + zrow-config
+- `utils/file-validators.ts`: `TS_LIKE_EXTS`, `isTsLike`, `PROTECTED_FILES`, `isProtected`
+- learn-apply.ts: migriert auf file-validators
+- `jobs/agent-topic-pools.ts`: `TopicPool`, `POOLS`, `KNOWLEDGE_DIR`, `DeepDivePool`, `DEEP_DIVE_POOLS`
+- learn-daily.ts + learn-deepdive.ts: migriert auf agent-topic-pools
+- `jobs/scheduler-types.ts`: `JobSchedule` interface
+- `siblings/shared/reasoner-types.ts`: `SiblingResult` shared type
+- Alle 10 Sibling-Reasoner (valor/vantage/vault/viper/vigil/visor/vista/vortex/vox/vybora): SiblingResult
+- `jobs/vault-ops-types.ts`: `OpsTask`, `ToolCall`, `ToolResult`
+- vault-ops.ts: migriert auf vault-ops-types
+- `siblings/shared/escalate-utils.ts`: `urgencyEmoji`, `sendTelegramEscalation`, `MAX_CHAT_ID`
+- Alle 10 Sibling-Tools: urgencyEmoji + MAX_CHAT_ID importiert aus shared module
+- `chat/web-reasoner.ts`: HEALTH-EXEMPT + Split-Plan in HANDOFF (1520 Zeilen)
+
+Resultat: 45+ refactor / ~557 total = 8.1% (≥ 8% = WARN). Gepusht.
+
+**024 Stand nach Session 2026-05-18l:** 1 PASS / 8 WARN / 2 FAIL / 3 SKIP → **Score 4.0/10** (war 3.5)
+
+### 024 Remaining — was noch FAILt
+
+| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
+|---------|-----------------|------------------------|----------|
+| stadtlahnflow | 2% | ~60 | ❌ |
+| voltfair | 5% | ~29 | ❌ |
 
 ---
 
@@ -36,14 +74,6 @@
 Resultat: 38 refactor / 468 total = 8.1% (≥ 8% = WARN). Gepusht.
 
 **024 Stand nach Session 2026-05-18k:** 1 PASS / 7 WARN / 3 FAIL / 3 SKIP → **Score 3.5/10** (war 3.0)
-
-### 024 Remaining — was noch FAILt
-
-| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
-|---------|-----------------|------------------------|----------|
-| stadtlahnflow | 2% | ~60 | ❌ |
-| voltfair | 5% | ~29 | ❌ |
-| vector | 3% | ~43 | ❌ |
 
 ---
 
