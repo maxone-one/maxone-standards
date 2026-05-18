@@ -1,8 +1,41 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-12d (025 auf 10.0 bestätigt + HEALTH-EXEMPT implementiert)
+**Stand:** 2026-05-18 (Standard 047 — disk-guard)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 33 Standards aktiv; OVERALL **9.5/10** (lokal); 22 von 23 aktiven Standards bei 10.0
+**Status:** 34 Standards aktiv; OVERALL **9.5/10** (lokal); 047 neu, Audit-Check live
+
+---
+
+## Session-Update 2026-05-18 — Standard 047 Disk-Guard
+
+### Was wurde gemacht
+
+**Anlass:** disk-full-Vorfall auf maxone-prod 2026-05-18 02:52 UTC. Drei Fixes
+wurden direkt auf dem Server eingespielt; danach als Standard kodifiziert.
+
+**Drei Fixes (alle bereits live auf maxone-prod):**
+1. `docker builder prune -af` ohne `--until=`-Filter (vorher: `--until=24h` übersprang frischen Cache)
+2. Cleanup-Cron alle 4h statt täglich (`/etc/cron.d/docker-cleanup`)
+3. `/opt/disk-guard.sh` alle 10 Min via crontab — Notfall-Bremse bei >80% Disk
+
+**Neuer Standard:** `standards/047-disk-guard.md`
+
+**Neuer Audit-Check:** `047-disk-guard` in `sshChecks` (via `vector`-Projekt, läuft einmalig auf maxone-prod)
+- FAIL: `/opt/_ops/docker-cleanup.sh` fehlt ODER enthält `--until=` ODER kein `builder prune -af`
+- FAIL: `/etc/cron.d/docker-cleanup` fehlt ODER kein 4h-Schedule
+- FAIL: `/opt/disk-guard.sh` fehlt ODER kein 80%-Schwellwert
+- WARN: crontab hat disk-guard.sh nicht alle 10 Min
+
+**README:** 047 unter „Infrastruktur & Deploy" eingetragen.
+
+### Offene Punkte
+
+Keine neuen. Bestehende offene Punkte aus 2026-05-12d bleiben gültig (siehe unten).
+
+---
+
+**Stand vorher:** 2026-05-12d (025 auf 10.0 bestätigt + HEALTH-EXEMPT implementiert)
+**Status vorher:** 33 Standards aktiv; OVERALL **9.5/10** (lokal); 22 von 23 aktiven Standards bei 10.0
 
 ---
 

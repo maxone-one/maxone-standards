@@ -11,6 +11,7 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [002-no-build-on-prod.md](002-no-build-on-prod.md) — Niemals Docker-Builds auf Prod-Servern
 - [003-secrets-store.md](003-secrets-store.md) — Zentraler Secrets-Store unter `/opt/secrets/`
 - [004-tls-dns01.md](004-tls-dns01.md) — TLS-Certs immer per DNS-01, nie HTTP-01
+- [047-disk-guard.md](047-disk-guard.md) — Docker-Disk-Management: `builder prune -af` ohne `--until=`, Cleanup alle 4h, disk-guard.sh alle 10min@80% (disk-full-Vorfall 2026-05-18)
 
 **Tests & Doku:**
 - [005-test-first.md](005-test-first.md) — Smoke + Unit Tests bevor "ist live" gemeldet wird
