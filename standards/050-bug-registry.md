@@ -30,6 +30,7 @@ und hält sie nach jedem Schritt aktuell.
 ### BUG-001 — <kurzer Titel>
 **Status:** open | investigating
 **Erstellt:** YYYY-MM-DD
+**Muster:** `slug-in-kebab-case`   ← optional, für cross-project Erkennung (s. §7)
 **Symptom:** Was der User sieht / was kaputt ist.
 **Root Cause:** (leer bis geklärt)
 **Fehlgeschlagene Ansätze:**
@@ -42,7 +43,9 @@ und hält sie nach jedem Schritt aktuell.
 
 ### BUG-000 — <Titel>
 **Status:** fixed | wont-fix
+**Erstellt:** YYYY-MM-DD
 **Geschlossen:** YYYY-MM-DD
+**Muster:** `slug-in-kebab-case`   ← auch nach dem Fix stehen lassen
 **Fix:** Was letztendlich funktioniert hat und warum.
 **Fehlgeschlagene Ansätze:**
 - YYYY-MM-DD — Ansatz: <was versucht wurde> → Warum gescheitert: <Grund>
@@ -119,6 +122,50 @@ chore(bugs): update BUG-001 — fehlgeschlagener Ansatz ergänzt
 Löschen eines Eintrags. Geschlossene Einträge bleiben in `BUGS.md`, werden
 nicht gelöscht.
 
+### 7. Muster-Feld — Cross-Project Erkennung und Global Fix
+
+Das optionale `**Muster:**`-Feld taggt einen Bug mit einem Slug, der das
+zugrundeliegende Muster beschreibt — unabhängig vom Projekt:
+
+```
+**Muster:** `css-var-missing-fallback`
+**Muster:** `ssr-date-hydration`
+**Muster:** `supabase-rls-missing`
+**Muster:** `next-image-missing-alt`
+```
+
+**Slug-Konventionen:**
+- Kebab-case, Kleinbuchstaben, nur `a-z`, `0-9`, `-`
+- Beschreibt das *Muster* (was strukturell falsch ist), nicht das Symptom
+- Gleicher Slug = gleiche Root-Cause-Klasse, auch in anderen Projekten
+
+**Was der Audit daraus macht:**
+
+Sobald derselbe Slug in `BUGS.md` von ≥2 Projekten auftaucht, erscheint im
+Audit-Report:
+
+```
+--- [050] Cross-Project Bug-Muster (≥ 2 Projekte) — Global Fix empfohlen ---
+  [MUSTER] css-var-missing-fallback
+            Label:    CSS-Variable ohne Fallback
+            Bekannt:  stadtlahnflow, vanfree
+            Offen in: vanfree → Global Fix ausstehend
+```
+
+**Claude's Reaktion auf `[MUSTER]`:**
+
+1. Alle im Audit genannten offenen Projekte in einem Sprint fixen
+2. Gleichzeitig alle übrigen Projekte nach dem Muster scannen (möglicherweise
+   sind dort Instanzen noch nicht als Bug eingetragen)
+3. Bug-Einträge in betroffenen BUGS.md schließen
+4. `registry/bug-patterns.yml` mit `global_fix_status: fixed` und Datum aktualisieren
+
+**`registry/bug-patterns.yml`** ist die zentrale Musterliste:
+- Wird vom Audit automatisch befüllt, wenn ein neues Cross-Project-Muster erkannt wird
+- Enthält `label`, `description`, `example_fix` für menschenlesbare Reports
+- `global_fix_status: pending | in-progress | fixed | wont-fix` trackt den Fix-Fortschritt
+- Claude ergänzt `label`/`description`/`example_fix` beim ersten Global-Fix-Sprint
+
 ## Template
 
 Ein leeres `BUGS.md` zum Kopieren liegt unter
@@ -135,10 +182,17 @@ Ein leeres `BUGS.md` zum Kopieren liegt unter
 
 ## Audit-Checks
 
+**Per-Projekt (050-bug-registry):**
 1. Fehlt `BUGS.md` im Repo-Root? → WARN
 2. Hat `BUGS.md` keine `## Aktive Bugs`-Sektion? → WARN
 3. Hat `BUGS.md` keine `## Geschlossene Bugs`-Sektion? → WARN
 4. Enthält ein aktiver Bug-Eintrag keinen Fehlgeschlagene-Ansätze-Block? → INFO
+
+**Cross-Project (Post-runChecks-Section):**
+5. Taucht ein `**Muster:**`-Slug in ≥2 BUGS.md-Dateien auf? → `[MUSTER]`-Zeile im Report
+6. Hat ein Cross-Project-Muster `global_fix_status: pending` und ist in ≥1 Projekt noch offen?
+   → `Offen in: <projekte> → Global Fix ausstehend`
+7. Neue Cross-Project-Muster (nicht in `bug-patterns.yml`) werden automatisch eingetragen
 
 ## Verwandte Standards
 

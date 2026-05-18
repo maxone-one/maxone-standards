@@ -1,0 +1,16 @@
+# Bug-Muster-Registry — gepflegt von Claude
+#
+# Wird befüllt, sobald dasselbe Muster (Muster-Slug in BUGS.md) in ≥2 Projekten auftaucht.
+# Audit liest diese Datei für Labels und Fix-Status.
+# Claude aktualisiert die Einträge wenn ein Global-Fix-Sprint startet oder abgeschlossen ist.
+#
+# global_fix_status: pending | in-progress | fixed | wont-fix
+#
+# Workflow:
+#   1. Bug in Projekt A taucht auf → BUG-NNN mit **Muster:** `slug` in BUGS.md
+#   2. Gleiches Muster in Projekt B → gleicher Slug
+#   3. Nächster Audit-Lauf zeigt "[MUSTER]"-Zeile für `slug` mit beiden Projekten
+#   4. Claude startet Global-Fix-Sprint: alle betroffenen Projekte in einem Durchlauf fixen
+#   5. global_fix_status → fixed, global_fix_date eintragen
+
+patterns: []

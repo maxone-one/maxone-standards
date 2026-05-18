@@ -2495,6 +2495,106 @@ async function main() {
     }
   }
 
+  // === [050] Cross-Project Bug-Muster-Erkennung ===
+  // Scannt alle BUGS.md nach **Muster:** `slug`-Feldern.
+  // Aggregiert pro Slug: in welchen Projekten bekannt, wo noch offen.
+  // Zeigt Muster die in ≥2 Projekten vorkommen als Global-Fix-Kandidaten.
+  {
+    // Bekannte Muster aus Registry laden (für Labels und Fix-Status)
+    const patternRegistryPath = join(__dirname, '..', 'registry', 'bug-patterns.yml');
+    let knownPatterns = {};
+    if (existsSync(patternRegistryPath)) {
+      try {
+        const raw = readFileSync(patternRegistryPath, 'utf8');
+        const parsed = yaml.load(raw);
+        for (const p of parsed?.patterns ?? []) {
+          knownPatterns[p.id] = p;
+        }
+      } catch {}
+    }
+
+    // Regex: **Muster:** `slug` oder **Muster:** slug (backticks optional)
+    const MUSTER_RE = /\*\*Muster:\*\*\s*`?([a-z0-9][a-z0-9-]*)`?/gi;
+    // Erkennt ob ein Bug-Eintrag schon geschlossen ist
+    const STATUS_CLOSED_RE = /\*\*Status:\*\*\s*(fixed|wont-fix)/i;
+
+    const patternMap = new Map(); // slug → { allProjects: Set, openIn: Set }
+
+    for (const project of registry) {
+      if (!project.path_local) continue;
+      const bugsPath = join(project.path_local, 'BUGS.md');
+      if (!existsSync(bugsPath)) continue;
+
+      let text;
+      try { text = readFileSync(bugsPath, 'utf8'); } catch { continue; }
+
+      // Bug-Einträge einzeln parsen (jeder beginnt mit "### BUG-")
+      const entries = text.split(/(?=^###\s+BUG-)/m).filter(e => /^###\s+BUG-/m.test(e));
+      for (const entry of entries) {
+        const isClosed = STATUS_CLOSED_RE.test(entry);
+        for (const m of entry.matchAll(MUSTER_RE)) {
+          const slug = m[1].toLowerCase();
+          if (!patternMap.has(slug)) patternMap.set(slug, { allProjects: new Set(), openIn: new Set() });
+          const rec = patternMap.get(slug);
+          rec.allProjects.add(project.name);
+          if (!isClosed) rec.openIn.add(project.name);
+        }
+      }
+    }
+
+    const crossPatterns = [...patternMap.entries()]
+      .filter(([, rec]) => rec.allProjects.size >= 2)
+      .sort(([, a], [, b]) => b.openIn.size - a.openIn.size);
+
+    if (crossPatterns.length > 0) {
+      console.log('\n--- [050] Cross-Project Bug-Muster (≥ 2 Projekte) — Global Fix empfohlen ---');
+      for (const [slug, rec] of crossPatterns) {
+        const known = knownPatterns[slug];
+        const label = known?.label ?? slug;
+        const fixStatus = known?.global_fix_status ?? 'pending';
+        const openArr = [...rec.openIn].sort();
+        const allArr = [...rec.allProjects].sort();
+        const icon = fixStatus === 'fixed' ? '[OK]  ' : fixStatus === 'in-progress' ? '[~~]  ' : '[MUSTER]';
+        console.log(`  ${icon} ${slug}`);
+        console.log(`            Label:    ${label}`);
+        console.log(`            Bekannt:  ${allArr.join(', ')}`);
+        if (openArr.length > 0) {
+          console.log(`            Offen in: ${openArr.join(', ')} → Global Fix ausstehend`);
+        } else {
+          console.log(`            Status:   überall behoben ✓`);
+        }
+        if (known?.example_fix) console.log(`            Beispiel: ${known.example_fix}`);
+        if (known?.description) console.log(`            Info:     ${known.description}`);
+      }
+    }
+
+    // Neue Muster automatisch in bug-patterns.yml eintragen (add-only, kein Überschreiben)
+    let patternsChanged = false;
+    const patternsList = yaml.load(readFileSync(patternRegistryPath, 'utf8'))?.patterns ?? [];
+    const existingIds = new Set(patternsList.map(p => p.id));
+    for (const [slug, rec] of crossPatterns) {
+      if (!existingIds.has(slug)) {
+        patternsList.push({
+          id: slug,
+          label: slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          description: '',
+          example_fix: '',
+          first_seen: new Date().toISOString().slice(0, 10),
+          projects: [...rec.allProjects].sort(),
+          global_fix_status: 'pending',
+          global_fix_pr: null,
+          global_fix_date: null,
+        });
+        patternsChanged = true;
+      }
+    }
+    if (patternsChanged) {
+      const header = `# Bug-Muster-Registry — gepflegt von Claude\n#\n# Wird befüllt, sobald dasselbe Muster (Muster-Slug in BUGS.md) in ≥2 Projekten auftaucht.\n# Audit liest diese Datei für Labels und Fix-Status.\n# Claude aktualisiert die Einträge wenn ein Global-Fix-Sprint startet oder abgeschlossen ist.\n#\n# global_fix_status: pending | in-progress | fixed | wont-fix\n\n`;
+      writeFileSync(patternRegistryPath, header + yaml.dump({ patterns: patternsList }, { lineWidth: 120 }), 'utf8');
+      console.log(`\n  [+] bug-patterns.yml: ${patternsList.length - existingIds.size} neues Muster eingetragen`);
+    }
+  }
+
   console.log('\n--- Summary ---');
   console.log(`  Total:   ${total}`);
   console.log(`  Passed:  ${local.results.pass + ssh.results.pass}`);
