@@ -1,8 +1,24 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18l (024: vector WARN)
+**Stand:** 2026-05-18m (024: stadtlahnflow + voltfair WARN — alle Projekte ≥ WARN)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **4.0/10** (war 3.5); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+**Status:** 35 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **~5.0/10** (war 4.0); 048 = 10.0 ✅; 047 = 10.0 ✅; 027 = 10.0 ✅
+
+---
+
+## Session-Update 2026-05-18m — 024: stadtlahnflow WARN + alle FAILs weg
+
+**stadtlahnflow: 024 WARN** (war FAIL, 3.6%). 49 `refactor:`-Commits:
+- 17 neue Shared-Module in `src/lib/`: `date-formatters`, `number-formatters`, `anfragen-status`, `feedback-status`, `pioneers-status`, `vorschlaege-config`, `leads-config`, `leads-tips`, `leads-stats-config`, `events-config`, `zielgruppen-config`, `members-config`, `admin-config`, `settings-config`, `template-config`, `outreach-schedule-config`, `plan-utils` (erweitert)
+- `OutreachLead` interface in `types/database.ts`
+- Consumer-Migration: 30+ Komponenten auf shared modules umgestellt
+
+Resultat: 85/1060 = 8.02% (≥ 8% = WARN). Gepusht.
+
+**024 Stand nach Session 2026-05-18m:** 1 PASS / 10 WARN / 0 FAIL / 3 SKIP → **Score ~5.0/10** (war 4.0)
+
+### 024 Remaining — alle Projekte ≥ WARN ✅
+Kein Projekt mehr auf FAIL. Nächstes Ziel: PASS (≥15%) für die schwächsten Projekte (stadtlahnflow 8%, voltfair 9%).
 
 ---
 
@@ -35,12 +51,8 @@ Resultat: 45+ refactor / ~557 total = 8.1% (≥ 8% = WARN). Gepusht.
 
 **024 Stand nach Session 2026-05-18l:** 1 PASS / 8 WARN / 2 FAIL / 3 SKIP → **Score 4.0/10** (war 3.5)
 
-### 024 Remaining — was noch FAILt
-
-| Projekt | Refactor-Anteil | Commits nötig für WARN | Machbar? |
-|---------|-----------------|------------------------|----------|
-| stadtlahnflow | 2% | ~60 | ❌ |
-| voltfair | 5% | ~29 | ❌ |
+### 024 Remaining — alle Projekte jetzt ≥ WARN ✅
+(Beide FAILs danach in Session 2026-05-18m beseitigt)
 
 ---
 
