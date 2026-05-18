@@ -33,15 +33,14 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    # Standard 026: self-hosted runner — kein Actions-Minutes-Verbrauch.
+    # Scheduled-Audit laeuft bereits auf demselben Runner (Node + npm vorhanden).
+    runs-on: [self-hosted, maxone-prod]
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
+      - uses: actions/checkout@v4
 
       - name: Install deps
         run: npm ci --omit=dev --no-audit --no-fund
