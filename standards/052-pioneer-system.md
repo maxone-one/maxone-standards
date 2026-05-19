@@ -51,23 +51,36 @@ Client Components dürfen weiterhin aus `@/components/PioneerCounter` importiere
 | `source`              | Punkte    | Beschreibung                              |
 |-----------------------|-----------|-------------------------------------------|
 | `early_slot`          | 1 – 50    | Je früher der Slot, desto mehr             |
-| `profile_photo`       | 5         | Profilfoto hochgeladen + verifiziert      |
-| `feedback`            | 3         | Feedback eingereicht                      |
-| `bug_report`          | 8         | Bug-Report eingereicht                    |
-| `feature_implemented` | 20        | Feature-Request umgesetzt                 |
-| `referral`            | 15        | Erfolgreiche Einladung                    |
+| `profile_photo`       | 20        | Profilfoto hochgeladen + verifiziert      |
+| `feedback`            | 35        | Feedback eingereicht                      |
+| `bug_report`          | 15        | Bug-Report eingereicht                    |
+| `feature_implemented` | 30        | Feature-Request umgesetzt                 |
+| `referral`            | 25        | Erfolgreiche Einladung                    |
 
 ---
 
 ## Pioneer-Stufen (Tiers)
 
-Stufen basieren auf der **Slot-Nummer** — nicht auf Pulse. Stufen sind permanent.
+Stufen basieren auf dem **Eintrittsdatum (`confirmed_at`)** — niemals auf der Slot-Nummer, niemals auf Pulse. Stufen sind permanent.
 
-| Stufe      | Slots  | Farbe / Border-Klasse                     |
-|------------|--------|-------------------------------------------|
-| Founding   | 1 – 10 | `text-primary / border-primary/30`        |
-| Early      | 11–25  | `text-foreground / border-border`         |
-| Pioneer    | 26–50  | `text-muted-foreground / border-border`   |
+> **Regel:** `getTier(slot)` ist verboten. `pioneer_tier` wird im Leaderboard-View aus der
+> `confirmed_at`-Reihenfolge berechnet und vom Frontend direkt gelesen.
+>
+> **Trennung:** `users.tier` ist das **Zugangs-Tier** (Subscription-Level: `'founding' | 'lifetime' | ...`).
+> Alle Pioneers bekommen `users.tier = 'founding'` (höchster Zugang). Das Pioneer-Badge-Tier
+> (`pioneer_tier`) ist davon völlig unabhängig und liegt ausschließlich im Leaderboard-View.
+
+| Stufe      | Eintrittposition  | Farbe / Border-Klasse                     |
+|------------|-------------------|-------------------------------------------|
+| Founding   | 1 – 10 bestätigt  | `text-primary / border-primary/30`        |
+| Early      | 11 – 25 bestätigt | `text-foreground / border-border`         |
+| Pioneer    | 26 – 50 bestätigt | `text-muted-foreground / border-border`   |
+
+**Ranking** (Leaderboard-Position #1, #2, …) wird **ausschließlich nach Pulse** bewertet:
+```sql
+RANK() OVER (ORDER BY total_pulse DESC, confirmed_at ASC)
+```
+Tier und Ranking sind unabhängig voneinander.
 
 ---
 
@@ -150,6 +163,9 @@ Der umschließende `<Link>` braucht `items-stretch` statt `items-start`.
 ## Audit-Checks
 
 ```bash
+# 0. Kein getTier(slot)-Pattern — Tier immer aus DB lesen
+grep -rn "getTier(" app/   # sollte leer sein
+
 # 1. Keine 'use client' Import für Pioneer-Konstanten in Server Components
 grep -rn "PIONEER_MAX_SLOTS\|PIONEER_POOL_TOTAL" app/ \
   | grep -v "use client\|PioneerCounter\|node_modules" \
