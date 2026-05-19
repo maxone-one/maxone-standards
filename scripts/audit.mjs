@@ -1201,11 +1201,11 @@ const localChecks = {
           if (/(node_modules|\.next|\.svelte-kit|dist|build|\.git|coverage|audits|\.venv|__pycache__)/.test(e.name)) continue;
           scan(full, depth + 1);
         } else if (/\.(js|ts|tsx|jsx|mjs|cjs|py)$/i.test(e.name)) {
-          codeFiles.push(full);
+          // Always collect test files regardless of the codeFiles cap.
           if (/indirect[-_]?injection|prompt[-_]?injection/i.test(e.name)) testFiles.push(full);
-          if (codeFiles.length > 700) return;
+          if (codeFiles.length <= 700) codeFiles.push(full);
         } else if (/package\.json$/.test(e.name) || /requirements.*\.txt$/.test(e.name) || /promptfooconfig\.ya?ml$/i.test(e.name)) {
-          codeFiles.push(full);
+          if (codeFiles.length <= 700) codeFiles.push(full);
           if (/promptfooconfig\.ya?ml$/i.test(e.name)) testFiles.push(full);
         }
       }
