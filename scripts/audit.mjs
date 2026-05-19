@@ -1688,6 +1688,10 @@ const localChecks = {
         const runsOn = JSON.stringify(job['runs-on'] ?? '');
         const isSelfHosted = /self-hosted/i.test(runsOn);
         if (!isSelfHosted) continue;
+        // maxone-staging is the designated build server — docker build there is fine.
+        // Only flag if the job targets prod (maxone-prod label) or bare self-hosted (ambiguous).
+        const isExplicitlyStaging = /maxone-staging/i.test(runsOn);
+        if (isExplicitlyStaging) continue;
         // Use raw run-text (not JSON.stringify) — JSON encodes \n as backslash+n,
         // making "ndocker" run together and breaking \b word-boundary detection.
         const stepsText = job.steps.map(s => `${s.name ?? ''}\n${s.run ?? ''}`).join('\n');
