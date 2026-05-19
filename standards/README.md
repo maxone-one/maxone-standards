@@ -63,6 +63,9 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 **Marken-Werte & Kommunikation:**
 - [035-signature-truthful.md](035-signature-truthful.md) — Wahrhaftige Unterschrift: es unterzeichnet, wer wirklich verschickt — KI niemals als Max, Bot niemals als Person (Viktoria-From-Vorfall 2026-04-29)
 
+**Produkt-Features:**
+- [052-pioneer-system.md](052-pioneer-system.md) — Pioneer-System: limitierte Slots, endlicher Puls-Pool, Leaderboard-Wall; Konstanten aus server-sicheren Modulen; Singular „Puls" / Plural „Pulse" / „Puls-" in Komposita; ICU-Plural-Pattern für next-intl
+
 **Projektübergreifende Koordination:**
 - [038-cross-project-broadcast.md](038-cross-project-broadcast.md) — Cross-Project Incident Broadcast (CPIB): Fehler/Änderungen mit projektübergreifendem Effekt werden als Broadcast in `broadcasts/` dokumentiert — alle betroffenen Projekte fixieren, Audit prüft offene Einträge
 
