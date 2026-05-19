@@ -404,6 +404,16 @@ exceptions:
     expires_until: '2026-08-18'
     granted_by: max
 
+  # voltfair Deploy-Pfad ist ein lokales deploy.sh auf dem Server (Coolify-Stil,
+  # kein GitHub-Actions-CI-Workflow). docker build + Image-Transfer läuft manuell
+  # via Entwickler-Workstation. CI-Workflow ist in Planung.
+  - project: voltfair
+    standard: '027'
+    reason: "Deployment via lokales deploy.sh (server-side blue-green) — kein CI-Workflow. docker build läuft auf Entwickler-Workstation, Image-Transfer manuell. CI-Migration geplant."
+    granted_at: '2026-05-19'
+    expires_until: '2026-11-19'
+    granted_by: max
+
   # maxone.one nutzt LLM ausschliesslich fuer Audio (Groq Whisper STT + TTS via
   # api.groq.com/openai/v1/audio/...). Kein Text-Generation, kein System-Prompt,
   # kein Injection-Risiko. Approval-Queue-Pattern nicht anwendbar.

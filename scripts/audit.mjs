@@ -1714,7 +1714,9 @@ const localChecks = {
 
     // Pflichtkomponenten der Premium-Pipeline
     const checks = {
-      ubuntuLatest: /runs-on:\s*\[?\s*ubuntu-(latest|22\.04|24\.04)/i.test(wfText),
+      // ubuntu-latest OR self-hosted maxone-staging are both valid build runners.
+      // github-hosted runners cost money; maxone-staging is the free equivalent.
+      ubuntuLatest: /runs-on:\s*\[?\s*ubuntu-(latest|22\.04|24\.04)/i.test(wfText) || /maxone-staging/i.test(wfText),
       // docker save (tarball) OR docker push to registry (GHCR/other) — both are off-prod image transfer
       dockerSave: /docker\s+save\b/i.test(wfText) || /docker\s+push\s+ghcr\.io/i.test(wfText) || /docker\/build-push-action/i.test(wfText),
       // SSH-pipe OR GitHub-Artifact OR GHCR push+pull pattern
