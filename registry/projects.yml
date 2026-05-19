@@ -62,6 +62,7 @@ projects:
     supabase_url: https://panel.maxone.one
     path_local: c:\Users\max\Projects\maxone.one
     dockerfile_path: apps/umbrella/Dockerfile
+    compose_file: apps/umbrella/docker-compose.yml
     path_server: /opt/maxone-v2
     secrets_dir: maxone
     status: live
