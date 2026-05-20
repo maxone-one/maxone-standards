@@ -86,6 +86,22 @@ automatisch W-IdNr. an alle umsatzsteuerlich erfassten Unternehmen
   Sobald Max die W-IdNr. erhält: in Supabase eintragen, API liefert sie
   automatisch an alle Projekte.
 
+### Pseudonym / Markenzeile (seit 2026-05-20)
+
+Einzelunternehmer können neben dem amtlichen Namen eine **Marken-/Pseudonym-Zeile**
+führen — sie ersetzt die Rechtsperson nicht, ergänzt sie nur. Im Impressum
+erscheint sie zwischen `owner_name` und `street`, damit Empfänger zuordnen
+können, unter welcher Marke der Anbieter auftritt.
+
+- **API-Feld:** `pseudonym` in `maxone.company_info` (Key-Value-Eintrag) und
+  in der `impressum`-Edge-Function-Response.
+- **Format:** Klartext mit den Brand-typischen Trennzeichen (z.B. `- maxone.one -`).
+  Niemals die `owner_name`-Zeile überschreiben — Pseudonym ist additiv.
+- **Render-Reihenfolge:** `legal_name` → `owner_name` → `pseudonym` → `street`
+  → `zip city` → `country`.
+- **Optional:** Projekte können das Feld weglassen, wenn `pseudonym` leer ist;
+  ein leerer String darf keine Leerzeile produzieren.
+
 ### Zusätzlich für Kapitalgesellschaften (GmbH, UG, AG)
 
 Erkennung: API-Response enthält `register_court` **und** `register_number`.
