@@ -25,12 +25,9 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 ### vector `010_reply_status.sql` auf Server einspielen
 Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht auf maxone-prod eingespielt. → VAULT-Task delegieren.
 
-### 048/050/006-Treatment: gs-lohra, plansey-engaged, vanfree prüfen
-Hauptwelle (7 Projekte + 5 weitere) erledigt 2026-05-26.
-Noch nicht explizit behandelt:
-- **gs-lohra** — PLAN.md bereits gefüllt (2026-05-18e), BUGS.md-Status + Server-HANDOFF.md unbekannt
-- **plansey-engaged** — nicht in Registry, Pfad `c:\Users\max\Projects\plansey-engaged`
-- **vanfree** — im Briefing als "erledigt 2026-05-26 (vor dieser Session)" markiert; Verifikation ausstehend
+### plansey-engaged in Registry aufnehmen
+plansey-engaged wurde 2026-05-26 mit PLAN.md + BUGS.md versorgt, fehlt aber in `registry/projects.yml`.
+Eintragen: `status: dev`, `path_local`, `domain: plansey.app`, `supabase_url` (noch zu klären), kein `path_server` (kein Server-Deployment bekannt).
 
 ### 041-avv-dpa-registry: Backfill
 `data_processors`-Feld in `registry/projects.yml` für alle Projekte befüllen — aktuell 12 WARNs. Keine Anbieter-Fakten raten; wenn unklar → `unknown` und Max entscheiden lassen.
@@ -49,6 +46,7 @@ Voltfair-crontab hatte CRON_SECRET plaintext (vor GH-Action-Migration). Neue Sta
 
 ## Erledigt
 
+- 2026-05-26 — 048/050/006 Treatment: alle 15 Projekte abgeschlossen — plansey-engaged (.gitignore-Fix), gs-lohra (alles OK), venfree (alles OK, vor Session erledigt)
 - 2026-05-26 — 048/050/006 Treatment: repivot, plansey-2026, stadtpunkt, kitchen-station, solarproof — PLAN.md befüllt, BUGS.md normalisiert, HANDOFF.md auf Server geschrieben
 - 2026-05-26 — 048/050/006 Treatment: maxone.one, vector, stadtlahnflow, voltfair, snapflow, zentinel — PLAN.md befüllt, HANDOFF.md auf Server aktualisiert
 - 2026-05-26 — 052: E6 (drei Tiers A/B/C) + E8 (first_slot #1/#10/#25/#50) entschieden + finalisiert
