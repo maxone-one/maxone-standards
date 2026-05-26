@@ -25,11 +25,12 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 ### vector `010_reply_status.sql` auf Server einspielen
 Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht auf maxone-prod eingespielt. → VAULT-Task delegieren.
 
-### 048/050/006-Treatment für restliche Projekte
-maxone-standards selbst: erledigt 2026-05-26. Restliche Server-Projekte brauchen noch BUGS.md + HANDOFF.md-Refresh:
-- maxone.one, vector, stadtlahnflow, voltfair, snapflow, zentinel
-
-Briefing: globale `CLAUDE.md` vom 2026-05-26 (Abschnitt „Alle Projekte auf Standard 048/050/006 ziehen").
+### 048/050/006-Treatment: gs-lohra, plansey-engaged, vanfree prüfen
+Hauptwelle (7 Projekte + 5 weitere) erledigt 2026-05-26.
+Noch nicht explizit behandelt:
+- **gs-lohra** — PLAN.md bereits gefüllt (2026-05-18e), BUGS.md-Status + Server-HANDOFF.md unbekannt
+- **plansey-engaged** — nicht in Registry, Pfad `c:\Users\max\Projects\plansey-engaged`
+- **vanfree** — im Briefing als "erledigt 2026-05-26 (vor dieser Session)" markiert; Verifikation ausstehend
 
 ### 041-avv-dpa-registry: Backfill
 `data_processors`-Feld in `registry/projects.yml` für alle Projekte befüllen — aktuell 12 WARNs. Keine Anbieter-Fakten raten; wenn unklar → `unknown` und Max entscheiden lassen.
@@ -48,6 +49,8 @@ Voltfair-crontab hatte CRON_SECRET plaintext (vor GH-Action-Migration). Neue Sta
 
 ## Erledigt
 
+- 2026-05-26 — 048/050/006 Treatment: repivot, plansey-2026, stadtpunkt, kitchen-station, solarproof — PLAN.md befüllt, BUGS.md normalisiert, HANDOFF.md auf Server geschrieben
+- 2026-05-26 — 048/050/006 Treatment: maxone.one, vector, stadtlahnflow, voltfair, snapflow, zentinel — PLAN.md befüllt, HANDOFF.md auf Server aktualisiert
 - 2026-05-26 — 052: E6 (drei Tiers A/B/C) + E8 (first_slot #1/#10/#25/#50) entschieden + finalisiert
 - 2026-05-26 — 011, 052, audit-vector-embed.mjs, briefings/ committet
 - 2026-05-26 — maxone-standards PLAN.md + BUGS.md angelegt (Standard 048/050/006 Treatment)
