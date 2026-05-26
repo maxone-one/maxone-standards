@@ -196,7 +196,7 @@ projects:
     deploy: blue-green
     container: vanfree-app
     supabase_url: https://api.vanfree.de
-    path_local: c:\Users\max\Projects\vanfree
+    path_local: c:\Users\max\Projects\venfree
     compose_file: ops/docker-compose.app.yml
     path_server: /opt/vanfree
     secrets_dir: vanfree
@@ -472,3 +472,32 @@ projects:
         evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
         reviewed_at: "2026-04-27"
     notes: "Seit 2026-05-07 als eigenes Projekt-Repo auf Projektebene entkoppelt. Standalone Deploy/Container-Pfade werden nach Abschluss der Entkopplung gesetzt; bis dahin laufen produktive Teile weiterhin ueber maxone.one-Infrastruktur."
+
+  - name: plansey-engaged
+    workspace: plansey-engaged
+    domain: plansey.app
+    server: null
+    deploy: null
+    container: null
+    supabase_url: null  # zu klären — Supabase Auth/DB/Edge Functions im Stack; eigene Instanz prüfen (Standard 051)
+    path_local: c:\Users\max\Projects\plansey-engaged
+    path_server: null
+    secrets_dir: null
+    status: dev
+    tags: product
+    external_subscriptions:
+      - service: INWX
+        reason: domain-registrar
+        cost_per_month_eur: variabel
+        sunset_plan: "Domain behalten solange Projekt aktiv"
+    last_review_date: "2026-05-26"
+    warmup_required: false  # Static SPA via Vite, kein SSR-Server
+    data_processors:
+      - service: Brevo
+        purpose: Transaktionaler E-Mail-Versand (Einladungen, Benachrichtigungen)
+        personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
+        region: EU (Frankreich)
+        avv_status: unknown
+        evidence: null
+        reviewed_at: "2026-05-26"
+    notes: "Phase 0 der neuen Plansey-Strategie. Verlobungsverkündungs-Plattform (React 18 + Vite + Tailwind + shadcn/ui + Supabase + Mollie). Kein bekanntes Server-Deployment Stand 2026-05-26. Plansey-Produktfamilie: Legacy (2015/PHP) + 2026 (Next.js) + Engaged (Phase 0)."
