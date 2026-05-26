@@ -25,9 +25,8 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 ### vector `010_reply_status.sql` auf Server einspielen
 Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht auf maxone-prod eingespielt. → VAULT-Task delegieren.
 
-### plansey-engaged in Registry aufnehmen
-plansey-engaged wurde 2026-05-26 mit PLAN.md + BUGS.md versorgt, fehlt aber in `registry/projects.yml`.
-Eintragen: `status: dev`, `path_local`, `domain: plansey.app`, `supabase_url` (noch zu klären), kein `path_server` (kein Server-Deployment bekannt).
+### vanfree path_local in Registry: Audit verifikation
+`path_local` wurde von `vanfree` auf `venfree` korrigiert (699bd89). Beim nächsten vollen Audit prüfen ob alle vanfree-Standards jetzt grün laufen.
 
 ### 041-avv-dpa-registry: Backfill
 `data_processors`-Feld in `registry/projects.yml` für alle Projekte befüllen — aktuell 12 WARNs. Keine Anbieter-Fakten raten; wenn unklar → `unknown` und Max entscheiden lassen.
@@ -46,6 +45,7 @@ Voltfair-crontab hatte CRON_SECRET plaintext (vor GH-Action-Migration). Neue Sta
 
 ## Erledigt
 
+- 2026-05-26 — plansey-engaged in Registry + vanfree path_local korrigiert (699bd89)
 - 2026-05-26 — 048/050/006 Treatment: alle 15 Projekte abgeschlossen — plansey-engaged (.gitignore-Fix), gs-lohra (alles OK), venfree (alles OK, vor Session erledigt)
 - 2026-05-26 — 048/050/006 Treatment: repivot, plansey-2026, stadtpunkt, kitchen-station, solarproof — PLAN.md befüllt, BUGS.md normalisiert, HANDOFF.md auf Server geschrieben
 - 2026-05-26 — 048/050/006 Treatment: maxone.one, vector, stadtlahnflow, voltfair, snapflow, zentinel — PLAN.md befüllt, HANDOFF.md auf Server aktualisiert
