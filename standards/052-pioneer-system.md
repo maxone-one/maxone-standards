@@ -160,6 +160,161 @@ Der umschließende `<Link>` braucht `items-stretch` statt `items-start`.
 
 ---
 
+## Erst-Event-Feier (Achievement-Celebration)
+
+Erste-X-Aktionen werden mit einem kurzen visuellen Moment gefeiert. Detection ist server-seitig über UNIQUE-Constraint abgesichert, niemals über `localStorage`.
+
+### UX-Tiers (pro Projekt konfigurierbar)
+
+| Tier | Stil | Default-Projekte |
+|---|---|---|
+| **A — Vollfeier** | Konfetti + Toast | vanfree, snapflow, plansey, maxone.one |
+| **B — Toast-only** | Toast ohne Konfetti | stadtlahnflow |
+| **C — Stille Notification** | Server-seitig geloggt, kein UI-Event | voltfair, kitchen-station |
+
+Tier ist pro Projekt einmal in `lib/pioneer/config.ts` festgelegt, NICHT pro Event — Konsistenz innerhalb eines Projekts hat Vorrang. Quellen-Vergleich der Ist-Implementierungen: `briefings/pioneer-achievement-convergence.md`.
+
+**Drei aktuelle Realisierungen (Stand 2026-05-20, nicht normativ):**
+
+| Projekt | UX-Stil | Tabelle | Datei |
+|---|---|---|---|
+| SLF | Konfetti + Toast (volle Feier) | `member_milestones` mit `seen_at` | [`FirstTimeConfetti.tsx`](../../stadt-lahn-flow/src/components/milestones/FirstTimeConfetti.tsx), [`milestones.ts`](../../stadt-lahn-flow/src/lib/milestones.ts) |
+| vanfree | Grüner Checkmark (mittlere Feier) | — (Detection über `pioneer_scores` Count, race-anfällig) | [`pioneer/profile/page.tsx`](../../vanfree/app/[locale]/(shell)/pioneer/profile/page.tsx) |
+| voltfair | Stilles Form-Feedback (keine Feier) | — (Detection über `pioneer_scores` Count, manuell) | [`pioneer-review.ts`](../../voltfair.de/app/actions/pioneer-review.ts) |
+
+Die unten skizzierten Snippets sind ein **Vorschlag in Richtung 053**, nicht der
+Ist-Zustand und nicht verbindlich.
+
+### Event-Keys (Pioneer-System)
+
+| Event-Key             | Trigger                                        | Pulse | Broadcast |
+|-----------------------|------------------------------------------------|-------|-----------|
+| `first_slot`          | `/pioneer/confirm` erfolgreich (Slot belegt)   | 1–50  | ja, bei Milestone-Slots |
+| `first_feedback`      | erstes `feedback`-Puls-Event                   | 35    | nein      |
+| `first_bug_report`    | erstes `bug_report`-Puls-Event                 | 15    | nein      |
+| `first_feature`       | erstes `feature_implemented`-Puls-Event        | 30    | nein      |
+| `first_referral`      | erste bestätigte Einladung (Inviter)           | 25    | nein      |
+
+**Milestone-Broadcast** (öffentlich auf `/pioneers`-Wall): Slot-Eintritte bei
+**#1, #10, #25, #50** zusätzlich als globales Event. Konfetti feuert bei allen
+aktiven Besuchern der Leaderboard-Seite; permanenter Eintrag im Wall-Header
+(„#10 erreicht — Early-Stufe voll"). Implementierung via Supabase Realtime auf
+`pioneer_milestones`-Tabelle.
+
+### Datenmodell
+
+```sql
+create table pioneer_milestones (
+  id uuid primary key default gen_random_uuid(),
+  subscriber_id uuid references pioneer_subscribers(id) on delete cascade,
+  key text not null,                  -- 'first_slot' | 'first_feedback' | ...
+  seen_at timestamptz,                -- NULL = pending, sonst dismissed
+  broadcast boolean not null default false,
+  created_at timestamptz not null default now(),
+  unique (subscriber_id, key)         -- ein Event pro Pioneer-Key
+);
+```
+
+Der UNIQUE-Constraint ist die einzige Wahrheit. Doppel-Trigger lösen `23505`
+aus, was als „schon gefeiert" interpretiert wird (kein Fehler, kein Replay).
+
+### Server-Helper
+
+```ts
+// lib/pioneer/milestones.ts
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+export type PioneerEvent =
+  | 'first_slot' | 'first_feedback' | 'first_bug_report'
+  | 'first_feature' | 'first_referral'
+
+export async function markPioneerMilestone(
+  subscriberId: string,
+  key: PioneerEvent,
+  admin: SupabaseClient,
+): Promise<boolean> {
+  const { error } = await admin
+    .from('pioneer_milestones')
+    .insert({ subscriber_id: subscriberId, key })
+  if (error?.code === '23505') return false // schon gefeiert
+  if (error) { console.error('[pioneer] milestone:', error.message); return false }
+  return true
+}
+```
+
+Aufruf direkt nach dem Puls-Event innerhalb derselben Transaktion/RPC, damit
+ein gescheiterter Puls-Insert kein „first" markiert.
+
+### Client-Komponente
+
+Eine `<PioneerConfettiQueue>` in `app/(pioneer)/layout.tsx` pollt
+`/api/pioneer/milestones/pending`, feuert sequentiell und dismissed via
+`POST { ids: [...] }` (setzt `seen_at`).
+
+`fireConfetti()` folgt dem SLF-Pattern: 1500 ms zwei-seitiger Side-Burst +
+zentraler Burst mit 80 Partikeln. **Pflicht:** `disableForReducedMotion: true`
+in jedem `confetti()`-Call.
+
+```ts
+import confetti from 'canvas-confetti'
+
+function fireConfetti() {
+  const duration = 1500
+  const end = Date.now() + duration
+  const colors = ['#3b82f6', '#f59e0b', '#10b981', '#ec4899']
+  ;(function frame() {
+    confetti({ particleCount: 4, angle: 60,  spread: 70, origin: { x: 0, y: 0.7 }, colors, disableForReducedMotion: true })
+    confetti({ particleCount: 4, angle: 120, spread: 70, origin: { x: 1, y: 0.7 }, colors, disableForReducedMotion: true })
+    if (Date.now() < end) requestAnimationFrame(frame)
+  })()
+  confetti({ particleCount: 80, spread: 100, origin: { x: 0.5, y: 0.5 }, colors, disableForReducedMotion: true })
+}
+```
+
+### Toast-Copy (de.json)
+
+```json
+"milestones": {
+  "first_slot":     { "title": "Slot #{slot} ist deiner!",        "body": "Willkommen im Pioneer-Kreis — du gehörst zu den ersten {n}." },
+  "first_feedback": { "title": "Erstes Feedback!",                "body": "Danke — dein Eindruck formt das Produkt." },
+  "first_bug_report":{ "title": "Erster Bug gemeldet!",            "body": "Jeder gefundene Bug spart anderen Nerven." },
+  "first_feature":  { "title": "Dein Feature ist live!",          "body": "Du hast etwas vorgeschlagen, das jetzt im Produkt steht." },
+  "first_referral": { "title": "Erste Einladung angekommen!",     "body": "Dein Pioneer-Kreis wächst — {name} ist dabei." },
+  "milestoneSlot":  { "title": "#{slot} erreicht!",               "body": "{tier}-Stufe ist voll. Konfetti für alle." }
+}
+```
+
+Toast-Wording folgt der maxone-Stimme: kurz, warm, ohne Marketing-Pathos.
+
+### Milestone-Broadcast über Realtime
+
+```ts
+// nur auf /pioneers
+const channel = supabase.channel('pioneer-milestones')
+  .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'pioneer_milestones',
+        filter: 'broadcast=eq.true' },
+      (payload) => { fireConfetti(); showWallBanner(payload.new) })
+  .subscribe()
+```
+
+Der Server setzt `broadcast=true` bei Slot-Insert auf #1/#10/#25/#50.
+
+### Regeln
+
+- **Server-only Detection.** Niemals `localStorage` als First-Time-Quelle —
+  Geräte-Wechsel würde Replay erlauben.
+- **Einmal pro Pioneer-Key.** UNIQUE-Constraint ist die Wahrheit; keine
+  zusätzliche Prüfung in Application-Code, die divergieren kann.
+- **`disableForReducedMotion`** ist Pflicht in jedem `confetti()`-Call —
+  niemand soll Konfetti-Spam erleben, der das nicht will.
+- **Kein Sound, kein Lottie.** SLF-Minimalismus ist absichtlich — kurzer
+  visueller Moment, dann weiterarbeiten.
+- **Queue, nicht parallel.** Wenn mehrere Milestones gleichzeitig pending sind
+  (z.B. Slot-Eintritt + sofortiges Feedback), sequenziell feiern, nicht überlagern.
+
+---
+
 ## Audit-Checks
 
 ```bash
@@ -176,6 +331,17 @@ grep "Pulse-" messages/de.json   # sollte leer sein
 
 # 3. Keine hardcoded >Pulse< (Einheits-Label) in JSX — t('tablePulse') verwenden
 grep ">Pulse<" app/   # sollte leer sein
+
+# 4. Konfetti respektiert reduced-motion in JEDEM Call
+grep -rn "confetti({" app/ lib/ components/ \
+  | grep -v "disableForReducedMotion"   # sollte leer sein
+
+# 5. Keine localStorage-First-Time-Detection (muss server-seitig sein)
+grep -rn "localStorage" app/ lib/ \
+  | grep -iE "first|seen|milestone|celebrated"   # sollte leer sein
+
+# 6. UNIQUE-Constraint auf pioneer_milestones vorhanden
+psql -c "\d pioneer_milestones" | grep -i "subscriber_id, key"   # sollte UNIQUE zeigen
 ```
 
 ---

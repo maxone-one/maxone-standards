@@ -1,8 +1,63 @@
 # HANDOFF — maxone-standards
 
-**Stand:** 2026-05-18o (024: stadtlahnflow FAIL→WARN durch OutreachTabs-Split + HEALTH-EXEMPT)
+**Stand:** 2026-05-26 (048/050/006 Treatment für maxone-standards; 052 Konvergenz finalisiert E6+E8; 053 + 011 + 009 committed)
 **Übergeben an:** nächster KI-Mitarbeiter im `maxone-standards` Projektfenster
-**Status:** 36 Standards aktiv; 14 Projekte; OVERALL **9.6/10** (lokal); 024 = **3.6/10** (1 PASS, 6 WARN, 4 FAIL, 3 SKIP); 051 = aktiv
+**Status:** 53 Standards; 14 Projekte; OVERALL **9.6/10** (lokal, Stand 2026-05-18o); 024 = **3.6/10** (4 FAILs: vanfree/stadtpunkt/kitchen-station/solarproof)
+
+---
+
+## Session-Update 2026-05-26 — 048/050/006 Treatment + 053 + 011 + 009
+
+### Was wurde gemacht
+
+**maxone-standards PLAN.md + BUGS.md angelegt** (Standard 048 + Standard 050):
+- `PLAN.md` im Repo-Root mit `## Noch offen` + `## Erledigt` — backgefüllt aus HANDOFF + Memory
+- `BUGS.md` im Repo-Root — 4 geschlossene Bugs (YAML-Parse, Artifact-Quota, set+e, Comment-Filter) rückwirkend dokumentiert, keine aktiven Bugs
+- `CLAUDE.md` aktualisiert: Zähler 32→53 Standards, 11→14 Projekte, Sitzungsstart-Pointer auf PLAN.md + BUGS.md ergänzt
+
+**Standard 053 — Image Pipeline** (Commit `623e850`, seit 2026-05-23):
+Neuer Standard für Image-Optimierung und -Pipeline. Details in `standards/053-image-pipeline.md`.
+
+**Standard 052 — Pioneer-System** (Commits `0b572fe` + `6b605b3`):
+- Pioneer-System-Standard erstellt (2026-05-19)
+- Pulse-Werte, Tier-Logik (nach Eintrittsdatum, nicht Slot-Nummer), Ranking (nach Pulse) korrigiert
+- Achievement-Celebration-Abschnitt als **DRAFT** hinzugefügt (uncommitted, E6+E8 offen)
+- Konvergenz-Briefing: `briefings/pioneer-achievement-convergence.md` (untracked)
+
+**Standard 011 — One-Liner-Pattern** (staged, noch nicht committed):
+Vollständige Überarbeitung — zentraler Auto-Loader (`embed.js`), Override via `data-*`-Attribute,
+Fallback-Pattern, Failure-Modes, Projekt-Status-Tabelle, externes Audit-Script `scripts/audit-vector-embed.mjs`.
+Anlass: karastelev.de hatte stillen Fehlschlag (vector-chat.js ohne `<vector-chat>`-Tag).
+
+**Standard 009 — Impressum** (Commit `da13372`):
+Pseudonym/Brand-Line-Feld + Website-Hinweis ergänzt.
+
+### Uncommittetes / Untracked — wartet auf E6+E8-Entscheidung
+
+| Datei | Git-Status | Wartet auf |
+|---|---|---|
+| `standards/011-vector-chat-widget.md` | ✅ committed | One-Liner-Pattern |
+| `standards/052-pioneer-system.md` | ✅ committed | Achievement-Celebration finalisiert |
+| `scripts/audit-vector-embed.mjs` | ✅ committed | Audit-Script für Widget |
+| `briefings/pioneer-achievement-convergence.md` | ✅ committed | Konvergenz-Analyse (archiviert) |
+| `.mcp.json` | untracked | separate Session |
+| `.playwright-mcp/` | untracked | separate Session |
+
+### 052 Pioneer Konvergenz: alle 8 Entscheidungen getroffen ✅
+
+- **E6:** Drei Tiers A/B/C (projekt-konfigurierbar via `lib/pioneer/config.ts`)
+- **E8:** Broadcast nur `first_slot` bei #1/#10/#25/#50
+- E1–E5 + E7: schon früher entschieden
+
+Standard 052 ist final — kein DRAFT-Status mehr.
+
+### Score-Snapshot (Stand 2026-05-18o, unverändert)
+
+| Standard | Score | Notiz |
+|---|---|---|
+| alle außer 024 | 10.0 | |
+| **024-code-health-budget** | **3.6/10** | vanfree (7%), stadtpunkt (8%+Größen), kitchen-station (7%), solarproof (6%) — nur organisch behebbar |
+| **OVERALL** | **9.6/10** | |
 
 ---
 

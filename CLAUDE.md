@@ -2,12 +2,14 @@
 
 ## Beim Sitzungsstart IMMER lesen
 
-[`HANDOFF.md`](HANDOFF.md) — aktueller Stand der offenen Übergabe.
+1. [`HANDOFF.md`](HANDOFF.md) — aktueller Ops-Stand, offene Session-Updates
+2. [`PLAN.md`](PLAN.md) — vereinbarter Scope, offene Standards-Arbeit
+3. [`BUGS.md`](BUGS.md) — bekannte Bugs in audit.mjs + Standards-Infrastruktur
 
 ## Was dieses Repo ist
 
-Governance-Repo für die 32 maxone-Standards (Architektur/Deploy/Security/UI/
-LLM-Härtung/Mail/Ops/Auth) über 11 Projekte. Nicht der Code der Projekte selbst —
+Governance-Repo für die 53 maxone-Standards (Architektur/Deploy/Security/UI/
+LLM-Härtung/Mail/Ops/Auth) über 14 Projekte. Nicht der Code der Projekte selbst —
 nur die Regeln, das Audit-Script und die Templates.
 
 ## Wichtige Eigenheiten
