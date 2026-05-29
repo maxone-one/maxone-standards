@@ -350,18 +350,18 @@ projects:
 
   - name: solarproof
     workspace: solarproof
-    domain: null
-    server: null
-    deploy: null
-    container: null
-    supabase_url: null  # statische Website ohne DB
+    domain: solarproof.voltfair.de
+    server: voltfair-cli
+    deploy: single
+    container: solarproof-app
+    supabase_url: https://solarproof-api.maxone.one
     path_local: c:\Users\max\Projects\SolarProof
-    path_server: null
+    path_server: /opt/solarproof
     status: live
     tags: brand
-    external_subscriptions: []  # kein Server, keine Domain — keine eigenen Abos
-    last_review_date: "2026-04-27"
-    data_processors: []  # kein Server, keine personenbezogenen Daten verarbeitet
+    external_subscriptions: []
+    last_review_date: "2026-05-29"
+    data_processors: []
 
   - name: vector
     workspace: vector

@@ -96,12 +96,12 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # solarproof hat kein eigenes Server-Deployment (domain/server null) — als Static-Site deployed.
+  # solarproof läuft single-container auf voltfair-cli — Blue-Green-Migration ausstehend.
   - project: solarproof
     standard: '001'
-    reason: Kein Server-Deploy konfiguriert (domain/server null) — Blue-Green-Migration wenn Server-Deploy geplant wird.
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
+    reason: Single-Container auf voltfair-cli (solarproof-app) — Blue-Green-Migration bei nächstem Infra-Sprint.
+    granted_at: '2026-05-29'
+    expires_until: '2026-11-29'
     granted_by: max
 
   # voltfair läuft auf eigenem voltfair-cli VPS — Blue-Green-Migration steht aus.
@@ -139,13 +139,6 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # solarproof hat keine Footer-Komponente — Static-Site ohne eigenen Footer.
-  - project: solarproof
-    standard: '012'
-    reason: Static-Site ohne Footer-Komponente — Footer-Sprint ausstehend.
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
 
   # katchi ist paused — kein Frontend vorhanden für Footer.
   - project: katchi
