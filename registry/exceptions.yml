@@ -417,3 +417,13 @@ exceptions:
     granted_at: '2026-05-12'
     expires_until: '2026-11-12'
     granted_by: max
+
+  # solarproof verwendet @supabase/auth-js, das localhost/127.0.0.1 als
+  # WebAuthn-Entwicklungskonstanten hardcoded enthaelt (webauthn.js + constants.js).
+  # Kein eigener Code-Eintrag — unveraenderlicher Third-Party-Bundle-Anteil.
+  - project: solarproof
+    standard: '018'
+    reason: "@supabase/auth-js enthält localhost/127.0.0.1 als WebAuthn-Konstanten — kein eigener Code, unveraenderlicher Third-Party-Anteil."
+    granted_at: '2026-05-29'
+    expires_until: '2026-11-29'
+    granted_by: max

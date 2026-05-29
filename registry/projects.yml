@@ -361,7 +361,14 @@ projects:
     tags: brand
     external_subscriptions: []
     last_review_date: "2026-05-29"
-    data_processors: []
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (voltfair-cli + voltfair-db) — Laufzeitumgebung und Supabase-DB
+        personal_data: IP-Adressen, E-Mail-Adressen (Supabase Auth/OTP), PV-Analysedaten (Case-Sync)
+        region: EU (Falkenstein, DE)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-05-29"
 
   - name: vector
     workspace: vector
