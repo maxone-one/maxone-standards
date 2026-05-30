@@ -28,6 +28,15 @@
 # anhängen (sonst doppelt).
 
 exceptions:
+  # kitchen-station: internes statisches Tool (nginx + HTML/JS, kein Framework,
+  # kein npm, kein modular Code). 024 Code-Health-Budget nicht sinnvoll anwendbar.
+  - project: kitchen-station
+    standard: '024'
+    reason: Statisches HTML/JS-Tool ohne Framework oder npm — Refactoring-Anteil per git-log nicht messbar, Duplikations-Scanner (jscpd) nicht relevant
+    granted_at: '2026-05-30'
+    expires_until: '2026-11-30'
+    granted_by: max
+
   # kitchen-station ist ein internes Tool ohne Customer-Traffic — Vector-Chat
   # und Footer-Standard-Block sind explizit nicht passend.
   - project: kitchen-station
