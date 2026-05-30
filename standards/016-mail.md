@@ -1,4 +1,4 @@
-# 030 — Mail (Architektur · Passwort-Sync)
+# 016 — Mail (Architektur · Passwort-Sync)
 
 **Status:** active
 **Seit:** 2026-04-28 (Architektur), 2026-05-16 (Passwort-Sync)

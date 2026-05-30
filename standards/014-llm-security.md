@@ -1,4 +1,4 @@
-# 025 — LLM-Security (Direct Injection · Indirect Injection · Agent-Rechte)
+# 014 — LLM-Security (Direct Injection · Indirect Injection · Agent-Rechte)
 
 **Status:** active
 **Seit:** 2026-04-28

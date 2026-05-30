@@ -1,4 +1,4 @@
-﻿# 019 — Cert- und DNS-Realität
+﻿# 012 — Cert- und DNS-Realität
 
 **Status:** active
 **Seit:** 2026-04-27
@@ -12,7 +12,7 @@ Für jede live-Domain muss gelten:
   (maxone-prod, voltfair-cli, voltfair-db, vybora-prod). Andere IPs
   sind dokumentationspflichtig (Lock-in-Risiko).
 - **TLS-Zertifikat** ist gültig (nicht abgelaufen, Restlaufzeit > 14 Tage),
-  vom erwarteten Aussteller (Let's Encrypt — Standard 004 verlangt
+  vom erwarteten Aussteller (Let's Encrypt — Standard 002 verlangt
   DNS-01) und der `subject`/`SAN` deckt die Domain ab.
 
 ## Warum
@@ -36,7 +36,7 @@ ist 7 Tage zu spät, wenn der Auto-Renewer aus irgendeinem Grund stockt.
 
 ## Wie anwenden
 
-**1. Bei Gate 3 (Standard 013 LAUNCH-REVIEW.md):**
+**1. Bei Gate 3 (Standard 008 LAUNCH-REVIEW.md):**
    - Section L (neu) listet: erwartete Server-IP + tatsächliche
      DNS-Auflösung + Cert-Aussteller + Cert-Expiry
    - Bei Wildcard-Cert (`*.maxone.one`): notieren, sonst ist die
@@ -50,7 +50,7 @@ ist 7 Tage zu spät, wenn der Auto-Renewer aus irgendeinem Grund stockt.
    - DNS-A-Record umstellen → bis zu 24h TTL abwarten
    - Audit `--standard=019` → `--project=<name>` neu laufen lassen
    - Neuer Cert sollte automatisch von Traefik via DNS-01 geholt werden
-     (Standard 004) — dauert ~1-2 min nach erstem Hit
+     (Standard 002) — dauert ~1-2 min nach erstem Hit
 
 ## Was das Audit NICHT findet
 
@@ -79,7 +79,7 @@ ist 7 Tage zu spät, wenn der Auto-Renewer aus irgendeinem Grund stockt.
      - `0-7` → FAIL ("Cert läuft in <7 Tagen ab")
      - `< 0` → FAIL ("Cert abgelaufen")
    - `issuer.O` enthält "Let's Encrypt" → OK, sonst WARN
-     ("anderer Issuer — Standard 004 verlangt Let's Encrypt")
+     ("anderer Issuer — Standard 002 verlangt Let's Encrypt")
    - Cert deckt Domain ab (`subject.CN` oder `subjectaltname` SAN) →
      OK, sonst FAIL
 3. **TLS-Handshake-Fehler** → FAIL ("TLS-Handshake fehlgeschlagen")

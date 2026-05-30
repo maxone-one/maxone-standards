@@ -1,4 +1,4 @@
-# 008 — Domain-Policy: .one statt .studio
+# 006 — Domain-Policy: .one statt .studio
 
 **Status:** active
 **Seit:** 2026-04-16 (User-Direktive)

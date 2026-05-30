@@ -1,4 +1,4 @@
-# 014 — Compliance-Lifecycle (Sunset · AVV/DPA-Registry)
+# 009 — Compliance-Lifecycle (Sunset · AVV/DPA-Registry)
 
 **Status:** active
 **Seit:** 2026-04-27 (Sunset), 2026-05-08 (AVV)
@@ -78,8 +78,8 @@ outbound_avv:
 
 ## Gate-Verknüpfung
 
-- **Standard 013 CONCEPT.md (Gate 1):** geplante `data_processors` + `outbound_avv` in Section "Externe Dienste" entwerfen
-- **Standard 013 LAUNCH-REVIEW.md (Gate 3):** vor Live-Gang gegen `registry/projects.yml` abgleichen
+- **Standard 008 CONCEPT.md (Gate 1):** geplante `data_processors` + `outbound_avv` in Section "Externe Dienste" entwerfen
+- **Standard 008 LAUNCH-REVIEW.md (Gate 3):** vor Live-Gang gegen `registry/projects.yml` abgleichen
 - **Sunset:** AVV-Kündigung, Datenlöschung und Exportpflichten beim Abbau prüfen
 
 ---

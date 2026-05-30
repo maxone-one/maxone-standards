@@ -1,4 +1,4 @@
-# 048 — Plan-Tracker (PLAN.md)
+# 024 — Plan-Tracker (PLAN.md)
 
 **Status:** active
 **Seit:** 2026-05-18
@@ -89,7 +89,7 @@ Der Audit prüft nur die Struktur, nicht die Qualität.
 
 ## Migration
 
-- **Neue Projekte:** PLAN.md vor Gate 1 (Standard 015) anlegen.
+- **Neue Projekte:** PLAN.md vor Gate 1 (Standard 008) anlegen.
 - **Bestand:** Sofort anlegen — auch leer. Inhalt kommt beim nächsten
   echten Plan-Sprint.
 - Keine Ausnahmen für `status: live` — PLAN.md ist eine leere Datei,

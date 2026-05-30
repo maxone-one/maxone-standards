@@ -1,4 +1,4 @@
-# 050 — Bug Registry (BUGS.md)
+# 025 — Bug Registry (BUGS.md)
 
 **Status:** active
 **Seit:** 2026-05-18
@@ -182,7 +182,7 @@ Ein leeres `BUGS.md` zum Kopieren liegt unter
 
 ## Audit-Checks
 
-**Per-Projekt (050-bug-registry):**
+**Per-Projekt (025-bug-registry):**
 1. Fehlt `BUGS.md` im Repo-Root? → WARN
 2. Hat `BUGS.md` keine `## Aktive Bugs`-Sektion? → WARN
 3. Hat `BUGS.md` keine `## Geschlossene Bugs`-Sektion? → WARN

@@ -1,4 +1,4 @@
-# 032 — Auth & DB-Isolation (Supabase SSR Auth · DB pro Projekt)
+# 018 — Auth & DB-Isolation (Supabase SSR Auth · DB pro Projekt)
 
 **Status:** active
 **Seit:** 2026-04-28 (Auth), 2026-05-18 (DB-Isolation)

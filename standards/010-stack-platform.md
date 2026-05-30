@@ -1,4 +1,4 @@
-# 016 — Stack & Platform Policy (Whitelist · Self-Hosted-First)
+# 010 — Stack & Platform Policy (Whitelist · Self-Hosted-First)
 
 **Status:** active
 **Seit:** 2026-04-27 (Whitelist), 2026-04-28 (Self-Hosted-First)
@@ -47,7 +47,7 @@ Der Stack jedes Projekts MUSS aus der Whitelist stammen. Blacklist-Komponenten s
 
 - Bei Gate 1: Stack-Wahl pro Schicht mit Whitelist-Status in CONCEPT.md
 - Bei Gate 3: Bundle auf Blacklist-Marker scannen
-- PII-verarbeitende externe Dienste: AVV-Status prüfen (→ Standard 014)
+- PII-verarbeitende externe Dienste: AVV-Status prüfen (→ Standard 009)
 
 ---
 

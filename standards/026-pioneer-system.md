@@ -1,4 +1,4 @@
-# 052 — Pioneer-System
+# 026 — Pioneer-System
 
 **Status:** active
 **Seit:** 2026-05-19

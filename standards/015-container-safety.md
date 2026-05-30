@@ -1,4 +1,4 @@
-# 028 — Container Safety (Misconfig-Audit · Disk-Guard)
+# 015 — Container Safety (Misconfig-Audit · Disk-Guard)
 
 **Status:** active
 **Seit:** 2026-04-28 (Misconfig), 2026-05-18 (Disk-Guard)

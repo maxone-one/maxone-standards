@@ -1,4 +1,4 @@
-# 022 — Security Scanning (gitleaks · Semgrep OWASP)
+# 013 — Security Scanning (gitleaks · Semgrep OWASP)
 
 **Status:** active
 **Seit:** 2026-04-27

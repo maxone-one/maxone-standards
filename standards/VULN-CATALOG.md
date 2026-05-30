@@ -5,7 +5,7 @@
 Projekten gegen halten. Quellen, Real-World-Vorfälle, Coverage-Mapping.
 **Pflege:** bei jedem neuen Vorfall / jeder neuen Studie ergänzen.
 
-> Dieses Dokument ist die Begründung für Standard 013, 022, 023 und die
+> Dieses Dokument ist die Begründung für Standard 008, 022, 023 und die
 > noch geplanten 014–021. Es ersetzt sie nicht — es zeigt, **was sie
 > abdecken und was nicht**.
 
@@ -21,7 +21,7 @@ Dritte den Code sehen).
 
 | Tool | Lizenz | EU-OK | Findet | Bei uns im Einsatz |
 |---|---|---|---|---|
-| **Semgrep** | OSS + paid | ✅ self-host | XSS, SSRF, Injection, Path-Traversal | ✅ Standard 023 |
+| **Semgrep** | OSS + paid | ✅ self-host | XSS, SSRF, Injection, Path-Traversal | ✅ Standard 013 |
 | **CodeQL** | GitHub-frei für Public, paid für Private | ⚠️ Cloud | Tiefe semantische Analyse | optional via GitHub Advanced Security |
 | **SonarQube** | OSS Community + paid | ✅ self-host | Quality + Security gemischt | nicht im Einsatz |
 | **Snyk Code** | Free-Tier + paid | ⚠️ US-Cloud | AI-augmented SAST, IDE-Integration, Auto-Fix | nicht im Einsatz |
@@ -37,7 +37,7 @@ Dritte den Code sehen).
 
 | Tool | Lizenz | EU-OK | Findet | Bei uns im Einsatz |
 |---|---|---|---|---|
-| **gitleaks** | OSS | ✅ self-host | Secrets in Code + Git-Historie | ✅ Standard 022 |
+| **gitleaks** | OSS | ✅ self-host | Secrets in Code + Git-Historie | ✅ Standard 013 |
 | **trufflehog** | OSS + paid (Verifizierung) | ✅ OSS lokal | Secrets + verifiziert ob "live" | optional ergänzend zu gitleaks |
 | **GitHub Secret Scanning** | Free für Public, paid Private | ⚠️ Cloud aber GitHub-nativ | Push-Protection (blockt vor Push) | empfohlen aktivieren |
 | **GitGuardian** | Free-Tier (25 Devs) + paid | ⚠️ FR-Cloud | Live-Monitoring, Pre-Commit, History | optional |
@@ -47,7 +47,7 @@ Dritte den Code sehen).
 
 | Tool | Lizenz | EU-OK | Findet | Bei uns im Einsatz |
 |---|---|---|---|---|
-| **npm audit / pnpm audit** | built-in | ✅ lokal | CVEs in Dependencies | ✅ Standard 013-A |
+| **npm audit / pnpm audit** | built-in | ✅ lokal | CVEs in Dependencies | ✅ Standard 008-A |
 | **Dependabot** | GitHub-frei | ⚠️ Cloud | Auto-PRs für Vuln-Deps | empfohlen aktivieren |
 | **Snyk Open Source** | Free-Tier + paid | ⚠️ US-Cloud | CVEs + License | optional |
 | **Socket.dev** | Free + paid | ⚠️ US-Cloud | Bösartige npm-Pakete (Supply-Chain-Angriff) | empfohlen für npm-lastige Projekte |
@@ -68,7 +68,7 @@ Dritte den Code sehen).
 |---|---|---|---|
 | **Supabase Database Linter** | built-in | RLS fehlt, Default-Allow, missing index, security definer | ✅ in Supabase Studio (manuell prüfen) |
 | **Supabase Security Advisor** | built-in | RLS, Performance, Missing-Index — limitiert (keine JWT/CORS/MFA-Checks) | ✅ Studio → Advisors |
-| **Custom curl-Tests** | DIY | Anon-Key kann lesen was er soll | ✅ Standard 013-C |
+| **Custom curl-Tests** | DIY | Anon-Key kann lesen was er soll | ✅ Standard 008-C |
 | **Vibe App Scanner** | $5 einmalig | Externer 5-Min-Scan: RLS + Storage + RPC | empfohlen pro Launch (Second-Opinion) |
 | **AuditYourApp** | paid | Tiefer Audit, testet echte API-Calls live | optional |
 | **Supabase RLS Checker** | OSS Browser-Extension (Chrome/Firefox) | Live-Erkennung im Browser | optional bei Dev-Sessions |
@@ -134,7 +134,7 @@ Minimal für jedes Projekt mit `status: live`:
 | 1 | Pre-Commit (lokal) | gitleaks | 022 |
 | 2 | Pre-Commit (lokal) | semgrep `--severity=ERROR` | 023 |
 | 3 | CI (GitHub Actions) | gitleaks + semgrep + npm audit + Trivy (für Image) | 022, 023, 013-A, neu |
-| 4 | Pre-Launch (manuell) | Standard 013 komplett, inkl. Section J | 013 |
+| 4 | Pre-Launch (manuell) | Standard 008 komplett, inkl. Section J | 013 |
 | 5 | Pre-Launch (manuell) | Webbkoll-Scan auf Staging-URL | 017 (geplant) |
 | 6 | Pre-Launch (manuell) | Nuclei oder OWASP ZAP gegen Staging | 020 (geplant) |
 | 7 | Live-Continuous | Dependabot + GitHub Secret Scanning + GitHub Code Scanning | optional |
@@ -158,19 +158,19 @@ Jeder Eintrag mit:
 - **Beschreibung:** User-Input wird ungesanitiert als HTML/JS gerendert
 - **AI-Rate:** **86 %** der AI-generierten Samples (Georgetown CSET 2025/26)
 - **Vorfall:** in Lovable-/Bolt-/Base44-Apps live (Escape.tech 03/2026)
-- **Coverage:** ✅ Standard 023 (semgrep), ✅ Standard 013 Section J Punkt 1
+- **Coverage:** ✅ Standard 013 (semgrep), ✅ Standard 008 Section J Punkt 1
 
 #### A2 — Log Injection
 - **CWE:** CWE-117
 - **Beschreibung:** Log-Einträge werden mit User-Input konstruiert, Angreifer kann Log-Format manipulieren oder PII einschleusen
 - **AI-Rate:** **88 %** Failure (Georgetown CSET)
-- **Coverage:** ✅ Standard 023 (semgrep), ✅ Standard 013 Section J Punkt 2
+- **Coverage:** ✅ Standard 013 (semgrep), ✅ Standard 008 Section J Punkt 2
 
 #### A3 — SSRF (Server-Side Request Forgery)
 - **CWE:** CWE-918 / OWASP A10
 - **Beschreibung:** Server-side `fetch(url)` mit User-kontrollierter URL → Angreifer trifft interne Endpunkte (AWS-Metadata, RFC1918)
 - **AI-Rate:** **100 %** über alle 5 getesteten Tools (Cursor, Claude Code, Codex, Replit, Devin) — Tenzai März 2026
-- **Coverage:** ✅ Standard 023 (semgrep), ✅ Standard 013 Section J Punkt 3
+- **Coverage:** ✅ Standard 013 (semgrep), ✅ Standard 008 Section J Punkt 3
 - **Hinweis:** Claude Code (unser Werkzeug) ist mit auf der Liste — eigene Aufmerksamkeit Pflicht
 
 #### A4 — Hardcoded Secrets im Code
@@ -178,13 +178,13 @@ Jeder Eintrag mit:
 - **Beschreibung:** API-Keys, Passwörter, Tokens als String-Literal im Code
 - **AI-Rate:** **3,2 %** (vs. 1,5 % human, Veracode 100+ LLMs 2026) — Faktor 2,1× häufiger bei KI-Commits
 - **Vorfall:** 400 von 5.600 Lovable/Bolt/Base44-Apps mit live API-Keys (Escape.tech 03/2026), inkl. Stripe `sk_live_*`, OpenAI, Supabase Service-Role
-- **Coverage:** ✅ Standard 022 (gitleaks), ✅ Standard 013 Section F (Frontend-Bundle), ✅ Section J Punkt 4
+- **Coverage:** ✅ Standard 013 (gitleaks), ✅ Standard 008 Section F (Frontend-Bundle), ✅ Section J Punkt 4
 
 #### A5 — Hallucination-basierte Flaws
 - **CWE:** keine direkte (Pattern: nicht-existente Library oder fingierter API-Aufruf)
 - **Beschreibung:** LLM erfindet Library-Namen, Funktions-Signatur oder API-Endpunkt. Code referenziert etwas, das nicht existiert oder anders funktioniert als angenommen. Spezialfall: **Slopsquatting / Dependency-Confusion** — LLM erfindet Package-Namen, Angreifer registriert genau diesen Namen und schmuggelt Schadcode ein.
 - **AI-Rate:** **91,5 %** der vibe-coded Apps in Q1 2026 enthielten mindestens eine Hallucination-Flaw (Assessment 200+ Apps, Quelle: GitClear / ICSE-SEIP 2026)
-- **Coverage:** ⚠️ teilweise via Standard 022 (Lockfile-Pflicht), Socket.dev empfohlen für Slopsquatting-Erkennung. **Standard 015 (CONCEPT.md)** erzwingt explizite Stack-Wahl + Reviewer-Prüfung — Hallucinations fallen beim manuellen Code-Re-Read auf. 🔴 **TODO:** automatisierter Library-Existenz-Check in CI.
+- **Coverage:** ⚠️ teilweise via Standard 013 (Lockfile-Pflicht), Socket.dev empfohlen für Slopsquatting-Erkennung. **Standard 008 (CONCEPT.md)** erzwingt explizite Stack-Wahl + Reviewer-Prüfung — Hallucinations fallen beim manuellen Code-Re-Read auf. 🔴 **TODO:** automatisierter Library-Existenz-Check in CI.
 
 ### B. Klassische OWASP-Top-10 (in AI-Code reproduziert)
 
@@ -194,12 +194,12 @@ Jeder Eintrag mit:
 - **Verbreitung:** **94 %** der getesteten Apps mit mindestens einer BOLA-/Access-Control-Lücke (OWASP Top 10 2021 Statistik) — die häufigste Klasse überhaupt
 - **Vorfall:** **Enrichlead 2025** — jeder Nutzer konnte fremde Daten ändern + kostenpflichtige Features nutzen → Projekt eingestellt
 - **Vorfall:** **Lovable 2026** — BOLA-Lücke blieb 48 Tage offen, Bug-Bounty-Report wurde als „erledigt" geschlossen
-- **Coverage:** ✅ Standard 013 Section B (curl User-A vs User-B), ✅ Section J Punkt 7, ✅ Standard 020 (Pen-Test-Light: defensive Außensicht — exposed Files / Admin-Routen / Status-Endpunkte / Header-Hygiene). Echte BOLA mit zwei Test-Usern bleibt manuell in 013-C / Section J.
+- **Coverage:** ✅ Standard 008 Section B (curl User-A vs User-B), ✅ Section J Punkt 7, ✅ Standard 008 (Pen-Test-Light: defensive Außensicht — exposed Files / Admin-Routen / Status-Endpunkte / Header-Hygiene). Echte BOLA mit zwei Test-Usern bleibt manuell in 013-C / Section J.
 
 #### B2 — Vertical Privilege Escalation
 - **OWASP:** A01
 - **Beschreibung:** Normaler User wird Admin durch Manipulation von Header/Token/Request
-- **Coverage:** ✅ Standard 013 Section B
+- **Coverage:** ✅ Standard 008 Section B
 
 #### B3 — Cryptographic Failures
 - **OWASP:** A02
@@ -209,12 +209,12 @@ Jeder Eintrag mit:
 #### B4 — Injection (SQL, NoSQL, Command, LDAP)
 - **CWE:** CWE-89, CWE-78
 - **Beschreibung:** User-Input direkt in SQL/Shell-Command konkateniert
-- **Coverage:** ✅ Standard 023 (semgrep p/owasp-top-ten)
+- **Coverage:** ✅ Standard 013 (semgrep p/owasp-top-ten)
 
 #### B5 — Insecure Design
 - **OWASP:** A04
 - **Beschreibung:** Fehlende Threat-Modeling, fehlende Sicherheitsanforderungen vor Bauphase
-- **Coverage:** 🔄 Standard 015 geplant (CONCEPT.md / Gate 1)
+- **Coverage:** 🔄 Standard 008 geplant (CONCEPT.md / Gate 1)
 
 #### B6 — Security Misconfiguration / Default-Allow DB (insb. Supabase RLS)
 - **OWASP:** A05
@@ -228,38 +228,38 @@ Jeder Eintrag mit:
 - **Vorfall:** **Tea-App / Sapphos 2025** — zwei Datenlecks durch zu weite DB-Permissions, komplette Nutzer-DB downloadbar
 - **Vorfall:** **Moltbook Januar 2026** — 1,5 Mio API-Tokens, 35.000 E-Mails, private Nachrichten öffentlich (Supabase ohne RLS, von Wiz nach 3 Tagen entdeckt)
 - **CVE:** **CVE-2025-48757** — 170+ Lovable-Apps ohne RLS, Source-Code + DB-Credentials 48 Tage exposed
-- **Coverage:** ✅ Standard 013 Section C (RLS-Pflicht, Anon-Key-Test, Supabase-Linter manuell), 🔄 Continue CLI + Supabase MCP als daily Cron empfohlen (siehe Tools-Tabelle)
-- **Coverage Container-Layer:** ✅ Standard 028 (Container-Misconfig-Audit) — 7 Pflicht-Klassen pro `docker-compose.yml`: privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/`. SSH-first mit Local-Fallback, schließt den dokumentierten 002+004-Compose-Blindspot.
+- **Coverage:** ✅ Standard 008 Section C (RLS-Pflicht, Anon-Key-Test, Supabase-Linter manuell), 🔄 Continue CLI + Supabase MCP als daily Cron empfohlen (siehe Tools-Tabelle)
+- **Coverage Container-Layer:** ✅ Standard 015 (Container-Misconfig-Audit) — 7 Pflicht-Klassen pro `docker-compose.yml`: privileged, inline-secrets, `:latest`-Pull, mem_limit, restart, docker.sock, env_file aus `/opt/secrets/`. SSH-first mit Local-Fallback, schließt den dokumentierten 002+004-Compose-Blindspot.
 
 #### B7 — Vulnerable & Outdated Components
 - **OWASP:** A06
-- **Coverage:** ✅ Standard 013 Section A (`npm audit --production` ohne Critical/High), Dependabot empfohlen
+- **Coverage:** ✅ Standard 008 Section A (`npm audit --production` ohne Critical/High), Dependabot empfohlen
 
 #### B8 — Identification & Authentication Failures
 - **OWASP:** A07
 - **Beschreibung:** Session-Fixation, schwache Passwort-Reset-Tokens, fehlende MFA, lange Session-Lifetime
-- **Coverage:** ✅ Standard 013 Section B
+- **Coverage:** ✅ Standard 008 Section B
 
 #### B9 — Software & Data Integrity Failures
 - **OWASP:** A08
 - **Beschreibung:** Fehlende Webhook-Signaturen (z.B. Stripe), unsignierte Updates, Auto-Update von npm-Packages
-- **Coverage:** ✅ Standard 013 Section G (Webhook-Signatur-Prüfung), ✅ npm lockfile Pflicht
+- **Coverage:** ✅ Standard 008 Section G (Webhook-Signatur-Prüfung), ✅ npm lockfile Pflicht
 
 #### B10 — Security Logging & Monitoring Failures
 - **OWASP:** A09
 - **Beschreibung:** Vorfälle werden nicht erkannt, weil Logging fehlt oder PII enthält
-- **Coverage:** ✅ Standard 013 Section H, I (Logging + Monitoring Pflicht)
+- **Coverage:** ✅ Standard 008 Section H, I (Logging + Monitoring Pflicht)
 
 ### C. DSGVO-/Privacy-Lücken
 
 #### C1 — Tracker ohne Consent
 - **Rechtsgrundlage:** TTDSG § 25, DSGVO Art. 6
 - **Vorfall:** ständig — auch eigener 30-min-Vibe-Coding-Test 2026-04-27 hatte das Problem
-- **Coverage:** ✅ Standard 013 Section D + ✅ Standard 017 (audit.mjs HTML-Pattern-Scan auf GA/GTM/FB-Pixel/Hotjar/Mixpanel/Segment/Amplitude/Intercom/CrazyEgg/LinkedIn/TikTok/YouTube/Vimeo/Maps; Webbkoll für JS-injizierte Tracker manuell)
+- **Coverage:** ✅ Standard 008 Section D + ✅ Standard 011 (audit.mjs HTML-Pattern-Scan auf GA/GTM/FB-Pixel/Hotjar/Mixpanel/Segment/Amplitude/Intercom/CrazyEgg/LinkedIn/TikTok/YouTube/Vimeo/Maps; Webbkoll für JS-injizierte Tracker manuell)
 
 #### C2 — Google Fonts via CDN
 - **Rechtsgrundlage:** **LG München I, Az. 3 O 17493/20** — Schadensersatz an betroffene IP
-- **Coverage:** ✅ Standard 013 Section D + ✅ Standard 017 (audit.mjs HTML-Pattern-Scan auf `fonts.googleapis.com` / `fonts.gstatic.com` — am 2026-04-27 hat das Audit repivot + snapflow live als Verstoss geflaggt)
+- **Coverage:** ✅ Standard 008 Section D + ✅ Standard 011 (audit.mjs HTML-Pattern-Scan auf `fonts.googleapis.com` / `fonts.gstatic.com` — am 2026-04-27 hat das Audit repivot + snapflow live als Verstoss geflaggt)
 
 #### C3 — PII in Logs
 - **Beschreibung:** E-Mails, IPs, Namen in Server-Logs ohne Notwendigkeit
@@ -267,21 +267,21 @@ Jeder Eintrag mit:
 
 #### C4 — Fehlender AVV / DPA
 - **Rechtsgrundlage:** DSGVO Art. 28
-- **Coverage:** Standard 013 Section D + Standard 041 (data_processors-Registry mit AVV-/DPA-Status, Nachweis-Ort und reviewed_at)
+- **Coverage:** Standard 008 Section D + Standard 009 (data_processors-Registry mit AVV-/DPA-Status, Nachweis-Ort und reviewed_at)
 
 #### C5 — Daten ausserhalb EU
 - **Rechtsgrundlage:** DSGVO Kap. V
-- **Coverage:** ✅ Standard 013 Section D, ✅ "Germany First"-Prinzip in CLAUDE.md
+- **Coverage:** ✅ Standard 008 Section D, ✅ "Germany First"-Prinzip in CLAUDE.md
 
 #### C6 — Externe Embeds ohne 2-Click
 - **Beispiel:** YouTube, Vimeo, Maps mit Personenbezug
-- **Coverage:** ✅ Standard 013 Section D
+- **Coverage:** ✅ Standard 008 Section D
 
 #### C7 — PII-Exposure ohne Auth (öffentliche personenbezogene Daten)
 - **Rechtsgrundlage:** DSGVO Art. 32 („Stand der Technik") + Art. 33 (72h-Meldepflicht) + Art. 83 (bis 4 % Jahresumsatz)
 - **Beschreibung:** Medizinische Daten, Zahlungsinfos, Adressen, Namen direkt per öffentlicher API/URL abrufbar — meist Folge von B6 (RLS-Misconfig) oder Unauth-Routes
 - **Vorfall:** Escape.tech-Scan März 2026 — **175 PII-Leaks** in 5.600 Vibe-Coded Apps, inklusive Medical Records und Payment Data, in Produktion (nicht Test)
-- **Coverage:** ✅ Standard 013 Section C (RLS) + Section J Punkt 6 (Unauth-Routes-Liste) + ✅ Standard 020 (Pen-Test-Light: prüft `.env`/`.git/`/`backup.sql` exposed — am 2026-04-28 lief der Audit live über alle 8 Domains, 0 Critical-Treffer). Vollständiger Endpunkt-Scan auf personenbezogene Felder bleibt manuell.
+- **Coverage:** ✅ Standard 008 Section C (RLS) + Section J Punkt 6 (Unauth-Routes-Liste) + ✅ Standard 008 (Pen-Test-Light: prüft `.env`/`.git/`/`backup.sql` exposed — am 2026-04-28 lief der Audit live über alle 8 Domains, 0 Critical-Treffer). Vollständiger Endpunkt-Scan auf personenbezogene Felder bleibt manuell.
 
 ### D. AI-Agent-spezifische Risiken (OWASP LLM Top 10, 2025 + Agentic 2026)
 
@@ -292,30 +292,30 @@ Jeder Eintrag mit:
 
 #### D1 — Prompt Injection (OWASP **LLM01:2025**)
 - **Beschreibung:** User-Input wird als Instruktion vom LLM interpretiert, Schutz wird umgangen
-- **Coverage:** ✅ Standard 025 (3-Direktiven-Härtung + `<user_message>`-Wrapping + Pflicht-Test-Suite mit ≥10 Payloads)
+- **Coverage:** ✅ Standard 014 (3-Direktiven-Härtung + `<user_message>`-Wrapping + Pflicht-Test-Suite mit ≥10 Payloads)
 - **Empfohlene Test-Quelle:** garak `promptinject.HijackHateHumans`, `dan.DanInTheWild`, `dan.AntiDAN`, sowie greshake/llm-security `chat_completion_steering` für indirect-injection (RAG/Telegram/Web-Chat)
 
 #### D2 — Insecure Output Handling (OWASP **LLM02:2025**, jetzt **LLM05:2025** „Improper Output Handling")
 - **Beschreibung:** LLM-Output wird ungeprüft als Code/HTML/SQL ausgeführt
-- **Coverage:** ✅ Standard 025 (DOMPurify-Pflicht + Tool-Use-Schema mit `enum`-Whitelists statt Freitext-Aktionen)
+- **Coverage:** ✅ Standard 014 (DOMPurify-Pflicht + Tool-Use-Schema mit `enum`-Whitelists statt Freitext-Aktionen)
 
 #### D3 — Sensitive Information Disclosure (OWASP **LLM06:2025**, jetzt teils **LLM07:2025** „System Prompt Leakage")
 - **Beschreibung:** LLM gibt System-Prompt, andere User-Daten oder Trainingsdaten preis
-- **Coverage:** ✅ Standard 025 (Direktive 2: explizites Verbot der Prompt-Preisgabe inkl. ROT13/Base64/Translation-Bypass)
+- **Coverage:** ✅ Standard 014 (Direktive 2: explizites Verbot der Prompt-Preisgabe inkl. ROT13/Base64/Translation-Bypass)
 - **Empfohlene Test-Quelle:** garak `leakreplay.SystemPrompts`
 
 #### D4 — Excessive Agency (OWASP **LLM08:2025**, plus Agentic **ASI06:2026** „Tool Misuse" + **ASI07:2026** „Privilege Compromise") — die Replit-Klasse
 - **Beschreibung:** AI-Agent hat zu viele Rechte / zu wenig Genehmigungs-Gates für irreversible Aktionen
 - **Vorfall:** **Replit-Agent 2025** — autonomer Agent löschte Prod-DB trotz Anweisung "keine Änderungen". Ursache: keine technische Test/Prod-Trennung
-- **Coverage:** ✅ Standard 013 Section E (Test/Prod-Trennung) + ✅ Standard 025 (Approval-Queue über `ops_tasks` für Schreib-Tools)
+- **Coverage:** ✅ Standard 008 Section E (Test/Prod-Trennung) + ✅ Standard 014 (Approval-Queue über `ops_tasks` für Schreib-Tools)
 
 #### D5 — Agentic Memory Poisoning (Agentic **ASI01:2026**) — VECTOR-spezifisch
 - **Beschreibung:** Persistenter Agent-Speicher wird durch eine eingeschleuste Instruktion vergiftet, sodass spätere Sessions die Manipulation reproduzieren
-- **Coverage:** ⚠️ teilweise via Standard 025 (Indirect-Input-Wrapping); 🔴 **TODO:** dedizierte Memory-Validierung vor jedem Restore in VECTOR
+- **Coverage:** ⚠️ teilweise via Standard 014 (Indirect-Input-Wrapping); 🔴 **TODO:** dedizierte Memory-Validierung vor jedem Restore in VECTOR
 
 #### D6 — Cascading Hallucination / Goal Manipulation (Agentic **ASI02:2026** + **ASI03:2026**)
 - **Beschreibung:** Halluzinierter Tool-Output wird zur Eingabe der nächsten Agent-Stufe → Fehler kaskadiert; Goal-Override durch geschickte Eingaben
-- **Coverage:** ⚠️ teilweise via Standard 025 (Approval-Queue + Whitelists); 🔴 **TODO:** Output-Sanity-Checks zwischen Agent-Hops
+- **Coverage:** ⚠️ teilweise via Standard 014 (Approval-Queue + Whitelists); 🔴 **TODO:** Output-Sanity-Checks zwischen Agent-Hops
 
 ### E. Plattform- & Supply-Chain-Lücken
 
@@ -323,40 +323,40 @@ Jeder Eintrag mit:
 - **Beschreibung:** Code lebt auf Lovable/Bolt/Base44/v0/Replit. Wenn die Plattform eine Lücke hat, sind alle Apps darauf betroffen — auch wenn der eigene Code sauber ist
 - **Vorfall:** **Base44 Juli 2025** — Plattform-Lücke gab Angreifern Zugriff auf fremde private Apps
 - **Vorfall:** **Lovable 2026** — drei dokumentierte Security-Incidents, jüngster: BOLA-Lücke 48 Tage offen
-- **Coverage:** ✅ Standard 013 Section J Punkt 8 (Plattform-Lock-in-Check), ✅ Standard 016 (Stack-Whitelist + Audit auf Marker/Lockfile)
+- **Coverage:** ✅ Standard 008 Section J Punkt 8 (Plattform-Lock-in-Check), ✅ Standard 010 (Stack-Whitelist + Audit auf Marker/Lockfile)
 
 #### E2 — Bösartige npm-Packages (Supply-Chain)
 - **Beschreibung:** Angreifer published Package mit ähnlichem Namen oder kompromittiert legitimes Package
 - **Coverage:** ⚠️ teilweise via npm audit, **Socket.dev empfohlen**, kein eigener Standard
 
 #### E3 — Stale Dependencies
-- **Coverage:** ✅ Standard 013 Section A (npm audit), Dependabot empfohlen
+- **Coverage:** ✅ Standard 008 Section A (npm audit), Dependabot empfohlen
 
 #### E4 — Packaging-Fehler / Source Code Leak
 - **CWE:** CWE-540 (Information Exposure Through Source Code)
 - **Beschreibung:** Build-/Bundling-Konfiguration falsch, proprietärer Code landet im Release-Artefakt (npm-Package, Docker-Image, Frontend-Bundle, Source-Maps)
 - **Vorfall:** **Anthropic Claude Code CLI 2026-03-31** — 59,8 MB Source Map im npm-Package, ~512.000 Zeilen TypeScript exponiert. Das Tool selbst ist vibe-coded. **Kein Code-Bug, sondern Packaging-Konfig**. SAST hat es nicht gefunden, weil keine Logik-Lücke vorlag.
 - **Lehre:** Security braucht auch Packaging-Reviews. Source-Maps in Public-Bundles + npm-Package-Inhalt müssen geprüft werden.
-- **Coverage:** ✅ Standard 013 Section F (Source-Maps in Prod deaktiviert/privat) + ✅ Standard 018 (Live-Asset-Scan auf `sourceMappingURL=` Direktive), ⚠️ npm-Package-Inhalt nicht systematisch geprüft
+- **Coverage:** ✅ Standard 008 Section F (Source-Maps in Prod deaktiviert/privat) + ✅ Standard 011 (Live-Asset-Scan auf `sourceMappingURL=` Direktive), ⚠️ npm-Package-Inhalt nicht systematisch geprüft
 
 ### F. Drift-Klassen (live, schleichend)
 
 #### F1 — DNS-Drift
 - **Beschreibung:** Domain zeigt nicht mehr auf eigenen Server (z.B. plansey.app → Lovable, vanfree-Domain → IONOS Parking)
 - **Vorfall:** im aktuellen Projekt-Audit gefunden, 2026-04-27 — plansey.app zeigt auf 172.67.165.34 + 104.21.11.40 (Cloudflare) statt eigenen Hetzner-Server
-- **Coverage:** ✅ Standard 019 (audit.mjs `dns.resolve4` gegen `KNOWN_SERVER_IPS`-Whitelist; fremde IPs werden mit konkreter IP-Liste gewarnt)
+- **Coverage:** ✅ Standard 012 (audit.mjs `dns.resolve4` gegen `KNOWN_SERVER_IPS`-Whitelist; fremde IPs werden mit konkreter IP-Liste gewarnt)
 
 #### F2 — Bundle-Drift (alte URLs / Domains)
 - **Beispiel:** repivot lädt `panel.maxone.studio` obwohl auf `.one` migriert
-- **Coverage:** ✅ Standard 018 (audit.mjs zieht bis zu 8 Live-Assets pro Domain und scannt auf `*.maxone.studio`-Reste, Plattform-Watermarks, Dev-Hosts, Service-Role-Keys; am 2026-04-27 hat das Audit bei repivot genau diesen Drift live nachgewiesen)
+- **Coverage:** ✅ Standard 011 (audit.mjs zieht bis zu 8 Live-Assets pro Domain und scannt auf `*.maxone.studio`-Reste, Plattform-Watermarks, Dev-Hosts, Service-Role-Keys; am 2026-04-27 hat das Audit bei repivot genau diesen Drift live nachgewiesen)
 
 #### F3 — Cert-Ablauf
 - **Vorfall:** vanfree (vanfree.de) hat 2026-04-27 TLS-Handshake-Fehler — Audit hat es als FAIL geflaggt; karastelev.de hatte 2026-04-22 Account-Ratelimit-Sprenger durch HTTP-01 (Auslöser für DNS-01-Direktive)
-- **Coverage:** ✅ Standard 019 (audit.mjs `tls.connect` zieht Cert, prüft Restlaufzeit (>14d OK / 7-14d WARN / <7d FAIL), Issuer (Let's Encrypt) und Subject/SAN-Match)
+- **Coverage:** ✅ Standard 012 (audit.mjs `tls.connect` zieht Cert, prüft Restlaufzeit (>14d OK / 7-14d WARN / <7d FAIL), Issuer (Let's Encrypt) und Subject/SAN-Match)
 
 #### F4 — Source-Maps in Production
 - **Beschreibung:** Source-Maps öffentlich → Reverse-Engineering trivial
-- **Coverage:** ✅ Standard 013 Section F + ✅ Standard 018 (Live-Asset-Scan)
+- **Coverage:** ✅ Standard 008 Section F + ✅ Standard 011 (Live-Asset-Scan)
 
 #### F5 — Mail-Architektur-Drift (Outbound/Inbound-Kanal-Verwechslung)
 - **Beschreibung:** App schickt ausgehende Mail über Stalwart-SMTP statt Brevo HTTP-API; oder Diagnose sucht im falschen System (Stalwart-Logs für Outbound). Pre-Flight-Check für Brevo-Domain-Auth fehlt → Brevo wirft Mails still mit `event=error` weg, DB-Status bleibt `sent`. JMAP-Client strippt `{accountId}`-Template aus `uploadUrl` → Sent-Kopien landen als Orphan-Blobs im Default-Account `"a"`, Stalwart antwortet 200 ohne Side-Effect. Health-Checks mit Fake-Auth-Headers triggern Stalwart-Auto-Ban nach 2 Calls → Self-Inflicted-Outage in Restart-Loop.
@@ -364,7 +364,7 @@ Jeder Eintrag mit:
 - **Vorfall:** **2026-04-05** Self-Inflicted Fail2Ban Loop — `zentinel-health` schickte alle 2min `Basic healthcheck:invalid` → Stalwart bannte Edge-IP → Restart-Loop bis Max die Timer manuell stoppte
 - **Vorfall:** **2026-04-10** Sent-Items-Blackhole + Brevo Silent Rejection — 7 Sent-Kopien als Blob-Orphans in Default-Account verloren (5 Tage); 1 Mail (`max@maxone.one → r.jenau@linagames.de`) von Brevo still rejected weil Domain noch nicht authentifiziert war (Empfänger-Rückfrage 7 Tage später)
 - **Vorfall:** **2026-04-27** Falsch-Negativ-Diagnose — Mail-Status-Frage „hat X meine Mail bekommen?" wurde fälschlich aus Stalwart-Logs beantwortet (zeigten nichts → falsches „nein"); korrekte Antwort lag in Brevo Events API
-- **Coverage:** ✅ Standard 030 (Mail-Architektur — Pre-Flight-Pflicht, Anti-Pattern-Scan für `uploadUrl.split("{")` / `Basic healthcheck:invalid` / `/.well-known/jmap`-Request / Public-URL aus Edge-Function / fehlender DB-Status `rejected_unauthenticated_domain`). Quelle: [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md) (20 Regeln, lebendiges Dokument).
+- **Coverage:** ✅ Standard 016 (Mail-Architektur — Pre-Flight-Pflicht, Anti-Pattern-Scan für `uploadUrl.split("{")` / `Basic healthcheck:invalid` / `/.well-known/jmap`-Request / Public-URL aus Edge-Function / fehlender DB-Status `rejected_unauthenticated_domain`). Quelle: [`maxone.one/briefings/ZENTINEL-STALWART-BIBEL.md`](https://github.com/maxone-one/maxone.one/blob/main/briefings/ZENTINEL-STALWART-BIBEL.md) (20 Regeln, lebendiges Dokument).
 
 ### G. Strukturelle / Wartbarkeits-Lücken (langfristig sicherheitsrelevant)
 
@@ -376,8 +376,8 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
   rein menschlicher Code (CodeRabbit Analyse 470 PRs, 2026)
 - **Beschreibung:** KI generiert Code schneller als Reviewer ihn lesen können —
   Findings akkumulieren sich, Backlog wird unbewältigbar
-- **Coverage:** ✅ Standard 013 Section A (Black-Box-Anteil Pflicht-Schätzung,
-  > 20 % triggert zusätzlichen Review-Pass), ✅ Standard 015 (CONCEPT.md
+- **Coverage:** ✅ Standard 008 Section A (Black-Box-Anteil Pflicht-Schätzung,
+  > 20 % triggert zusätzlichen Review-Pass), ✅ Standard 008 (CONCEPT.md
   vom Menschen) — minimiert Konzept-Lücken, nicht Implementierungs-Lücken
 
 #### G2 — Refactoring-Anteil im Sinkflug
@@ -387,7 +387,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
 - **Beschreibung:** Codebase wächst, aber Architektur erodiert. Jeder neue
   Bugfix passiert in einer komplexeren Umgebung als der vorhergehende.
 - **Coverage:** 🔴 **TODO** — kein technischer Audit. Mitigation: explizite
-  Refactor-Sprints pro Quartal, evtl. Standard 024 „Code-Health-Budget".
+  Refactor-Sprints pro Quartal, evtl. Standard 003 „Code-Health-Budget".
 
 #### G3 — Code-Duplikation explodiert
 - **Daten:** **4× mehr Code-Duplikation seit 2021** (GitClear). KI-Tools
@@ -407,7 +407,7 @@ jede Bug-Klasse ihre Wirkung. Tech-Debt ist Security-Debt mit Verzögerung.
   2026-05-11 hatte vier Optionen, alle vier vom User-NUC abhängig
   (Windows Task Scheduler / WSL crontab / Doppelklick / „läuft eh bei
   Session-Start"). Genau das war Drift-Erzeugung statt Drift-Schutz.
-- **Coverage:** ✅ Standard 031 (Routine-Platform) — Audit FAILt bei
+- **Coverage:** ✅ Standard 017 (Routine-Platform) — Audit FAILt bei
   `Register-ScheduledTask`/`schtasks /create`/`wsl crontab` als
   Setup-Anleitung; WARNt bei `*audit*.cmd`/`*scheduled*.cmd` ohne
   Heartbeat-Begleitfile; PASS verlangt Heartbeat-Marker
@@ -513,8 +513,8 @@ Traefik + Claude Code (CLI, kein API).
 
 ### In GitHub Actions (pro PR — alles kostenlos)
 
-1. **Semgrep CE** — SAST (Standard 023)
-2. **gitleaks** — Secret-Scan (Standard 022)
+1. **Semgrep CE** — SAST (Standard 013)
+2. **gitleaks** — Secret-Scan (Standard 013)
 3. **Dependabot** — npm-Dependency-Updates
 4. **TruffleHog** — Git-History-Secret-Scan
 5. **OWASP ZAP Baseline Scan** — DAST Smoke Test gegen Staging-URL
@@ -531,7 +531,7 @@ Traefik + Claude Code (CLI, kein API).
 9. **Lynis** Host-Audit (monatlich)
 10. **CrowdSec** statt/zusätzlich zu Fail2Ban
 
-### Vor jedem Go-Live (Standard 013-Lauf)
+### Vor jedem Go-Live (Standard 008-Lauf)
 
 11. **Vibe App Scanner** ($5) — externer Second-Opinion-Scan
 12. **Manueller Curl-Pen-Test** für BOLA (User-A vs User-B) — Section J Punkt 7
@@ -560,16 +560,16 @@ einem Standard erzwungen, sondern bewusst diskutiert.
    fängt die restlichen 20 %. Frage: ab welchem Umsatz lohnt sich DGC/SySS?
 
 3. **Pen-Test-Frequenz** — einmalig vor Launch (aktuell), jährlich, oder
-   bei jedem Major-Release? Standard 020 (Pen-Test-Light) deckt automatisiert
+   bei jedem Major-Release? Standard 008 (Pen-Test-Light) deckt automatisiert
    das Wiederkehrende ab; manueller Tiefen-Pen-Test bleibt diskutabel.
 
 4. **Bug-Bounty-Programm** — öffentlich (HackerOne / Intigriti) oder privat?
    Aktuell zu früh; ab > 1.000 zahlende Nutzer eines Projekts neu prüfen.
 
 5. **Security-Disclosure-Policy** — eigener `/security.txt` mit Kontakt und
-   Response-Zeit pro Domain? Würde unter Standard 026 fallen.
+   Response-Zeit pro Domain? Würde unter Standard 010 fallen.
 
-6. **DSGVO-Folgenabschätzung (Art. 35)** — ab wann formal? Standard 015
+6. **DSGVO-Folgenabschätzung (Art. 35)** — ab wann formal? Standard 008
    (CONCEPT.md) enthält die Mindest-Prüfung, aber kein vollständiges DSFA-Template.
 
 ---
@@ -602,7 +602,7 @@ einem Standard erzwungen, sondern bewusst diskutiert.
 | 18 | Eigene Vorfälle: Enrichlead, Tea-App, Moltbook, Replit-Agent, Base44, Lovable | B1, B6, D4, E1 |
 | 19 | aquasecurity/trivy — `trivy config` Compose-Ruleset (AVD-DS-XXXX) | B6 (Container-Layer) |
 | 20 | bridgecrewio/checkov — `CKV_DOCKER_*` Compose-Ruleset | B6 (Container-Layer) |
-| 21 | Stalwart-Orphan-Vorfall 2026-03-24 (CLAUDE.md) — `docker run` ohne `restart:` → Brevo-Key-Exposure, Mail-Downtime | B6 (Standard 028 Begründung) |
+| 21 | Stalwart-Orphan-Vorfall 2026-03-24 (CLAUDE.md) — `docker run` ohne `restart:` → Brevo-Key-Exposure, Mail-Downtime | B6 (Standard 015 Begründung) |
 
 **Pflege:** Bei jedem neuen Vorfall (eigene Nachrichten oder LinkedIn/HN/Newsletter)
 einen Eintrag ergänzen — Datum, Quelle, betroffene Klasse, Coverage-Status.

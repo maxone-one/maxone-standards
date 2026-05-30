@@ -1,4 +1,4 @@
-# 005 — Tests & Code-Qualität (Test-First · Code-Health-Budget)
+# 003 — Tests & Code-Qualität (Test-First · Code-Health-Budget)
 
 **Status:** active
 **Seit:** 2026-04-17 (Test-First), 2026-04-28 (Code-Health)
@@ -57,7 +57,7 @@ npx jscpd --min-tokens 50 --reporters json --output ./jscpd-report ./src
 
 **HANDOFF.md Code-Health-Sektion** (Best-Practice):
 ```markdown
-## Code-Health (Standard 005-B)
+## Code-Health (Standard 003-B)
 - Black-Box-Anteil (KI-generiert): ~25 %
 - Refactoring-Anteil letztes Quartal: 18 %
 - Duplikations-Score (jscpd): 3,4 %

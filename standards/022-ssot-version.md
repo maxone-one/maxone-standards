@@ -1,4 +1,4 @@
-# 042 — SSoT & Version-Marker (Version-Marker · Cron-Dedup · Kein Hardcode)
+# 022 — SSoT & Version-Marker (Version-Marker · Cron-Dedup · Kein Hardcode)
 
 **Status:** active
 **Seit:** 2026-05-17
@@ -86,8 +86,8 @@ Kein Wert der in mehr als einer Datei verwendet wird, darf hardcoded im Komponen
 |---|---|
 | Social-Media-Links | `maxone-standards/config/social.ts` → sync → `lib/social.ts` |
 | Marken-URLs | `lib/constants.ts` pro Projekt / ENV wo sinnvoll |
-| Rechtliche Texte / Impressum | Zentrale API (→ Standard 009) |
-| Secrets & API-Keys | `/opt/secrets/` Store (→ Standard 003) |
+| Rechtliche Texte / Impressum | Zentrale API (→ Standard 007) |
+| Secrets & API-Keys | `/opt/secrets/` Store (→ Standard 002) |
 | Build-IDs | ENV-Injection zur Build-Zeit (→ A oben) |
 | Farbpaletten / Tokens | `tailwind.config` / CSS-Custom-Properties |
 

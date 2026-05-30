@@ -1,4 +1,4 @@
-# 031 — Routine-Platform: keine Cron-Logik in IDE/Claude-Sitzungen
+# 017 — Routine-Platform: keine Cron-Logik in IDE/Claude-Sitzungen
 
 **Status:** active
 **Seit:** 2026-04-28
@@ -87,7 +87,7 @@ Erzeugung statt Drift-Schutz.
   Telegram-Reminders, Health-Checks, `ops_tasks`-Bearbeitung laufen
   unabhängig vom User.
 - **`brevo-bounce-watchdog.timer`** (systemd auf maxone-prod) — fängt
-  jede stillschweigend abgewiesene Sender-Domain (Standard 030 /
+  jede stillschweigend abgewiesene Sender-Domain (Standard 016 /
   Bibel Regel 12+20).
 - **`zentinel-watchdog`** (systemd auf maxone-prod) — `unban-stalwart.sh`
   + `circuit-breaker-drill.sh`.
@@ -130,7 +130,7 @@ Container-Health-Probes, Daten-Export für DSGVO-Sunset (014).
 | Server-State-Check (Disk, RAM, Container-Health) | systemd-Timer + Telegram via VECTOR | direkt am Host, keine SSH-Hops |
 | DB-Wartung (Vacuum, Analyze, RLS-Linter-Cron) | Supabase `pg_cron` | läuft im DB-Cluster, Transaktional |
 | User-Reminders (Re-Review-Datum, Sunset-Frist) | VECTOR Telegram-Send | Max liest Telegram, nicht Mail-Inbox |
-| Cert-Renewal | Traefik built-in (DNS-01-Loop, Standard 004) | bereits idempotent + idle-fähig |
+| Cert-Renewal | Traefik built-in (DNS-01-Loop, Standard 002) | bereits idempotent + idle-fähig |
 | Mail-Watchdog (Brevo-Bounce, Stalwart-Unban) | systemd-Timer auf maxone-prod | nahe an Mail-Stack |
 | LLM-Quota-Check, Token-Status | VECTOR Background-Task | hat OAuth-Token, kann selbst korrigieren |
 
@@ -194,7 +194,7 @@ Konkrete Migration für dieses Repo (war der Trigger-Vorfall):
 
 ## Audit
 
-Audit-ID: `031-routine-platform`. Heuristik pro Projekt:
+Audit-ID: `017-routine-platform`. Heuristik pro Projekt:
 
 1. **Hat das Projekt überhaupt Routinen?** Suche im Repo nach
    Heartbeat-Markern (PASS-Indikator) oder IDE-Trigger-Markern
@@ -241,7 +241,7 @@ Audit-ID: `031-routine-platform`. Heuristik pro Projekt:
   IDE-gebundene Routinen besonders fragil
 - VECTOR `/opt/vector/IDENTITY.md` — die zentrale 24/7-Agent-
   Plattform, an die viele Routinen abgegeben werden können
-- Standard 027 Deploy-Pipeline — definiert den Self-Hosted-Runner
+- Standard 001 Deploy-Pipeline — definiert den Self-Hosted-Runner
   `voltfair-server` als Build-Plattform; derselbe Runner kann
   GH-Actions-Cron aufnehmen
 - HANDOFF.md — der konkrete Trigger-Vorfall, der diese Regel

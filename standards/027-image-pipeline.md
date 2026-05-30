@@ -1,4 +1,4 @@
-# Standard 053 — Image Pipeline
+# 027 — Image Pipeline
 
 **Status:** Active (2026-05-20)
 **Scope:** Alle maxone-Properties (maxone.one, voltfair.de, vanfree.de, SLF, snapflow, plansey, repivot, katchi, vector, kitchen-station, alle kuenftigen)

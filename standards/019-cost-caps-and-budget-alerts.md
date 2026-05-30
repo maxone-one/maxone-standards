@@ -1,4 +1,4 @@
-# 034 — Kosten-Caps und Budget-Alerts auf jedem kostenpflichtigen Drittdienst
+# 019 — Kosten-Caps und Budget-Alerts auf jedem kostenpflichtigen Drittdienst
 
 **Status:** active
 **Seit:** 2026-05-02 (User-Direktive nach 715,08-EUR-Vorfall mit Google Places API)
@@ -77,6 +77,6 @@ Wenn ein Quota-Hit oder Budget-Alarm auftritt:
 
 ## Beziehung zu anderen Standards
 
-- **003-secrets-store:** API-Keys gehören in den Store. Cost-Caps sind eine Eigenschaft des Keys.
+- **002-secrets-store:** API-Keys gehören in den Store. Cost-Caps sind eine Eigenschaft des Keys.
 - **026-self-hosted-first:** Reduziert die Anzahl kostenpflichtiger Dienste — was self-hosted ist, kann nicht durchdrehen wegen Pay-per-Call.
 - **VULN-CATALOG:** Eintrag im Block "Kosten-/Quota-Lecks" mit Verweis auf diesen Standard.

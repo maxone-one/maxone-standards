@@ -1,4 +1,4 @@
-# Standard 056 — Manufacturer Asset Sourcing (Logos + Produktbilder)
+# 030 — Manufacturer Asset Sourcing (Logos + Produktbilder)
 
 **Status:** Active (2026-05-30)
 **Scope:** Alle Projekte die Hersteller-Logos oder Produktbilder von Drittanbietern zeigen (venfree, SLF, voltfair, künftige Katalog-Properties)
@@ -114,7 +114,7 @@ const imageUrl = img?.getAttribute('data-zoom')        // beste Qual.
 
 - **Option A (bevorzugt):** `image_url` in `catalog_products` zeigt auf Hersteller-CDN-URL
   - Vorteil: kein Storage-Aufwand, Bilder immer aktuell
-  - Risiko: URL kann sich ändern — bei 404-Monitoring (Standard 042) absichern
+  - Risiko: URL kann sich ändern — bei 404-Monitoring (Standard 022) absichern
 
 - **Option B:** Bild herunterladen → Supabase Storage → stabile eigene URL
   - Pflicht wenn: Bild aus Auth-geschütztem Bereich stammt, oder Hersteller Hot-Linking explizit verbietet
@@ -128,7 +128,7 @@ const imageUrl = img?.getAttribute('data-zoom')        // beste Qual.
 ### Wann ausführen
 
 - Bei Erstanlage neuer Hersteller im Katalog
-- Bei Quarterly-Refresh (Preise + Bilder synchron — Standard 036-B)
+- Bei Quarterly-Refresh (Preise + Bilder synchron — Standard 021-B)
 - Wenn mehr als 20 % der Produkte eines Herstellers kein `image_url` haben
 
 ### Schritt-für-Schritt
@@ -150,7 +150,7 @@ ssh prod "docker exec vanfree-db psql -U postgres -d postgres -c \
 ### Wichtig: Keine Phantoms
 
 Vor jedem Scraping-Lauf sicherstellen dass die Produkte in der DB echte Produkte sind
-(kein `status='rejected'`). Standard 050-bug-registry Regel: falsches Bild ist schlimmer als kein Bild.
+(kein `status='rejected'`). Standard 014-bug-registry Regel: falsches Bild ist schlimmer als kein Bild.
 
 ---
 

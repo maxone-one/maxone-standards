@@ -1,4 +1,4 @@
-# 003 — Secrets & TLS (Zentraler Store · DNS-01-Pflicht)
+# 002 — Secrets & TLS (Zentraler Store · DNS-01-Pflicht)
 
 **Status:** active
 **Seit:** 2026-03 (Store), 2026-04-22 (TLS)

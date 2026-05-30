@@ -1,4 +1,4 @@
-# 045 — Admin-UI (Dashboard-Layout · DevPanel · App-Launcher)
+# 023 — Admin-UI (Dashboard-Layout · DevPanel · App-Launcher)
 
 **Status:** active
 **Seit:** 2026-05-17 (Dashboard + DevPanel), 2026-05-18 (App-Launcher)
@@ -82,7 +82,7 @@ const STORAGE_TAB  = "<project>-devpanel-tab";
 
 **Pflicht-Tabs:**
 - **Session-Tab:** User-ID, E-Mail, Rolle + wichtigste Projekt-Entität + Sign-out-Action
-- **Build-Tab:** `build_id` (aus ENV/Standard 042), `/api/version`-Wert, `node_env`, Supabase-URL, `deployed_at`, UA
+- **Build-Tab:** `build_id` (aus ENV/Standard 022), `/api/version`-Wert, `node_env`, Supabase-URL, `deployed_at`, UA
 
 **Backend-Contract (`/api/dev/context`):**
 ```ts

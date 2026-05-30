@@ -27,7 +27,7 @@ nur die Regeln, das Audit-Script und die Templates.
   abgelaufene Ausnahmen → Audit zeigt wieder echtes FAIL/WARN.
 - **Bewusste Ausnahmen** außer den o.g. formalen sind in `standards/*.md`
   dokumentiert (z.B. SLF Impressum lokal — Tabelle in
-  `009-impressum-widget.md`). Bevor du eine WARN/FAIL-Meldung als Bug
+  `007-impressum-widget.md`). Bevor du eine WARN/FAIL-Meldung als Bug
   behandelst: Standard-Doku + `registry/exceptions.yml` checken.
 
 ## Audit-Lauf

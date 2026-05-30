@@ -1,4 +1,4 @@
-# 006 — HANDOFF.md auf dem Server
+# 004 — HANDOFF.md auf dem Server
 
 **Status:** active
 **Seit:** etabliert, formalisiert 2026-04-27

@@ -1,4 +1,4 @@
-# 009 — Required UI Components (Impressum · Credits · Vector-Widget · Footer)
+# 007 — Required UI Components (Impressum · Credits · Vector-Widget · Footer)
 
 **Status:** active
 **Seit:** etabliert 2026-04-27, One-Liner-Pattern 2026-05-20
@@ -94,7 +94,7 @@ Jedes Customer-facing Projekt hat einen Footer. Variante einmalig pro Projekt w�
 
 **Mega — Pflicht-Spalten:** 1. Brand & Kurz-Info (inkl. "Gehostet in Deutschland") · 2–4. Navigation · letzte Spalte: Rechtliches (`/impressum`, `/datenschutz`, ggf. AGB)
 
-**Mega Bottom-Bar:** `© <Jahr>` (dynamisch) · "Entwickelt von [maxone](https://maxone.one)" · Version-Marker (`v: <BUILD_ID.slice(0,8)>` als Link auf GitHub-Commit, siehe Standard 042)
+**Mega Bottom-Bar:** `© <Jahr>` (dynamisch) · "Entwickelt von [maxone](https://maxone.one)" · Version-Marker (`v: <BUILD_ID.slice(0,8)>` als Link auf GitHub-Commit, siehe Standard 022)
 
 **Slim (einzeilig):**
 ```
@@ -135,4 +135,4 @@ Jedes Customer-facing Projekt hat einen Footer. Variante einmalig pro Projekt w�
 - Enthält Links zu `/impressum` und `/datenschutz`
 - Enthält Link zu `maxone.one`
 - Enthält `new Date().getFullYear()` (kein hardcoded Jahr)
-- Version-Marker: → Standard 042
+- Version-Marker: → Standard 022

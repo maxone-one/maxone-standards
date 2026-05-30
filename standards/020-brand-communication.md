@@ -1,4 +1,4 @@
-# 035 — Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute · Kein Gedankenstrich · Fließender Schreibstil)
+# 020 — Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute · Kein Gedankenstrich · Fließender Schreibstil)
 
 **Status:** active
 **Seit:** 2026-04-29

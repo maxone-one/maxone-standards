@@ -1,4 +1,4 @@
-# 013 — Gates & Review (Konzept-Gate · Launch-Gate · Pentest · Re-Review)
+# 008 — Gates & Review (Konzept-Gate · Launch-Gate · Pentest · Re-Review)
 
 **Status:** active
 **Seit:** 2026-04-27 (erweitert 2026-04-28)
@@ -59,7 +59,7 @@ Template: [`templates/LAUNCH-REVIEW.md`](../templates/LAUNCH-REVIEW.md), Checkli
 
 **Pflicht-Bereiche:**
 - Supabase: RLS auf JEDER Tabelle + Default-deny; Anon-Key manuell mit `curl` getestet; kein Service-Role-Key im Frontend
-- DSGVO: Tracker-Inventar, externe Hosts, Consent-Banner, Datenschutzerklärung, AVV-Status (→ Standard 014)
+- DSGVO: Tracker-Inventar, externe Hosts, Consent-Banner, Datenschutzerklärung, AVV-Status (→ Standard 009)
 - Bei Black-Box-Anteil > 20 %: zusätzlich `/code-review ultra` durchlaufen
 - Lockfile committed; `npm audit` ohne Critical/High; Standards 022 + 023 PASS
 
@@ -101,7 +101,7 @@ Jede Live-Domain wird automatisiert auf bekannte Vibe-Coding-Schwachstellen gepr
 
 Jedes Live-Projekt durchläuft alle **180 Tage** einen verkürzten Gate-3-Re-Review. Stichtag = `last_review_date` in `registry/projects.yml`.
 
-**Re-Review-Umfang:** Audit-Lauf PASS; Section J LAUNCH-REVIEW.md; neue Tracker/Drittdienste (→ Standard 017); Bundle-Drift-Check (→ Standard 017); DNS/Cert-Check; Pentest-Light; neuer Sign-Off-Block.
+**Re-Review-Umfang:** Audit-Lauf PASS; Section J LAUNCH-REVIEW.md; neue Tracker/Drittdienste (→ Standard 011); Bundle-Drift-Check (→ Standard 011); DNS/Cert-Check; Pentest-Light; neuer Sign-Off-Block.
 
 **registry/projects.yml:**
 ```yaml

@@ -1,4 +1,4 @@
-# 036 — Projekt-Koordination (Spec-Archiv · Dep-Currency · Cross-Project-Broadcast)
+# 021 — Projekt-Koordination (Spec-Archiv · Dep-Currency · Cross-Project-Broadcast)
 
 **Status:** active
 **Seit:** 2026-05-04 (Spec-Archiv), 2026-05-11 (Dep-Currency + Broadcast)

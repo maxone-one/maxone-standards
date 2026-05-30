@@ -1,4 +1,4 @@
-# 054 — Brevo Transactional API für Outreach-Sends
+# 028 — Brevo Transactional API für Outreach-Sends
 
 **Status:** active  
 **Gilt für:** SLF (stadtlahnflow.de) — übertragbar auf jedes Projekt mit Outreach-Versand  

@@ -1,4 +1,4 @@
-# 007 — Pfade und Container-Naming
+# 005 — Pfade und Container-Naming
 
 **Status:** active
 **Seit:** etabliert, formalisiert 2026-04-27
