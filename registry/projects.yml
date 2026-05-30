@@ -190,7 +190,7 @@ projects:
     notes: "Split in repivot-backend + repivot-frontend (beide Blue/Green via Profiles). Server-Pfad /opt/repivot (nicht /opt/repivot.me — alter Pfad ist Ghost-Dir mit nur HANDOFF.md, korrigiert 2026-04-29)."
 
   - name: vanfree
-    workspace: vanfree
+    workspace: venfree
     domain: vanfree.de
     server: maxone-prod
     deploy: blue-green
