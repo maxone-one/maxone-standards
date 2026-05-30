@@ -13,7 +13,7 @@ Projekte noch auf FAIL- oder unterer WARN-Schwelle:
 Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächst organisch, kein Konfigurations-Fix.
 
 ### 051-db-isolation: offene Migrations
-- **DRINGEND (bis 2026-08-18):** plansey-2026 — verbindet direkt auf `supabase-db:5432` (maxone.one DB-Container). Kritische Verletzung.
+- **DRINGEND (bis 2026-08-18):** plansey-2026 — VAULT-Task angelegt (3a36ef04), severity: critical
 - **bis 2026-11-18:** repivot — teilt `panel.maxone.one` mit maxone.one; eigene Supabase-Instanz aufsetzen.
 - **zu klären:** stadtpunkt — DB-Situation unklar.
 - **nach Split:** zentinel — nach Monorepo-Entkopplung (Option A) eigene Instanz planen.
@@ -21,8 +21,6 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 ### 011 One-Liner-Migration in Projekten
 11 Projekte noch auf altem 3-Zeilen-Pattern — inkrementell bei Diff-Touch pro Projekt auf One-Liner (`embed.js`) umstellen. Beide Patterns funktionieren; 3-Zeilen ist anfällig für stillen Fehlschlag bei vergessenem `<vector-chat>`-Tag.
 
-### vector `010_reply_status.sql` auf Server einspielen
-Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht auf maxone-prod eingespielt. → VAULT-Task delegieren.
 
 
 
@@ -31,6 +29,8 @@ Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht a
 
 ## Erledigt
 
+- 2026-05-30 — vector 010_reply_status.sql: VAULT-Task angelegt (9a654424, warning)
+- 2026-05-30 — 051 plansey-2026: VAULT-Task angelegt (3a36ef04, critical)
 - 2026-05-30 — 041 vollständig: plansey-engaged Brevo evidence ergänzt → 10.0/10 (78c30aa)
 - 2026-05-30 — Uptime-Kuma Probes (Monitor 22+23): embed.js + vector-chat.js auf watchdog. embed.js neu gebaut + deployed (401be32)
 - 2026-05-30 — vanfree audit: path_local ✅, 007 FAIL (workspace-Name) + 015 WARN (CONCEPT-Sektionen) behoben (6bad794 / fbc48cd)
