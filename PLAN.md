@@ -37,13 +37,11 @@ Zwei neue Probes in `watchdog.maxone.one`:
 
 Offen aus Standard 011 (2026-05-20, TODO-Block im Standard dokumentiert).
 
-### CRON_SECRET voltfair rotieren
-Voltfair-crontab hatte CRON_SECRET plaintext (vor GH-Action-Migration). Neue Standorte: GH-Org-Secret (encrypted) + voltfair.de prod-env (root-only). Rotation per CLAUDE.md-Credentials-Protokoll noch ausstehend.
-
 ---
 
 ## Erledigt
 
+- 2026-05-30 — CRON_SECRET voltfair: bereits 2026-05-28 rotiert (PLAN.md voltfair ## Erledigt) — Standards-Eintrag veraltet
 - 2026-05-30 — 051 snapflow: VITE_SUPABASE_URL = api.snapflow.one (eigene Instanz, Standard erfüllt)
 - 2026-05-26 — plansey-engaged in Registry + vanfree path_local korrigiert (699bd89)
 - 2026-05-26 — 048/050/006 Treatment: alle 15 Projekte abgeschlossen — plansey-engaged (.gitignore-Fix), gs-lohra (alles OK), venfree (alles OK, vor Session erledigt)
