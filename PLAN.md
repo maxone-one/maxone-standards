@@ -28,17 +28,12 @@ Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht a
 ### 041-avv-dpa-registry: Backfill
 `data_processors`-Feld in `registry/projects.yml` für alle Projekte befüllen — aktuell 12 WARNs. Keine Anbieter-Fakten raten; wenn unklar → `unknown` und Max entscheiden lassen.
 
-### Uptime-Kuma Probes für Widget-Bundles
-Zwei neue Probes in `watchdog.maxone.one`:
-- `https://agent.maxone.one/widget/embed.js` — HTTP 200, alle 60 s
-- `https://agent.maxone.one/widget/vector-chat.js` — HTTP 200, alle 60 s
-
-Offen aus Standard 011 (2026-05-20, TODO-Block im Standard dokumentiert).
 
 ---
 
 ## Erledigt
 
+- 2026-05-30 — Uptime-Kuma Probes (Monitor 22+23): embed.js + vector-chat.js auf watchdog. embed.js neu gebaut + deployed (401be32)
 - 2026-05-30 — vanfree audit: path_local ✅, 007 FAIL (workspace-Name) + 015 WARN (CONCEPT-Sektionen) behoben (6bad794 / fbc48cd)
 - 2026-05-30 — CRON_SECRET voltfair: bereits 2026-05-28 rotiert (PLAN.md voltfair ## Erledigt) — Standards-Eintrag veraltet
 - 2026-05-30 — 051 snapflow: VITE_SUPABASE_URL = api.snapflow.one (eigene Instanz, Standard erfüllt)
