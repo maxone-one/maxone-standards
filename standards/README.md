@@ -8,7 +8,7 @@ Neue Regeln werden als **Abschnitt in bestehende Dateien** eingefügt, nicht als
 Nur wenn ein Thema genuinely orthogonal zu allen bestehenden ist, darf eine neue Datei entstehen.
 Ziel: auch nach weiteren Erweiterungen nie mehr als 33 Nummern.
 
-Aktuell: **29 Standards** (4 freie Slots).
+Aktuell: **30 Standards** (3 freie Slots).
 
 ## Propagations-Regel (2026-05-30)
 
@@ -63,6 +63,7 @@ Wenn eine Datei fehlt, alle vier auf einmal anlegen — nicht nur die fehlende.
 - [052-pioneer-system.md](052-pioneer-system.md) — Pioneer-System: limitierte Slots, Puls-Pool, Leaderboard
 - [053-image-pipeline.md](053-image-pipeline.md) — Bild-Pipeline (EXIF, Format, Optimierung)
 - [054-brevo-api-outreach.md](054-brevo-api-outreach.md) — Brevo API Outreach-Campaigns
+- [056-manufacturer-assets.md](056-manufacturer-assets.md) — Hersteller-Logos + Produktbilder: Bezugsreihenfolge (Pressematerial → Website-Inspektion → Playwright), Speicherort, URL-Muster KNX-Hersteller, Audit-Query
 
 **Sicherheit & Gates:**
 - [013-gates-review.md](013-gates-review.md) — Gate 1 (Konzept) + Gate 3 (Launch-Review) + Pentest-Light + Re-Review alle 180 Tage
