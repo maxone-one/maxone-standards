@@ -504,7 +504,7 @@ projects:
         purpose: Transaktionaler E-Mail-Versand (Einladungen, Benachrichtigungen)
         personal_data: E-Mail-Adressen, Namen, Mail-Inhalte
         region: EU (Frankreich)
-        avv_status: unknown
-        evidence: null
-        reviewed_at: "2026-05-26"
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-05-30"
     notes: "Phase 0 der neuen Plansey-Strategie. Verlobungsverkündungs-Plattform (React 18 + Vite + Tailwind + shadcn/ui + Supabase + Mollie). Kein bekanntes Server-Deployment Stand 2026-05-26. Plansey-Produktfamilie: Legacy (2015/PHP) + 2026 (Next.js) + Engaged (Phase 0)."
