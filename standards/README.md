@@ -10,6 +10,16 @@ Ziel: auch nach weiteren Erweiterungen nie mehr als 33 Nummern.
 
 Aktuell: **29 Standards** (4 freie Slots).
 
+## Propagations-Regel (2026-05-30)
+
+Wenn in einem Projekt eine neue Regel entsteht (Vorfall, Direktive, Erfahrung):
+
+1. **Standard anlegen oder erweitern** — hier in maxone-standards (Cap beachten)
+2. **Alle anderen Projekte nachrüsten** — sofort, nicht "beim nächsten Touch"
+3. **Broadcast anlegen** wenn Drift-Risiko besteht (Standard 036-C)
+
+Projektlokal = temporär. In Standards = permanent und projektübergreifend.
+
 ---
 
 ## Pflicht-Dateien pro Projekt (alle auf einmal anlegen/prüfen)
