@@ -16,3 +16,6 @@ audit-results.json
 # --emit=issues Output (regenerierbar, NICHT committen)
 audits/issues-*.json
 audits/issues-*.md
+
+# Lokale Server-Konfiguration mit echten IPs (nicht öffentlich)
+config/servers.local.yml

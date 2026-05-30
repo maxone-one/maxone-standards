@@ -10,10 +10,7 @@
 #   server         — Hostname oder null
 #   deploy         — blue-green | single | null
 #   container      — Container-Name (Audit prüft <container>-blue/-green bei blue-green)
-#   path_local     — lokaler Repo-Pfad
-#   path_server    — Server-Pfad (oder null)
 #   compose_file   — Name der Prod-Compose-Datei (default: docker-compose.yml)
-#   secrets_dir    — Ordnername in /opt/secrets/ (default: name; oft verschieden!)
 #   status         — live | dev | paused | sunset-pending | sunset
 #   tags           — Liste
 #   external_subscriptions  — (optional, Standard 026) Liste von Drittanbieter-
@@ -60,11 +57,8 @@ projects:
     deploy: blue-green
     container: maxone-v2
     supabase_url: https://panel.maxone.one
-    path_local: c:\Users\max\Projects\maxone.one
     dockerfile_path: apps/umbrella/Dockerfile
     compose_file: apps/umbrella/docker-compose.yml
-    path_server: /opt/maxone-v2
-    secrets_dir: maxone
     status: live
     tags: brand
     external_subscriptions:
@@ -100,9 +94,6 @@ projects:
     deploy: blue-green
     container: slf-app
     supabase_url: http://slf-kong:8000
-    path_local: c:\Users\max\Projects\stadt-lahn-flow
-    path_server: /opt/stadtlahnflow
-    secrets_dir: slf
     status: live
     tags: customer
     external_subscriptions:
@@ -146,9 +137,6 @@ projects:
     deploy: blue-green
     container: katchi-app
     supabase_url: https://udxbbpschalnhxnlaiyi.supabase.co
-    path_local: c:\Users\max\Projects\katchi
-    path_server: /opt/katchi
-    secrets_dir: katchi
     status: paused
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
@@ -170,11 +158,8 @@ projects:
     deploy: blue-green
     container: repivot-backend
     supabase_url: https://panel.maxone.one  # VIOLATION-051: teilt maxone.one Supabase — Migration ausstehend
-    path_local: c:\Users\max\Projects\repivot.in
     dockerfile_path: backend/Dockerfile
     compose_file: docker-compose.prod.yml
-    path_server: /opt/repivot
-    secrets_dir: repivot
     status: live
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
@@ -196,10 +181,7 @@ projects:
     deploy: blue-green
     container: vanfree-app
     supabase_url: https://api.vanfree.de
-    path_local: c:\Users\max\Projects\venfree
     compose_file: ops/docker-compose.app.yml
-    path_server: /opt/vanfree
-    secrets_dir: vanfree
     status: live
     tags: product
     external_subscriptions:
@@ -232,10 +214,7 @@ projects:
     deploy: blue-green
     container: plansey-app
     supabase_url: null  # VIOLATION-051: verbindet direkt auf supabase-db:5432 (maxone.one DB-Container!) — Migration dringend
-    path_local: c:\Users\max\Projects\plansey-2026
-    path_server: /opt/plansey-2026
     compose_file: docker-compose.prod.yml
-    secrets_dir: plansey
     status: live
     tags: product
     external_subscriptions:
@@ -261,9 +240,6 @@ projects:
     deploy: blue-green
     container: stadtpunkt-app
     supabase_url: https://panel.maxone.one  # VIOLATION-051: teilt maxone.one Supabase — Migration ausstehend
-    path_local: c:\Users\max\Projects\stadtpunkt
-    path_server: /opt/stadtpunkt
-    secrets_dir: stadtpunkt
     status: live
     tags: customer
     external_subscriptions: []
@@ -299,9 +275,6 @@ projects:
     deploy: single
     container: kitchen-station-app
     supabase_url: null  # internes Kiosk-Tool ohne eigene Datenbank
-    path_local: c:\Users\max\Projects\Kitchen Station
-    path_server: /opt/kitchen-station
-    secrets_dir: kitchen-station
     status: live
     tags: internal
     external_subscriptions: []  # internes Tool, keine eigenen Abos
@@ -317,9 +290,6 @@ projects:
     deploy: single
     container: null
     supabase_url: https://api.voltfair.de
-    path_local: c:\Users\max\Projects\voltfair.de
-    path_server: /opt/voltfair
-    secrets_dir: voltfair
     status: live
     tags: brand
     external_subscriptions:
@@ -355,8 +325,6 @@ projects:
     deploy: single
     container: solarproof-app
     supabase_url: https://solarproof-api.maxone.one
-    path_local: c:\Users\max\Projects\SolarProof
-    path_server: /opt/solarproof
     status: live
     tags: brand
     external_subscriptions: []
@@ -377,9 +345,6 @@ projects:
     deploy: blue-green
     container: vector
     supabase_url: https://panel.maxone.one  # Infra-Agent: eigene DB = panel.maxone.one; cross-project read-only via exceptions.yml
-    path_local: c:\Users\max\Projects\vector
-    path_server: /opt/vector
-    secrets_dir: vector
     status: live
     tags: infra
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
@@ -400,10 +365,7 @@ projects:
     deploy: blue-green
     container: snapflow-app
     supabase_url: https://api.snapflow.one
-    path_local: c:\Users\max\Projects\snapflow.one
     compose_file: infra/docker-compose.yml
-    path_server: /opt/snapflow
-    secrets_dir: snapflow
     status: live
     tags: product
     external_subscriptions:
@@ -438,9 +400,6 @@ projects:
     deploy: single
     container: gs-lohra
     supabase_url: null  # statische Schul-Website ohne eigene Datenbank
-    path_local: c:\Users\max\Projects\grundschule-lohra-webseite
-    path_server: /opt/gs-lohra
-    secrets_dir: gs-lohra
     status: live
     tags: customer
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
@@ -463,10 +422,7 @@ projects:
     deploy: null
     container: null
     supabase_url: null  # nutzt maxone.one Supabase via Monorepo-Kopplung — wird nach Entkopplung eigene Instanz brauchen
-    path_local: c:\Users\max\Projects\Zentinel
     compose_file: zentinel/vigil/docker-compose.yml
-    path_server: null
-    secrets_dir: zentinel
     status: dev
     tags: product
     external_subscriptions: []  # Subdomain von maxone.one — keine eigenen Abos
@@ -487,9 +443,6 @@ projects:
     deploy: null
     container: null
     supabase_url: null  # zu klären — Supabase Auth/DB/Edge Functions im Stack; eigene Instanz prüfen (Standard 051)
-    path_local: c:\Users\max\Projects\plansey-engaged
-    path_server: null
-    secrets_dir: null
     status: dev
     tags: product
     external_subscriptions:

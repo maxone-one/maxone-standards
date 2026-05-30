@@ -78,7 +78,7 @@ jobs:
       - name: Transfer to maxone-prod
         run: |
           docker save <projekt>-app:latest | gzip | \
-            ssh -i ~/.ssh/maxone-prod root@128.140.40.235 "gunzip | docker load"
+            ssh -i ~/.ssh/deploy_key root@<server-ip> "gunzip | docker load"
       - name: Deploy inactive slot
         run: ssh ... "cd /opt/<projekt> && COMPOSE_PROFILES=$TARGET docker compose up -d --no-build"
       - name: Wait for healthy + Warmup + Swap

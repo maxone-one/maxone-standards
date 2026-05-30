@@ -31,10 +31,10 @@ import yaml from 'js-yaml';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
-const SERVERS = {
-  'maxone-prod':   { host: '128.140.40.235', user: 'root', key: '~/.ssh/id_ed25519' },
-  'voltfair-cli':  { host: '46.225.107.118', user: 'root', key: '~/.ssh/voltfair' },
-};
+const _serversConfigPath = join(ROOT, 'config', 'servers.local.yml');
+const SERVERS = existsSync(_serversConfigPath)
+  ? yaml.load(readFileSync(_serversConfigPath, 'utf8')) ?? {}
+  : {};
 
 function parseArgs() {
   const args = {};

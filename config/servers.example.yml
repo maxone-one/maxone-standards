@@ -1,0 +1,16 @@
+# Server-Konfiguration für SSH-Checks in scripts/audit.mjs
+#
+# Kopiere diese Datei nach config/servers.local.yml und trage deine Server ein.
+# config/servers.local.yml ist gitignored und wird nicht versioniert.
+#
+# Format:
+#   <server-name>:
+#     host: <IP oder Hostname>
+#     user: <SSH-User>
+#     key:  <Pfad zum SSH-Key>
+
+# Beispiel:
+# my-server:
+#   host: 1.2.3.4
+#   user: root
+#   key: ~/.ssh/id_ed25519

@@ -6,11 +6,7 @@ Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 
 ## A. DNS
 
-- [ ] A-Record (oder AAAA) zeigt auf eine bekannte Server-IP:
-      - `128.140.40.235` (maxone-prod, Hetzner DE)
-      - `46.225.107.118` (voltfair-cli, Hetzner DE)
-      - `46.225.168.235` (voltfair-db, Hetzner DE)
-      - `46.225.88.53`   (vybora-prod, Hetzner DE)
+- [ ] A-Record (oder AAAA) zeigt auf einen eigenen Server (aus `config/servers.local.yml`)
 - [ ] Falls **Cloudflare-Proxy aktiv**: DNS-Eintrag bewusst gewählt
       (Performance vs. DSGVO — Cloudflare ist US-Cloud, AVV
       DSGVO-konform aber Lock-in)

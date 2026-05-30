@@ -12,9 +12,9 @@
 //                                              Fallback genutzt, wenn ein Projekt
 //                                              keinen path_server hat: <root>/<name>.
 //
-// SSH-Checks brauchen ~/.ssh/id_ed25519 für maxone-prod (128.140.40.235) und
-// ~/.ssh/voltfair für voltfair-cli (46.225.107.118). Bei Fehler wird der Check
-// als WARN (nicht FAIL) gewertet, damit das Audit auch ohne Konnektivität läuft.
+// SSH-Checks lesen Server-IPs aus config/servers.local.yml (gitignored).
+// Vorlage: config/servers.example.yml. Bei fehlendem File oder Verbindungsfehler
+// wird der Check als WARN (nicht FAIL) gewertet.
 
 import { existsSync, readFileSync, readdirSync, statSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname, extname } from 'node:path';
@@ -31,12 +31,10 @@ const ROOT = join(__dirname, '..');
 // Live-Domains via fetch() ab — bei --local-only wird übersprungen.
 let OFFLINE = false;
 
-const SERVERS = {
-  'maxone-prod':   { host: '128.140.40.235', user: 'root', key: '~/.ssh/id_ed25519' },
-  'voltfair-cli':  { host: '46.225.107.118', user: 'root', key: '~/.ssh/voltfair' },
-  'voltfair-db':   { host: '46.225.168.235', user: 'root', key: '~/.ssh/voltfair' },
-  'vybora-prod':   { host: '46.225.88.53',   user: 'root', key: '~/.ssh/id_ed25519' },
-};
+const _serversConfigPath = join(ROOT, 'config', 'servers.local.yml');
+const SERVERS = existsSync(_serversConfigPath)
+  ? yaml.load(readFileSync(_serversConfigPath, 'utf8')) ?? {}
+  : {};
 
 // Standard 019 — DNS-Whitelist: alle eigenen Server-IPs.
 const KNOWN_SERVER_IPS = new Set(Object.values(SERVERS).map(s => s.host));
