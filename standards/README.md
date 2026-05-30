@@ -17,6 +17,25 @@ damit nachvollziehbar bleibt **warum** eine Regel existiert.
 - [005-test-first.md](005-test-first.md) — Smoke + Unit Tests bevor "ist live" gemeldet wird
 - [006-handoff-md.md](006-handoff-md.md) — Jedes Projekt hat HANDOFF.md auf dem Server
 - [048-plan-tracker.md](048-plan-tracker.md) — PLAN.md mit "## Noch offen" + "## Erledigt" in jedem aktiven Projekt
+- [050-bug-registry.md](050-bug-registry.md) — BUGS.md: persistente Bug-Wissensbasis, lesen vor jeder Debugging-Session
+- [055-concept-reference.md](055-concept-reference.md) — CONCEPT.md: Produkt-Konzept als Single Source of Truth für Agenten und Copy
+
+## Pflicht-Dateien pro Projekt (alle auf einmal anlegen/prüfen)
+
+Für jedes Projekt mit `status: live` oder `status: dev` müssen diese Dateien
+**gleichzeitig** vorhanden sein — nicht "eine anlegen wenn sie fehlt", sondern
+immer alle vier gemeinsam prüfen und bei Fehlen sofort nachholen:
+
+| Datei | Ort | Standard | Inhalt |
+|-------|-----|----------|--------|
+| `CONCEPT.md` | Repo-Root | 055 | Was das Produkt ist, Vision, Sprache |
+| `PLAN.md` | Repo-Root | 048 | Offene + erledigte Pläne |
+| `BUGS.md` | Repo-Root | 050 | Aktive + geschlossene Bugs |
+| `HANDOFF.md` | `/opt/<projekt>/` auf Server | 006 | Infra-Zustand, letzter Deploy |
+
+**Warum gleichzeitig:** Wenn nur eine Datei fehlt und man sie isoliert anlegt,
+fehlen die anderen drei beim nächsten Session-Start trotzdem. Der einzige sichere
+Ansatz ist der Voll-Check: alle vier auf einmal anlegen wenn eine davon fehlt.
 
 **Naming & Domains:**
 - [007-paths-naming.md](007-paths-naming.md) — Pfade und Container-Naming-Konventionen
