@@ -1747,6 +1747,7 @@ const localChecks = {
   // Echte Wahrheit liefert sshChecks['028-container-misconfig'].
   '028-container-misconfig-local': (project) => {
     if (!project.path_local) return SKIP('kein path_local');
+    if (project.status === 'paused' || project.status === 'sunset') return SKIP(`status=${project.status}`);
     const composeFile = project.compose_file ?? 'docker-compose.yml';
     const candidates = [composeFile, 'compose.yml', 'compose.yaml'];
     let found = null;
@@ -2237,7 +2238,7 @@ const sshChecks = {
   // Variante ist nur Fallback wenn Compose im Repo-Root liegt.
   '028-container-misconfig': (project) => {
     if (!project.server || !project.path_server) return SKIP('kein Server');
-    if (project.status === 'sunset') return SKIP(`status=sunset`);
+    if (project.status === 'paused' || project.status === 'sunset') return SKIP(`status=${project.status}`);
     const composeFile = project.compose_file ?? 'docker-compose.yml';
     const remote = `${project.path_server}/${composeFile}`;
     let text;
