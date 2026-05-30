@@ -25,14 +25,13 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 Migration liegt im vector-Repo (`migrations/010_reply_status.sql`), noch nicht auf maxone-prod eingespielt. → VAULT-Task delegieren.
 
 
-### 041-avv-dpa-registry: Backfill
-`data_processors`-Feld in `registry/projects.yml` für alle Projekte befüllen — aktuell 12 WARNs. Keine Anbieter-Fakten raten; wenn unklar → `unknown` und Max entscheiden lassen.
 
 
 ---
 
 ## Erledigt
 
+- 2026-05-30 — 041 vollständig: plansey-engaged Brevo evidence ergänzt → 10.0/10 (78c30aa)
 - 2026-05-30 — Uptime-Kuma Probes (Monitor 22+23): embed.js + vector-chat.js auf watchdog. embed.js neu gebaut + deployed (401be32)
 - 2026-05-30 — vanfree audit: path_local ✅, 007 FAIL (workspace-Name) + 015 WARN (CONCEPT-Sektionen) behoben (6bad794 / fbc48cd)
 - 2026-05-30 — CRON_SECRET voltfair: bereits 2026-05-28 rotiert (PLAN.md voltfair ## Erledigt) — Standards-Eintrag veraltet
