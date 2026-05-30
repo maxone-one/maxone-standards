@@ -8,7 +8,7 @@ Neue Regeln werden als **Abschnitt in bestehende Dateien** eingefügt, nicht als
 Nur wenn ein Thema genuinely orthogonal zu allen bestehenden ist, darf eine neue Datei entstehen.
 Ziel: auch nach weiteren Erweiterungen nie mehr als 33 Nummern.
 
-Aktuell: **30 Standards** (3 freie Slots).
+Aktuell: **31 Standards** (2 freie Slots).
 
 ## Propagations-Regel (2026-05-30)
 
@@ -28,10 +28,11 @@ Für jedes Projekt mit `status: live` oder `status: dev` müssen diese Dateien *
 
 | Datei | Ort | Standard | Inhalt |
 |---|---|---|---|
-| `CONCEPT.md` | Repo-Root | 008-A | Was das Produkt ist, Vision, Sprache |
+| `CONCEPT.md` | Repo-Root | 029 | Was das Produkt ist, Vision, Sprache |
 | `PLAN.md` | Repo-Root | 024 | Offene + erledigte Pläne |
 | `BUGS.md` | Repo-Root | 025 | Aktive + geschlossene Bugs |
 | `HANDOFF.md` | `/opt/<projekt>/` auf Server | 004 | Infra-Zustand, letzter Deploy |
+| `docs/DECISIONS.md` | `docs/` | 031 | Strategische Entscheidungen, die PRD/Konzept überschreiben (nur wenn PRD vorhanden) |
 
 Wenn eine Datei fehlt, alle vier auf einmal anlegen — nicht nur die fehlende.
 
@@ -55,6 +56,7 @@ Wenn eine Datei fehlt, alle vier auf einmal anlegen — nicht nur die fehlende.
 - [024-plan-tracker.md](024-plan-tracker.md) — PLAN.md mit "## Noch offen" + "## Erledigt" in jedem aktiven Projekt
 - [025-bug-registry.md](025-bug-registry.md) — BUGS.md: persistente Bug-Wissensbasis vor jeder Debugging-Session lesen
 - [029-concept-reference.md](029-concept-reference.md) — CONCEPT.md: Produkt-Konzept als SSoT für Agenten und Copy
+- [031-decisions-md.md](031-decisions-md.md) — DECISIONS.md: Strategische Entscheidungen die PRD/Konzept überschreiben + Drei-Quellen-Hierarchie
 
 **UI & Produkt:**
 - [007-required-ui.md](007-required-ui.md) — Impressum-API + Credits-API + Vector-Chat-Widget + Footer (alle Customer-facing Pflichten)
