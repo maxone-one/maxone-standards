@@ -3,14 +3,13 @@
 ## Noch offen
 
 
-### 024-code-health-budget: verbleibende FAILs (Score: 3.6/10)
+### 024-code-health-budget: verbleibende FAILs
 Projekte noch auf FAIL- oder unterer WARN-Schwelle:
-- vanfree (7% — unter WARN-Schwelle 8%)
-- stadtpunkt (>1000-Zeilen-Dateien, 8% — Größen-FAIL überlagert Refactor-WARN)
-- kitchen-station (7% — unter WARN-Schwelle)
-- solarproof (6% — unter WARN-Schwelle)
+- repivot (3% — Chrome-Extension, großer Rückstand)
+- vanfree (7% — unter WARN-Schwelle 8%, wiki-catalog.ts 1511 Z.)
 
-Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächst organisch, kein Konfigurations-Fix.
+Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar.
+Abgeschlossen: maxone.one (6%→8%, FAIL→WARN, 2026-05-30).
 
 ### 051-db-isolation: offene Migrations
 - **DRINGEND (bis 2026-08-18):** plansey-2026 — VAULT-Task angelegt (3a36ef04), severity: critical
