@@ -427,3 +427,13 @@ exceptions:
     granted_at: '2026-05-29'
     expires_until: '2026-11-29'
     granted_by: max
+
+  # repivot LLM-Schreib-Operationen erfordern expliziten User-Klick (Click-to-Apply).
+  # Human-in-the-Loop ist vorhanden, aber nicht über die formale ops_tasks-Queue.
+  # Migration auf Approval-Queue ausstehend.
+  - project: repivot
+    standard: '025'
+    reason: "KI-Schreib-Vorschlaege erfordern expliziten User-Klick (Click-to-Apply) — Human-in-the-Loop vorhanden. Formale ops_tasks-Approval-Queue ausstehend."
+    granted_at: '2026-05-30'
+    expires_until: '2026-11-30'
+    granted_by: max
