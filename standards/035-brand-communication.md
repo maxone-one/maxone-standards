@@ -1,13 +1,15 @@
-# 035 — Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute)
+# 035 — Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute · Kein Gedankenstrich · Fließender Schreibstil)
 
 **Status:** active
 **Seit:** 2026-04-29
-**Gilt für:** alle Projekte, alle Kanäle (Mail, Telegram, SMS, Push, Bot-DMs, Auto-Replies)
+**Gilt für:** alle Projekte, alle Kanäle (Mail, Telegram, SMS, Push, Bot-DMs, Auto-Replies, Chat, UI-Texte, Docs)
 
 ## Inhalt
 
 - [A] Wahrhaftige Unterschrift
 - [B] Echte Umlaute, niemals ASCII-Ersatz
+- [C] Kein Gedankenstrich
+- [D] Fließender Schreibstil, kein KI-Aufzählungsstil
 
 ---
 
@@ -76,6 +78,38 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 
 ---
 
+## C — Kein Gedankenstrich
+
+**Regel:** Den Gedankenstrich (—) niemals verwenden. Keine Ausnahmen.
+
+**Gilt für:** alles ohne Einschränkung. E-Mails, Nachrichten, UI-Texte, Landingpages, Blogs, Docs, Commit-Messages, PR-Bodies, Code-Kommentare, Chat-Antworten, Memory-Einträge, technische Specs.
+
+**Ersatz:** Komma, Punkt oder Doppelpunkt. Satz bei Bedarf umstrukturieren.
+
+**Warum:** Gedankenstriche sind durch KI-generierte Texte in Verruf geraten und wirken sofort maschinell. Dreifach verstoßen (2026-05-27, 2026-05-28, 2026-05-30) trotz bestehender CLAUDE.md-Regel.
+
+---
+
+## D — Fließender Schreibstil, kein KI-Aufzählungsstil
+
+**Regel:** KI schreibt standardmäßig in kurzen, aufzählenden Sätzen. Das fällt auf. Max schreibt fließend und in leicht verständlichen Sätzen. Dieser Stil ist verbindlich für alle Texte die maxone.one, Claude oder andere Agenten im Auftrag von Max produzieren.
+
+**Was das bedeutet:** Gedanken werden in Sätzen verbunden, nicht abgehackt. Fakten und Haltung kommen im selben Atemzug. Kein Bullet-Point-Denken, keine "Ich kann X, ich kann Y, ich kann Z"-Reihung. Zusammenhänge werden erklärt, nicht nummeriert.
+
+**Gilt für:** alle vom Menschen lesbaren Texte — Anschreiben, Profile, E-Mails, UI-Texte, Zusammenfassungen, Chat-Antworten, Dokumentation.
+
+**Referenz (Max' eigene Formulierungen):**
+"Gelernter Handwerker mit einer ausgeprägten Leidenschaft für Digitalisierung, innovative Technologien und automatisierte Prozesse, die das Leben erleichtern und effizienter gestalten. Ich bringe mein Know-how aus Handwerk, technischer Praxis, Online-Marketing, Automation und Smart-Home-Technologien überall dort ein, wo es sinnvoll ist und echten Mehrwert schafft."
+
+"Ich bin KI-Spezialist mit Schwerpunkt Agent-Entwicklung, Prompt Engineering und LLM-Integration. Alles, was ich in den letzten fünf Monaten gebaut habe, läuft in Produktion: ein Multi-Channel-KI-Agent, eine vollständige Mail-Infrastruktur, ein MCP-Server für ELSTER-Anbindung. Kein Tutorial, kein Demo-Modus."
+
+**Was zu vermeiden ist:** Kurze abgehackte Sätze hintereinander. Listen wo Fließtext passt. Aussagen die wie Stichpunkte klingen. Der typische KI-Aufzählungsstil.
+
+**Warum:** 2026-05-30, Max: "KI schreibt gerne in kurzen, aufzählenden Sätzen. Ja, wenn es mir aufgefallen ist, fällt es auch anderen auf."
+
+---
+
 ## Audit
 
 **Umlaute:** `node scripts/check-umlauts.mjs all` — 0 Treffer erwartet. CI: Exit 1 bei neuen ASCII-Fallbacks in Diff.
+**Gedankenstrich:** `grep -r " — " src/` in Textdateien — 0 Treffer erwartet.
