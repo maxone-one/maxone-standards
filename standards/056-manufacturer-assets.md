@@ -75,6 +75,13 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
    - Produktseiten-URL: `https://www.mdt.de/en/products/product-detail/<kategorie>/<unterkategorie>/<slug>.html`
    - Bild-CDN: `https://www.mdt.de/_assets/…/Images/<filename>` (Pfad via page inspection)
 
+   **Jung**
+   - Katalog-URL: `https://www.jung-group.com/de-DE/Katalog/KNX/Produkte/`
+   - Produktseiten-URL: `https://www.jung-group.com/de-DE/p/<name-slug>/<SKU>`
+   - **Bild-URL vollständig vorhersagbar:** `https://www.jung-group.com/downloads/catalogue/images/280x280_webp/JUNG_{SKU_NODASH}.webp`
+   - `{SKU_NODASH}` = SKU mit allen Bindestrichen entfernt (z.B. `1701-SE` → `JUNG_1701SE.webp`)
+   - Kein Scraping nötig — Bild-URL aus SKU allein berechenbar
+
    **Gira**
    - Produktseiten-URL: `https://www.gira.de/produkte/<kategorie>/<bestell-nr>`
    - Bild-CDN: `https://www.gira.de/media/<path>`
