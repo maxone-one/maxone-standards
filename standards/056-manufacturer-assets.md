@@ -46,9 +46,23 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
 
 ### Bezugsreihenfolge
 
-1. **Hersteller-Produktseite via Playwright** — `data-zoom`-Attribut liefert die höchste Auflösung
+1. **JSON-LD `Product`-Schema** (bevorzugt für JS-rendered Shops wie Hager/Magento):
+   ```js
+   const p = Array.from(document.querySelectorAll('script[type="application/ld+json"]'))
+     .map(s => { try { return JSON.parse(s.textContent); } catch { return null; } })
+     .find(d => d?.['@type'] === 'Product');
+   // p.image[0] = Haupt-Produktbild, p.sku = interne SKU, p.description = Beschreibung
+   ```
+   Funktioniert auch wenn Bilder lazy-geladen sind (keine `data-src` nötig).
 
-2. **Bekannte URL-Muster per Hersteller** (Stand 2026-05-30):
+2. **`data-zoom`-Attribut** — für traditionelle Produkt-Seiten (Theben, MDT):
+   ```js
+   document.querySelector('img[alt*="Produktname"]')?.getAttribute('data-zoom')
+   ```
+
+3. **WordPress `wp-content/uploads/`** — Zennio und andere WP-basierte Sites listen alle Produkt-Thumbnails im Listing-Grid direkt als `<img src="...wp-content/uploads/...">`.
+
+4. **Bekannte URL-Muster per Hersteller** (Stand 2026-05-30):
 
    **Theben**
    - Produktseiten-URL: `https://www.theben.de/en/<name-slug>-<order-number>`
@@ -66,8 +80,16 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
    - Bild-CDN: `https://www.gira.de/media/<path>`
 
    **Zennio**
-   - Produktseiten-URL: `https://www.zennio.com/products/<slug>`
-   - Bild-CDN: WordPress uploads (`/wp-content/uploads/...`)
+   - Listing-Seiten: `https://www.zennio.com/products/knx/<kategorie>/`
+   - Alle Produkt-Thumbnails direkt als `<img src>` sichtbar (WordPress, kein Lazy-Loading)
+   - Bild-CDN: `https://www.zennio.com/wp-content/uploads/<year>/<month>/<filename>.png`
+   - Dateiname-Muster: `{ORDER_NUMBER}_{Produktname}_370x361.png`
+
+   **Hager**
+   - Produktseiten-URL: `https://hager.com/de/katalog/produkt/<sku-slug>`
+   - JSON-LD `Product.image[0]` = Haupt-Bild auf `assets.hager.com`
+   - Bild-CDN: `https://assets.hager.com/step-content/P/{hash}/11/std.lang.all/{SKU}.webp`
+   - Preis im JSON-LD ist immer 0 (Hager zeigt keine Endkundenpreise)
 
 3. **Fallback: eibhandel.de oder knxwarehouse.com** — für Produkte ohne eigene Seite beim Hersteller
 
