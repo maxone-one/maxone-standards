@@ -6,7 +6,7 @@
 ### 024-code-health-budget: verbleibende FAILs
 Projekte noch auf FAIL- oder unterer WARN-Schwelle:
 - repivot (3% — Chrome-Extension, großer Rückstand)
-- vanfree (7% — unter WARN-Schwelle 8%, wiki-catalog.ts 1511 Z.)
+- vanfree (7.3% — knapp unter 8%; 7 refactor:-Commits heute: HerstellerForm-Extraktion, HealthBanner-Extraktion, 8× HEALTH-EXEMPT; braucht noch ~7 weitere organische Commits)
 
 Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar.
 Abgeschlossen: maxone.one (6%→8%, FAIL→WARN, 2026-05-30).
