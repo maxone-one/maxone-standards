@@ -108,6 +108,20 @@ Bei zusammengeführten Standards (mehrere Themen in einer Datei): Inhalt-Übersi
 
 ---
 
+## Cross-Links — Wiki & Standards
+
+Standards und Wiki sind bidirektional verknüpft. Die Pfeile:
+
+| Standard | Wiki-Topic |
+|---|---|
+| 030-mail | `~/.claude/wiki/maxone-mail-pilot/INDEX.md` |
+| 052-pioneer-system | `~/.claude/wiki/pioneers/INDEX.md` |
+| 053-image-pipeline | `~/.claude/wiki/brand/visual-style.md` |
+
+**Regel:** Wenn ein Standard ein komplexes narratives Thema hat (Vorfalls-Geschichte, Betriebswissen, Sprach-Konzepte), gehört der Kontext ins Wiki — der Standard verlinkt dorthin. Das Wiki verlinkt zurück zum Standard als Pflicht-Spec.
+
+Wiki-Index-Datei (Eintrittspunkt): `c:/Users/max/.claude/INDEX.md`
+
 ## Externe Recherche
 
 - [`../research/2026-04-28-github-similar-projects.md`](../research/2026-04-28-github-similar-projects.md) — ossf/scorecard, garak, promptfoo, trivy, OWASP-Top-10-LLM
