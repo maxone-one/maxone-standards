@@ -15,7 +15,6 @@ Nur durch echte `refactor:`-Commits in den jeweiligen Projekten behebbar. Wächs
 ### 051-db-isolation: offene Migrations
 - **DRINGEND (bis 2026-08-18):** plansey-2026 — verbindet direkt auf `supabase-db:5432` (maxone.one DB-Container). Kritische Verletzung.
 - **bis 2026-11-18:** repivot — teilt `panel.maxone.one` mit maxone.one; eigene Supabase-Instanz aufsetzen.
-- **zu klären:** snapflow — `supabase_url` verifizieren (VITE_SUPABASE_URL baked-in, nicht aus .env lesbar).
 - **zu klären:** stadtpunkt — DB-Situation unklar.
 - **nach Split:** zentinel — nach Monorepo-Entkopplung (Option A) eigene Instanz planen.
 
@@ -45,6 +44,7 @@ Voltfair-crontab hatte CRON_SECRET plaintext (vor GH-Action-Migration). Neue Sta
 
 ## Erledigt
 
+- 2026-05-30 — 051 snapflow: VITE_SUPABASE_URL = api.snapflow.one (eigene Instanz, Standard erfüllt)
 - 2026-05-26 — plansey-engaged in Registry + vanfree path_local korrigiert (699bd89)
 - 2026-05-26 — 048/050/006 Treatment: alle 15 Projekte abgeschlossen — plansey-engaged (.gitignore-Fix), gs-lohra (alles OK), venfree (alles OK, vor Session erledigt)
 - 2026-05-26 — 048/050/006 Treatment: repivot, plansey-2026, stadtpunkt, kitchen-station, solarproof — PLAN.md befüllt, BUGS.md normalisiert, HANDOFF.md auf Server geschrieben
