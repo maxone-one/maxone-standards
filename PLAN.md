@@ -16,11 +16,6 @@ Abgeschlossen: maxone.one (6%→8%, FAIL→WARN, 2026-05-30), vanfree (7.3%→8%
 - **zu klären:** stadtpunkt — DB-Situation unklar.
 - **nach Split:** zentinel — nach Monorepo-Entkopplung (Option A) eigene Instanz planen.
 
-### 011 One-Liner-Migration: 2 Projekte mit komplexen Attributen offen
-- **voltfair.de** — `<vector-chat>` hat dynamische React-Props (user-name, supabase-key aus ENV); embed.js unterstützt keine JSX-expressions. Benötigt separaten Ansatz.
-- **SolarProof** — `<vector-chat>` hat viele custom Attribute (accent-color, greeting, button-text, hint-delay, supabase-*). Separaten Ansatz klären.
-
-Abgeschlossen (2026-05-30): stadtpunkt, plansey-2026, plansey-engaged, zentinel, snapflow.one, vanfree, repivot.in, maxone.one (4 Apps).
 
 
 
@@ -30,6 +25,7 @@ Abgeschlossen (2026-05-30): stadtpunkt, plansey-2026, plansey-engaged, zentinel,
 
 ## Erledigt
 
+- 2026-05-31 — 011 One-Liner-Migration abgeschlossen: alle 10 Projekte auf embed.js
 - 2026-05-30 — vector 010_reply_status.sql: VAULT-Task angelegt (9a654424, warning)
 - 2026-05-30 — 051 plansey-2026: VAULT-Task angelegt (3a36ef04, critical)
 - 2026-05-30 — 041 vollständig: plansey-engaged Brevo evidence ergänzt → 10.0/10 (78c30aa)
