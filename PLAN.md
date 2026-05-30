@@ -16,8 +16,11 @@ Abgeschlossen: maxone.one (6%→8%, FAIL→WARN, 2026-05-30), vanfree (7.3%→8%
 - **zu klären:** stadtpunkt — DB-Situation unklar.
 - **nach Split:** zentinel — nach Monorepo-Entkopplung (Option A) eigene Instanz planen.
 
-### 011 One-Liner-Migration in Projekten
-11 Projekte noch auf altem 3-Zeilen-Pattern — inkrementell bei Diff-Touch pro Projekt auf One-Liner (`embed.js`) umstellen. Beide Patterns funktionieren; 3-Zeilen ist anfällig für stillen Fehlschlag bei vergessenem `<vector-chat>`-Tag.
+### 011 One-Liner-Migration: 2 Projekte mit komplexen Attributen offen
+- **voltfair.de** — `<vector-chat>` hat dynamische React-Props (user-name, supabase-key aus ENV); embed.js unterstützt keine JSX-expressions. Benötigt separaten Ansatz.
+- **SolarProof** — `<vector-chat>` hat viele custom Attribute (accent-color, greeting, button-text, hint-delay, supabase-*). Separaten Ansatz klären.
+
+Abgeschlossen (2026-05-30): stadtpunkt, plansey-2026, plansey-engaged, zentinel, snapflow.one, vanfree, repivot.in, maxone.one (4 Apps).
 
 
 
