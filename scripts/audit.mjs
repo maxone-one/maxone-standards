@@ -50,7 +50,16 @@ function parseArgs() {
 
 function loadRegistry() {
   const text = readFileSync(join(ROOT, 'registry', 'projects.yml'), 'utf8');
-  return yaml.load(text).projects;
+  const projects = yaml.load(text).projects;
+  // Merge local path overrides (gitignored, not in public repo)
+  const localPathsFile = join(ROOT, 'registry', 'paths.local.yml');
+  if (existsSync(localPathsFile)) {
+    const localPaths = yaml.load(readFileSync(localPathsFile, 'utf8')) ?? {};
+    for (const p of projects) {
+      if (localPaths[p.name]) Object.assign(p, localPaths[p.name]);
+    }
+  }
+  return projects;
 }
 
 function loadExceptions() {

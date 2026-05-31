@@ -19,3 +19,6 @@ audits/issues-*.md
 
 # Lokale Server-Konfiguration mit echten IPs (nicht öffentlich)
 config/servers.local.yml
+
+# Lokale Pfad-Overrides mit Windows-Pfaden (nicht öffentlich)
+registry/paths.local.yml

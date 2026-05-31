@@ -130,6 +130,58 @@ Gilt für LLM-Apps die externe Inhalte in den Prompt-Kontext laden: Telegram-Mes
 
 ---
 
+---
+
+## C — LLM-Proxy-Zugang: Token-Isolation pro Projekt
+
+Gilt für alle Projekte, die einen internen LLM-Proxy aufrufen (aktuell: VECTOR `/api/explain`, künftig vergleichbare Endpunkte auf `maxone.one`).
+
+### Regel
+
+**Jedes Projekt bekommt einen eigenen API-Token.** Kein geteilter globaler Token über mehrere Projekte hinweg.
+
+```bash
+# RICHTIG: pro Projekt in /opt/secrets/<projekt>/keys.env
+VECTOR_API_KEY=vkp_venfree_abc123...   # nur für venfree
+VECTOR_API_KEY=vkp_voltfair_xyz789...  # nur für voltfair
+
+# FALSCH: ein Token in allen Projekten
+VECTOR_API_TOKEN=vkp_global_shared...  # kein shared token
+```
+
+Token-Format-Empfehlung: `vkp_<projekt>_<random32>` (vkp = vector-key-project). So ist im Log-Eintrag sofort ersichtlich welches Projekt anfragt.
+
+### Warum
+
+Drei konkrete Probleme bei shared Token:
+1. **Revocability:** Ein kompromittierter Token muss in N Projekten gleichzeitig getauscht werden, mit koordiniertem Downtime-Risiko.
+2. **Audit Trail:** Ohne Projekt-Identität im Token ist nicht rekonstruierbar, welches Projekt wann wie viele LLM-Calls gemacht hat.
+3. **Rate-Limiting / Quota:** Ein einzelnes Projekt kann die Quota für alle verbrauchen.
+
+**Kontext (2026-05-31):** VECTOR `/api/explain` nutzte einen globalen `VECTOR_API_TOKEN`. Kein Problem beim aktuellen Scale (alle Projekte gehören Max), aber ohne Token-Isolation ist Kostentransparenz strukturell unmöglich. Die erste Anfrage nach "welches Projekt hat wie viel verbraucht" kann nicht beantwortet werden.
+
+### Umsetzung in VECTOR
+
+VECTOR muss eine Token-Registry führen (`config/api-keys.json` oder Postgres-Tabelle):
+
+```json
+{
+  "vkp_venfree_abc123": { "project": "venfree", "created": "2026-05-31", "active": true },
+  "vkp_voltfair_xyz789": { "project": "voltfair", "created": "2026-05-31", "active": true }
+}
+```
+
+Jeder `/api/explain`-Call loggt das aufgelöste `project`-Label im NDJSON-Log-Eintrag neben `input_tokens` und `output_tokens`. Ein `/api/admin/usage?from=&to=&project=` Aggregations-Endpoint macht die Daten abfragbar — kein Dashboard nötig, JSON reicht.
+
+### Migration bestehender Projekte
+
+1. Neuen Token `vkp_<projekt>_<random>` für jedes bestehende Projekt anlegen
+2. In `/opt/secrets/<projekt>/keys.env`: `VECTOR_API_KEY` auf neuen Token setzen
+3. Container recreaten
+4. Alten globalen Token erst nach Verifikation aller Projekte zurückziehen
+
+---
+
 ## Audit
 
 `scripts/audit.mjs` für jedes Projekt mit LLM-Markern:
@@ -147,3 +199,8 @@ Gilt für LLM-Apps die externe Inhalte in den Prompt-Kontext laden: Telegram-Mes
 3. < 10 Payloads → WARN
 4. Kein Payload-Quellen-String (`greshake`/`giskard`/`garak`) → WARN
 5. `promptfooconfig.yaml` mit `indirect-prompt-injection` → äquivalent zu PASS
+
+**Token-Isolation (C):**
+1. Code referenziert `VECTOR_API_TOKEN` (shared, global) statt `VECTOR_API_KEY` (projektspezifisch) → **FAIL**
+2. `/opt/secrets/<projekt>/keys.env` enthält kein `VECTOR_API_KEY` → WARN (kann noch in Migration sein)
+3. Token-Format nicht `vkp_<projekt>_*` → INFO (Format-Empfehlung, kein Hard-Fail)
