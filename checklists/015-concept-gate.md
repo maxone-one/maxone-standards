@@ -1,7 +1,7 @@
-# Checkliste: 015 — CONCEPT.md / Gate 1
+# Checkliste: 015: CONCEPT.md / Gate 1
 
 Pflicht VOR der ersten Code-Zeile. Jeder Punkt wird in der Projekt-eigenen
-`CONCEPT.md` (Repo-Root) abgehakt — nicht hier. Diese Datei ist die
+`CONCEPT.md` (Repo-Root) abgehakt, nicht hier. Diese Datei ist die
 Master-Liste.
 
 Wenn ein Punkt nicht zutrifft (z.B. keine externen Dienste, kein Auth):
@@ -11,15 +11,15 @@ Wenn ein Punkt nicht zutrifft (z.B. keine externen Dienste, kein Auth):
 
 ## A. Problem & Ziel
 
-- [ ] Problem-Beschreibung in 1–3 Sätzen, konkret (kein „digitalisieren wir XYZ")
+- [ ] Problem-Beschreibung in 1-3 Sätzen, konkret (kein „digitalisieren wir XYZ")
 - [ ] Erfolgs-Kriterium messbar formuliert (Nutzerzahl, gesparte Stunden,
-      Conversion-Rate — etwas, das in 6 Monaten überprüfbar ist)
+      Conversion-Rate, etwas, das in 6 Monaten überprüfbar ist)
 - [ ] Wenn Erfolgs-Kriterium fehlt: Projekt ist „rein experimentell"
       explizit so deklariert (kein Ressourcen-Pull aus Live-Projekten)
 
 ## B. Nutzer & Zugang
 
-- [ ] Pro Rolle: anonym? eingeloggt? zahlend? — Tabelle ausgefüllt
+- [ ] Pro Rolle: anonym? eingeloggt? zahlend?, Tabelle ausgefüllt
 - [ ] Geschätzte Nutzerzahl bei Launch (Grössenordnung reicht)
 - [ ] Falls > 1.000 Nutzer oder Verarbeitung sensitiver Daten: DSFA-Prüfung
       vermerkt
@@ -35,18 +35,18 @@ Wenn ein Punkt nicht zutrifft (z.B. keine externen Dienste, kein Auth):
 ## D. Auth-Modell
 
 - [ ] Pro Entität: wer darf lesen / schreiben / löschen
-- [ ] Default-Antwort ist „Owner" — Abweichungen (Admin, öffentlich) explizit
+- [ ] Default-Antwort ist „Owner", Abweichungen (Admin, öffentlich) explizit
       begründet
 - [ ] RLS-Strategie skizziert: Policy pro Tabelle, kein `USING (true)`
 - [ ] Service-Role-Key NUR server-seitig dokumentiert
 - [ ] Bezahlfeatures (falls vorhanden): server-seitige Prüfung gegen
-      Bezahlstatus geplant — nicht nur clientseitige Anzeige
+      Bezahlstatus geplant, nicht nur clientseitige Anzeige
 
 ## E. Externe Dienste
 
 - [ ] Vollständige Liste aller Drittdienste, die Daten verarbeiten
 - [ ] Pro Dienst: Server-Region (EU bevorzugt)
-- [ ] Pro Dienst: AVV/DPA-Status (für jeden Verarbeiter Pflicht — DSGVO Art. 28)
+- [ ] Pro Dienst: AVV/DPA-Status (für jeden Verarbeiter Pflicht, DSGVO Art. 28)
 - [ ] US-Dienste explizit begründet (warum kein EU-Pendant?)
 - [ ] Datenfluss skizziert (welche Daten gehen WAS für Zwecke an WEN)
 
@@ -64,10 +64,10 @@ Wenn ein Punkt nicht zutrifft (z.B. keine externen Dienste, kein Auth):
 
 - [ ] Frontend, Backend, DB, Hosting, Reverse Proxy, AI-Coding-Tool benannt
 - [ ] Pro Wahl: 1-Satz-Begründung (nicht „weil schnell")
-- [ ] Standard 016 (Stack-Whitelist, geplant) konform — Lovable / Bolt /
+- [ ] Standard 016 (Stack-Whitelist, geplant) konform, Lovable / Bolt /
       Base44 / v0 nur mit dokumentiertem Migrations-Pfad
-- [ ] EU-Hosting bevorzugt — wenn nicht: warum
-- [ ] AI-Modell-Aufrufe via Claude CLI (CLAUDE.md global) — nicht via API/SDK
+- [ ] EU-Hosting bevorzugt, wenn nicht: warum
+- [ ] AI-Modell-Aufrufe via Claude CLI (CLAUDE.md global), nicht via API/SDK
 
 ## H. Out of Scope
 
@@ -83,7 +83,7 @@ Wenn ein Punkt nicht zutrifft (z.B. keine externen Dienste, kein Auth):
 
 ## J. Vibe-Coding-spezifisch (wenn KI initial-generiert)
 
-- [ ] Konzept VOM MENSCHEN geschrieben — KI darf ko-editieren, nicht draften
+- [ ] Konzept VOM MENSCHEN geschrieben, KI darf ko-editieren, nicht draften
 - [ ] Reviewer hat Konzept unabhängig vom Autor gelesen + verstanden
       (Sign-Off bestätigt Verständnis, nicht nur Kosmetik)
 - [ ] Stack-Wahl listet AI-Coding-Tool explizit (Claude Code / Cursor /

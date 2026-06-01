@@ -15,7 +15,7 @@ Adresse: `[STRASSE, PLZ ORT]`
 Vertreten durch: `[ANSPRECHPARTNER]`
 E-Mail: `[E-MAIL-ADRESSE]`
 
-— nachfolgend „Verantwortlicher" genannt —
+nachfolgend „Verantwortlicher" genannt
 
 ## und
 
@@ -24,7 +24,7 @@ Max Karastelev, handelnd unter der Marke maxone
 Adresse: `[MAX' ADRESSE]`
 E-Mail: hallo@maxone.one
 
-— nachfolgend „Auftragsverarbeiter" genannt —
+nachfolgend „Auftragsverarbeiter" genannt
 
 ---
 
@@ -33,7 +33,7 @@ E-Mail: hallo@maxone.one
 (1) Der Auftragsverarbeiter erbringt für den Verantwortlichen folgende Leistung:
 
 `[KURZE BESCHREIBUNG DER SOFTWARE / DES DIENSTES, z. B. „Betrieb der
-Webanwendung stadtlahnflow.de — digitales Veranstaltungs- und
+Webanwendung stadtlahnflow.de, digitales Veranstaltungs- und
 Kommunikationstool für die Organisation des Verantwortlichen"]`
 
 (2) Die Verarbeitung personenbezogener Daten erfolgt ausschließlich im Rahmen
@@ -50,8 +50,8 @@ ergibt.
 
 Der Auftragsverarbeiter verarbeitet personenbezogene Daten ausschließlich zum
 Zweck der Bereitstellung, des Betriebs und der Wartung der unter § 1
-genannten Leistung. Eine darüber hinausgehende Verarbeitung — insbesondere
-für eigene Zwecke des Auftragsverarbeiters — ist untersagt.
+genannten Leistung. Eine darüber hinausgehende Verarbeitung, insbesondere
+für eigene Zwecke des Auftragsverarbeiters, ist untersagt.
 
 ---
 
@@ -96,10 +96,10 @@ Unterauftragnehmer sind in Anlage 2 aufgeführt.
 (5) **Betroffenenrechte:** Den Verantwortlichen durch geeignete technische
 und organisatorische Maßnahmen dabei zu unterstützen, Anfragen betroffener
 Personen auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit
-und Widerspruch (Art. 15–22 DSGVO) zu beantworten.
+und Widerspruch (Art. 15-22 DSGVO) zu beantworten.
 
-(6) **Meldepflichten:** Den Verantwortlichen unverzüglich — möglichst innerhalb
-von 24 Stunden — zu informieren, wenn ihm eine Verletzung des Schutzes
+(6) **Meldepflichten:** Den Verantwortlichen unverzüglich, möglichst innerhalb
+von 24 Stunden, zu informieren, wenn ihm eine Verletzung des Schutzes
 personenbezogener Daten bekannt wird (Art. 33 DSGVO).
 
 (7) **Datenschutz-Folgenabschätzung:** Den Verantwortlichen bei der Durchführung
@@ -108,7 +108,7 @@ Aufsichtsbehörde zu unterstützen, soweit nötig.
 
 (8) **Nachweispflicht:** Dem Verantwortlichen alle erforderlichen Informationen
 zum Nachweis der Einhaltung der Pflichten aus Art. 28 DSGVO zur Verfügung
-zu stellen und Überprüfungen — einschließlich Inspektionen — durch den
+zu stellen und Überprüfungen, einschließlich Inspektionen, durch den
 Verantwortlichen oder einen von ihm beauftragten Prüfer zu ermöglichen und
 dazu beizutragen.
 
@@ -188,7 +188,7 @@ Wirksamkeit der übrigen Bestimmungen unberührt.
 
 ---
 
-## Anlage 1 — Technische und organisatorische Maßnahmen (TOM)
+## Anlage 1: Technische und organisatorische Maßnahmen (TOM)
 
 | Maßnahme | Umsetzung |
 |---|---|
@@ -202,7 +202,7 @@ Wirksamkeit der übrigen Bestimmungen unberührt.
 
 ---
 
-## Anlage 2 — Genehmigte Unterauftragnehmer
+## Anlage 2: Genehmigte Unterauftragnehmer
 
 | Dienstleister | Zweck | Sitz | Grundlage |
 |---|---|---|---|

@@ -1,4 +1,4 @@
-# Checkliste: 021 — Re-Review-Reminder
+# Checkliste: 021: Re-Review-Reminder
 
 Alle 180 Tage pro Live-Projekt. Stichtag aus `last_review_date` in
 `registry/projects.yml`.
@@ -20,16 +20,16 @@ Alle 180 Tage pro Live-Projekt. Stichtag aus `last_review_date` in
 
 ## C. Section J Re-Walkthrough (Vibe-Coding-Lücken)
 
-Aus Standard 013 Section J — jeder Punkt erneut bestätigen:
+Aus Standard 013 Section J, jeder Punkt erneut bestätigen:
 
-- [ ] J1 — XSS / DOM-Sanitization
-- [ ] J2 — Log-Injection / strukturiertes Logging
-- [ ] J3 — SSRF (Allowlist für externe Fetches)
-- [ ] J4 — keine Hardcoded Secrets im Bundle
-- [ ] J5 — Hallucination-Check (existieren alle referenzierten Libs?)
-- [ ] J6 — Unauth-Routes-Liste aktuell
-- [ ] J7 — BOLA-Test (User-A vs User-B curl) erneut durchgeführt
-- [ ] J8 — Plattform-Lock-in: noch immer kein Lovable/Bolt/Base44 drin?
+- [ ] J1, XSS / DOM-Sanitization
+- [ ] J2, Log-Injection / strukturiertes Logging
+- [ ] J3, SSRF (Allowlist für externe Fetches)
+- [ ] J4, keine Hardcoded Secrets im Bundle
+- [ ] J5, Hallucination-Check (existieren alle referenzierten Libs?)
+- [ ] J6, Unauth-Routes-Liste aktuell
+- [ ] J7, BOLA-Test (User-A vs User-B curl) erneut durchgeführt
+- [ ] J8, Plattform-Lock-in: noch immer kein Lovable/Bolt/Base44 drin?
 
 ## D. DSGVO-Diffs (Standard 017)
 
@@ -65,8 +65,8 @@ Eine der drei Optionen wählen:
 ## Zeitbudget
 
 - Audit grün, keine Findings: **~30 min** pro Projekt
-- 1–3 kleine Findings: **~1 h** pro Projekt
-- Größere Findings (Bundle-Drift, Cert ab, Tracker neu): **~2–3 h**
+- 1-3 kleine Findings: **~1 h** pro Projekt
+- Größere Findings (Bundle-Drift, Cert ab, Tracker neu): **~2-3 h**
 
 ## Trigger für sofortigen Re-Review (auch vor 180 Tagen)
 

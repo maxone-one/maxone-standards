@@ -1,4 +1,4 @@
-# 032 — docs/INDEX.md: Dokumentations-Einstiegspunkt
+# 032: docs/INDEX.md: Dokumentations-Einstiegspunkt
 
 **Status:** active
 **Seit:** 2026-05-31
@@ -7,7 +7,7 @@
 ## Regel
 
 Jedes Projekt mit mehr als 5 Dateien in `docs/` MUSS eine `docs/INDEX.md` haben.
-Sie ist der einzige Einstiegspunkt für alle Dokumentation — kein Agent und kein
+Sie ist der einzige Einstiegspunkt für alle Dokumentation, kein Agent und kein
 Mensch steigt direkt in Einzeldateien ein, ohne zuerst den INDEX gelesen zu haben.
 
 **`docs/INDEX.md` enthält:**
@@ -23,7 +23,7 @@ Pflicht-Schritt (nach PLAN.md und DECISIONS.md).
 
 Projekte akkumulieren Dokumentation über Zeit. Ohne zentralen Index werden
 Dateien in Unterverzeichnissen (`prd/`, `modules/`, `vision/`) systematisch
-übersehen — auch von KI-Agenten, die nur PLAN.md + DECISIONS.md lesen und
+übersehen, auch von KI-Agenten, die nur PLAN.md + DECISIONS.md lesen und
 davon ausgehen, alle relevanten Quellen zu kennen.
 
 **Konkreter Vorfall (2026-05-31, venfree):** 46 Doku-Dateien im Projekt.
@@ -57,7 +57,7 @@ dann den relevanten Zweig.
 
 - Bei jeder neuen Datei in `docs/`: sofort eine Zeile in `INDEX.md` ergänzen.
 - Bei veralteten Dateien: `⚠️ veraltet` markieren, nicht löschen.
-- INDEX.md selbst ist nie veraltet — sie zeigt aktuellen Stand.
+- INDEX.md selbst ist nie veraltet, sie zeigt aktuellen Stand.
 
 ## Audit
 
@@ -71,7 +71,7 @@ dann den relevanten Zweig.
 
 - **024-plan-tracker:** PLAN.md + DECISIONS.md bleiben Pflicht-Schritt 1+2.
   INDEX.md ist Schritt 3, nicht Ersatz.
-- **029-concept-reference:** CONCEPT.md ist ein Gate vor Code — INDEX.md ist
+- **029-concept-reference:** CONCEPT.md ist ein Gate vor Code, INDEX.md ist
   Navigation im laufenden Projekt. Beide koexistieren.
 - **031-decisions-md:** DECISIONS.md hat Vorrang. INDEX.md verweist auf sie,
   ersetzt sie nicht.

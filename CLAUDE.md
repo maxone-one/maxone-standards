@@ -1,26 +1,26 @@
-# maxone-standards — Projekt-Notizen für Claude
+# maxone-standards: Projekt-Notizen für Claude
 
 ## Beim Sitzungsstart IMMER lesen
 
-1. [`PLAN.md`](PLAN.md) — vereinbarter Scope, offene Standards-Arbeit
-2. [`BUGS.md`](BUGS.md) — bekannte Bugs in audit.mjs + Standards-Infrastruktur
+1. [`PLAN.md`](PLAN.md), vereinbarter Scope, offene Standards-Arbeit
+2. [`BUGS.md`](BUGS.md), bekannte Bugs in audit.mjs + Standards-Infrastruktur
 
 ## Was dieses Repo ist
 
 Governance-Repo für die 30 maxone-Standards (Architektur/Deploy/Security/UI/
-LLM-Härtung/Mail/Ops/Auth) über 14 Projekte. Nicht der Code der Projekte selbst —
+LLM-Härtung/Mail/Ops/Auth) über 14 Projekte. Nicht der Code der Projekte selbst
 nur die Regeln, das Audit-Script und die Templates.
 
 ## Wichtige Eigenheiten
 
 - **`scripts/audit.mjs`** prüft lokal (Glob + Grep) UND per SSH gegen konfigurierte
   Server. SSH-Konfiguration in `config/servers.local.yml` (gitignored, Vorlage:
-  `config/servers.example.yml`). SSH-Fails degradieren auf WARN, nicht FAIL —
+  `config/servers.example.yml`). SSH-Fails degradieren auf WARN, nicht FAIL
   `--local-only` schaltet SSH komplett aus.
-- **`registry/projects.yml`** — Single Source of Truth für alle Projekte.
+- **`registry/projects.yml`**, Single Source of Truth für alle Projekte.
   Kein `path_local` mehr (lokal konfigurieren falls nötig). Audit mit `--local-only`
   läuft ohne lokale Pfade.
-- **`registry/exceptions.yml`** — formale Ausnahmen pro (Projekt, Standard)
+- **`registry/exceptions.yml`**, formale Ausnahmen pro (Projekt, Standard)
   mit `granted_at` + `expires_until` + `granted_by`. Audit reklassifiziert
   FAIL/WARN nach SKIP, solange Ausnahme aktiv. Default-Lebensdauer 6 Monate;
   abgelaufene Ausnahmen → Audit zeigt wieder echtes FAIL/WARN.

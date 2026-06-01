@@ -1,4 +1,4 @@
-# 020 — Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute · Kein Gedankenstrich · Fließender Schreibstil)
+# 020: Brand & Kommunikation (Wahrhaftige Unterschrift · Echte Umlaute · Kein Gedankenstrich · Fließender Schreibstil)
 
 **Status:** active
 **Seit:** 2026-04-29
@@ -13,7 +13,7 @@
 
 ---
 
-## A — Wahrhaftige Unterschrift
+## A: Wahrhaftige Unterschrift
 
 **Es unterzeichnet der, der wirklich verschickt.**
 
@@ -21,26 +21,26 @@
 |---|---|
 | Max persönlich tippt | "Max" / "Liebe Grüße Max" / "Max Karastelev" |
 | KI im Auftrag (Claude, Vector, …) | `Vector — KI-Assistent von maxone.one (im Auftrag von Max Karastelev, automatisch versendet)` |
-| Bot/Daemon/Cron | `— maxone-watchdog (automatisch)` |
+| Bot/Daemon/Cron | `, maxone-watchdog (automatisch)` |
 
-Eine KI darf **nie** unter Max' Namen schreiben. Ein Bot darf **nie** als Person auftreten. Selbst wenn der Inhalt stimmt — die Unterschrift muss die Wahrheit über den Absender sagen.
+Eine KI darf **nie** unter Max' Namen schreiben. Ein Bot darf **nie** als Person auftreten. Selbst wenn der Inhalt stimmt, die Unterschrift muss die Wahrheit über den Absender sagen.
 
 **Kürzer in Telegram/SMS:** `— Vector (Max' KI), automatisch versendet`
 
 **Implementierung:**
-- Telegram-Bots: hardcoded Footer-Block am Ende jeder outbound Message — kein Bypass per Prompt, Code hängt es an
+- Telegram-Bots: hardcoded Footer-Block am Ende jeder outbound Message, kein Bypass per Prompt, Code hängt es an
 - Mail (`email-client` Edge Function): KI-Disclaimer vor Sponsor-Footer, Pipeline: User-Signatur → KI-Disclaimer → Sponsor-Footer → Send
-- Auto-Replies/Onboarding: Versender-Identität niemals "Max" — "maxone Team" oder Bot-Name
+- Auto-Replies/Onboarding: Versender-Identität niemals "Max", "maxone Team" oder Bot-Name
 
-**Ausnahme:** Max kann KI-vorgeschlagenen Text 1:1 selbst freigeben und persönlich versenden — dann unterzeichnet er als "Max" (Mensch im Loop = Wahrheit).
+**Ausnahme:** Max kann KI-vorgeschlagenen Text 1:1 selbst freigeben und persönlich versenden, dann unterzeichnet er als "Max" (Mensch im Loop = Wahrheit).
 
-**Warum:** Wenn Viktoria eine Nachricht "von Max" bekommt, die Claude geschrieben hat, entstehen falsche Erwartungen, fehlende Verbindlichkeits-Einschätzung, und wenn sie es rausfindet wirkt alles davor manipuliert. Marken-Wert von maxone.one: wir lügen nie. Vorfall 2026-04-29: Telegram-Onboarding an Viktoria From mit "Liebe Grüße Max" — Max: "das ist eine Lüge".
+**Warum:** Wenn Viktoria eine Nachricht "von Max" bekommt, die Claude geschrieben hat, entstehen falsche Erwartungen, fehlende Verbindlichkeits-Einschätzung, und wenn sie es rausfindet wirkt alles davor manipuliert. Marken-Wert von maxone.one: wir lügen nie. Vorfall 2026-04-29: Telegram-Onboarding an Viktoria From mit "Liebe Grüße Max", Max: "das ist eine Lüge".
 
 ---
 
-## B — Echte Umlaute, niemals ASCII-Ersatz
+## B: Echte Umlaute, niemals ASCII-Ersatz
 
-**Regel:** ä, ö, ü, Ä, Ö, Ü, ß — immer. Niemals ue/ae/oe/ss als Ersatz.
+**Regel:** ä, ö, ü, Ä, Ö, Ü, ß, immer. Niemals ue/ae/oe/ss als Ersatz.
 
 **Gilt überall:** DOM-Text, UI-Labels, ARIA-Attribute, Mail-Subjects, Mail-Bodies, Telegram-Nachrichten, Code-Kommentare, Commit-Messages, PR-Bodies, Memory-Einträge.
 
@@ -48,14 +48,14 @@ Eine KI darf **nie** unter Max' Namen schreiben. Ein Bot darf **nie** als Person
 
 ### Drei Schichten zur Durchsetzung
 
-**Schicht 1 — Runtime-Guard** (`src/lib/email-guard.ts`):
+**Schicht 1, Runtime-Guard** (`src/lib/email-guard.ts`):
 ```typescript
 import ASCII_FALLBACKS from "./ascii-fallbacks.json";
 export function assertNoAsciiFallback(parts: GuardableMailParts, context: string): void
 ```
 Wirft `AsciiFallbackError` direkt vor `transport.sendMail`. Kein Bypass möglich.
 
-**Schicht 2 — Repo-Lint** (`scripts/check-umlauts.mjs`):
+**Schicht 2, Repo-Lint** (`scripts/check-umlauts.mjs`):
 ```bash
 npm run check:umlauts:branch   # CI: neue Zeilen gegen main
 npm run check:umlauts:all      # Audit: alle getackten Quelltexte
@@ -68,17 +68,17 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 ```
 
 **Referenz-Implementierung:** SLF-Projekt (`c:/Users/max/Projects/stadt-lahn-flow`):
-- `src/lib/ascii-fallbacks.json` — 84 Einträge (SSoT für Runtime-Guard + Lint)
-- `src/lib/email-guard.ts` — Runtime-Guard mit 10 Unit-Tests
-- `scripts/check-umlauts.mjs` — CLI-Lint-Tool
+- `src/lib/ascii-fallbacks.json`, 84 Einträge (SSoT für Runtime-Guard + Lint)
+- `src/lib/email-guard.ts`, Runtime-Guard mit 10 Unit-Tests
+- `scripts/check-umlauts.mjs`, CLI-Lint-Tool
 
 **Neues Projekt onboarden:** `ascii-fallbacks.json` + `email-guard.ts` + `check-umlauts.mjs` kopieren, npm-Skripte + CI-Step eintragen.
 
-**Warum:** Vorfall 2026-04-29: Claude versandte Test-Mail mit "koennen", "naechste", "Gruesse" — obwohl CLAUDE.md-Regel existierte. Statische Regeln ohne maschinelle Durchsetzung reichen nicht.
+**Warum:** Vorfall 2026-04-29: Claude versandte Test-Mail mit "koennen", "naechste", "Gruesse", obwohl CLAUDE.md-Regel existierte. Statische Regeln ohne maschinelle Durchsetzung reichen nicht.
 
 ---
 
-## C — Kein Gedankenstrich
+## C: Kein Gedankenstrich
 
 **Regel:** Den Gedankenstrich (—) niemals verwenden. Keine Ausnahmen.
 
@@ -90,13 +90,13 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 
 ---
 
-## D — Fließender Schreibstil, kein KI-Aufzählungsstil
+## D: Fließender Schreibstil, kein KI-Aufzählungsstil
 
 **Regel:** KI schreibt standardmäßig in kurzen, aufzählenden Sätzen. Das fällt auf. Max schreibt fließend und in leicht verständlichen Sätzen. Dieser Stil ist verbindlich für alle Texte die maxone.one, Claude oder andere Agenten im Auftrag von Max produzieren.
 
 **Was das bedeutet:** Gedanken werden in Sätzen verbunden, nicht abgehackt. Fakten und Haltung kommen im selben Atemzug. Kein Bullet-Point-Denken, keine "Ich kann X, ich kann Y, ich kann Z"-Reihung. Zusammenhänge werden erklärt, nicht nummeriert.
 
-**Gilt für:** alle vom Menschen lesbaren Texte — Anschreiben, Profile, E-Mails, UI-Texte, Zusammenfassungen, Chat-Antworten, Dokumentation.
+**Gilt für:** alle vom Menschen lesbaren Texte, Anschreiben, Profile, E-Mails, UI-Texte, Zusammenfassungen, Chat-Antworten, Dokumentation.
 
 **Referenz (Max' eigene Formulierungen):**
 "Gelernter Handwerker mit einer ausgeprägten Leidenschaft für Digitalisierung, innovative Technologien und automatisierte Prozesse, die das Leben erleichtern und effizienter gestalten. Ich bringe mein Know-how aus Handwerk, technischer Praxis, Online-Marketing, Automation und Smart-Home-Technologien überall dort ein, wo es sinnvoll ist und echten Mehrwert schafft."
@@ -111,5 +111,5 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 
 ## Audit
 
-**Umlaute:** `node scripts/check-umlauts.mjs all` — 0 Treffer erwartet. CI: Exit 1 bei neuen ASCII-Fallbacks in Diff.
-**Gedankenstrich:** `grep -r " — " src/` in Textdateien — 0 Treffer erwartet.
+**Umlaute:** `node scripts/check-umlauts.mjs all`, 0 Treffer erwartet. CI: Exit 1 bei neuen ASCII-Fallbacks in Diff.
+**Gedankenstrich:** `grep -r " — " src/` in Textdateien, 0 Treffer erwartet.

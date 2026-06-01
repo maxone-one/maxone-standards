@@ -1,4 +1,4 @@
-# 026 — Pioneer-System
+# 026: Pioneer-System
 
 **Status:** active
 **Seit:** 2026-05-19
@@ -14,7 +14,7 @@ Slots, ein endlicher Puls-Pool und eine öffentliche Leaderboard-Wall. Es erzeug
 
 ---
 
-## Konstanten — immer aus einem server-sicheren Modul
+## Konstanten: immer aus einem server-sicheren Modul
 
 ```ts
 // lib/pioneer/pool.ts  (kein 'use client'!)
@@ -50,7 +50,7 @@ Client Components dürfen weiterhin aus `@/components/PioneerCounter` importiere
 
 | `source`              | Punkte    | Beschreibung                              |
 |-----------------------|-----------|-------------------------------------------|
-| `early_slot`          | 1 – 50    | Je früher der Slot, desto mehr             |
+| `early_slot`          | 1, 50    | Je früher der Slot, desto mehr             |
 | `profile_photo`       | 20        | Profilfoto hochgeladen + verifiziert      |
 | `feedback`            | 35        | Feedback eingereicht                      |
 | `bug_report`          | 15        | Bug-Report eingereicht                    |
@@ -61,7 +61,7 @@ Client Components dürfen weiterhin aus `@/components/PioneerCounter` importiere
 
 ## Pioneer-Stufen (Tiers)
 
-Stufen basieren auf dem **Eintrittsdatum (`confirmed_at`)** — niemals auf der Slot-Nummer, niemals auf Pulse. Stufen sind permanent.
+Stufen basieren auf dem **Eintrittsdatum (`confirmed_at`)**, niemals auf der Slot-Nummer, niemals auf Pulse. Stufen sind permanent.
 
 > **Regel:** `getTier(slot)` ist verboten. `pioneer_tier` wird im Leaderboard-View aus der
 > `confirmed_at`-Reihenfolge berechnet und vom Frontend direkt gelesen.
@@ -72,9 +72,9 @@ Stufen basieren auf dem **Eintrittsdatum (`confirmed_at`)** — niemals auf der 
 
 | Stufe      | Eintrittposition  | Farbe / Border-Klasse                     |
 |------------|-------------------|-------------------------------------------|
-| Founding   | 1 – 10 bestätigt  | `text-primary / border-primary/30`        |
-| Early      | 11 – 25 bestätigt | `text-foreground / border-border`         |
-| Pioneer    | 26 – 50 bestätigt | `text-muted-foreground / border-border`   |
+| Founding   | 1, 10 bestätigt  | `text-primary / border-primary/30`        |
+| Early      | 11, 25 bestätigt | `text-foreground / border-border`         |
+| Pioneer    | 26, 50 bestätigt | `text-muted-foreground / border-border`   |
 
 **Ranking** (Leaderboard-Position #1, #2, …) wird **ausschließlich nach Pulse** bewertet:
 ```sql
@@ -168,19 +168,19 @@ Erste-X-Aktionen werden mit einem kurzen visuellen Moment gefeiert. Detection is
 
 | Tier | Stil | Default-Projekte |
 |---|---|---|
-| **A — Vollfeier** | Konfetti + Toast | vanfree, snapflow, plansey, maxone.one |
-| **B — Toast-only** | Toast ohne Konfetti | stadtlahnflow |
-| **C — Stille Notification** | Server-seitig geloggt, kein UI-Event | voltfair, kitchen-station |
+| **A, Vollfeier** | Konfetti + Toast | vanfree, snapflow, plansey, maxone.one |
+| **B, Toast-only** | Toast ohne Konfetti | stadtlahnflow |
+| **C, Stille Notification** | Server-seitig geloggt, kein UI-Event | voltfair, kitchen-station |
 
-Tier ist pro Projekt einmal in `lib/pioneer/config.ts` festgelegt, NICHT pro Event — Konsistenz innerhalb eines Projekts hat Vorrang. Quellen-Vergleich der Ist-Implementierungen: `briefings/pioneer-achievement-convergence.md`.
+Tier ist pro Projekt einmal in `lib/pioneer/config.ts` festgelegt, NICHT pro Event, Konsistenz innerhalb eines Projekts hat Vorrang. Quellen-Vergleich der Ist-Implementierungen: `briefings/pioneer-achievement-convergence.md`.
 
 **Drei aktuelle Realisierungen (Stand 2026-05-20, nicht normativ):**
 
 | Projekt | UX-Stil | Tabelle | Datei |
 |---|---|---|---|
 | SLF | Konfetti + Toast (volle Feier) | `member_milestones` mit `seen_at` | [`FirstTimeConfetti.tsx`](../../stadt-lahn-flow/src/components/milestones/FirstTimeConfetti.tsx), [`milestones.ts`](../../stadt-lahn-flow/src/lib/milestones.ts) |
-| vanfree | Grüner Checkmark (mittlere Feier) | — (Detection über `pioneer_scores` Count, race-anfällig) | [`pioneer/profile/page.tsx`](../../vanfree/app/[locale]/(shell)/pioneer/profile/page.tsx) |
-| voltfair | Stilles Form-Feedback (keine Feier) | — (Detection über `pioneer_scores` Count, manuell) | [`pioneer-review.ts`](../../voltfair.de/app/actions/pioneer-review.ts) |
+| vanfree | Grüner Checkmark (mittlere Feier) |, (Detection über `pioneer_scores` Count, race-anfällig) | [`pioneer/profile/page.tsx`](../../vanfree/app/[locale]/(shell)/pioneer/profile/page.tsx) |
+| voltfair | Stilles Form-Feedback (keine Feier) |, (Detection über `pioneer_scores` Count, manuell) | [`pioneer-review.ts`](../../voltfair.de/app/actions/pioneer-review.ts) |
 
 Die unten skizzierten Snippets sind ein **Vorschlag in Richtung 053**, nicht der
 Ist-Zustand und nicht verbindlich.
@@ -189,7 +189,7 @@ Ist-Zustand und nicht verbindlich.
 
 | Event-Key             | Trigger                                        | Pulse | Broadcast |
 |-----------------------|------------------------------------------------|-------|-----------|
-| `first_slot`          | `/pioneer/confirm` erfolgreich (Slot belegt)   | 1–50  | ja, bei Milestone-Slots |
+| `first_slot`          | `/pioneer/confirm` erfolgreich (Slot belegt)   | 1-50  | ja, bei Milestone-Slots |
 | `first_feedback`      | erstes `feedback`-Puls-Event                   | 35    | nein      |
 | `first_bug_report`    | erstes `bug_report`-Puls-Event                 | 15    | nein      |
 | `first_feature`       | erstes `feature_implemented`-Puls-Event        | 30    | nein      |
@@ -198,7 +198,7 @@ Ist-Zustand und nicht verbindlich.
 **Milestone-Broadcast** (öffentlich auf `/pioneers`-Wall): Slot-Eintritte bei
 **#1, #10, #25, #50** zusätzlich als globales Event. Konfetti feuert bei allen
 aktiven Besuchern der Leaderboard-Seite; permanenter Eintrag im Wall-Header
-(„#10 erreicht — Early-Stufe voll"). Implementierung via Supabase Realtime auf
+(„#10 erreicht, Early-Stufe voll"). Implementierung via Supabase Realtime auf
 `pioneer_milestones`-Tabelle.
 
 ### Datenmodell
@@ -302,13 +302,13 @@ Der Server setzt `broadcast=true` bei Slot-Insert auf #1/#10/#25/#50.
 
 ### Regeln
 
-- **Server-only Detection.** Niemals `localStorage` als First-Time-Quelle —
+- **Server-only Detection.** Niemals `localStorage` als First-Time-Quelle
   Geräte-Wechsel würde Replay erlauben.
 - **Einmal pro Pioneer-Key.** UNIQUE-Constraint ist die Wahrheit; keine
   zusätzliche Prüfung in Application-Code, die divergieren kann.
-- **`disableForReducedMotion`** ist Pflicht in jedem `confetti()`-Call —
+- **`disableForReducedMotion`** ist Pflicht in jedem `confetti()`-Call
   niemand soll Konfetti-Spam erleben, der das nicht will.
-- **Kein Sound, kein Lottie.** SLF-Minimalismus ist absichtlich — kurzer
+- **Kein Sound, kein Lottie.** SLF-Minimalismus ist absichtlich, kurzer
   visueller Moment, dann weiterarbeiten.
 - **Queue, nicht parallel.** Wenn mehrere Milestones gleichzeitig pending sind
   (z.B. Slot-Eintritt + sofortiges Feedback), sequenziell feiern, nicht überlagern.
@@ -348,6 +348,6 @@ psql -c "\d pioneer_milestones" | grep -i "subscriber_id, key"   # sollte UNIQUE
 
 ## Verwandte Standards
 
-- **003** — Secrets-Store (Supabase-Zugangsdaten)
-- **044** — SSoT & kein Hardcode (Konstanten aus server-sicheren Modulen)
-- **040** — Deutsche Umlaute
+- **003**, Secrets-Store (Supabase-Zugangsdaten)
+- **044**, SSoT & kein Hardcode (Konstanten aus server-sicheren Modulen)
+- **040**, Deutsche Umlaute

@@ -1,4 +1,4 @@
-# 031 — DECISIONS.md: Strategische Entscheidungen als SSoT
+# 031: DECISIONS.md: Strategische Entscheidungen als SSoT
 
 **Status:** active
 **Seit:** 2026-05-31
@@ -6,11 +6,11 @@
 
 ## Das Problem
 
-In lang laufenden Projekten entsteht Drift: Das PRD beschreibt Desktop-First, die Plattform ist längst Web-only. Das Konzept verspricht Paid-Tiers, das Geschäftsmodell ist inzwischen anders. Ein Agent der zu spät in ein Projekt einsteigt, liest das PRD und baut in die falsche Richtung — ohne es zu wissen.
+In lang laufenden Projekten entsteht Drift: Das PRD beschreibt Desktop-First, die Plattform ist längst Web-only. Das Konzept verspricht Paid-Tiers, das Geschäftsmodell ist inzwischen anders. Ein Agent der zu spät in ein Projekt einsteigt, liest das PRD und baut in die falsche Richtung, ohne es zu wissen.
 
 Dieses Drift-Muster ist unvermeidlich: Konzepte und PRDs werden zu Beginn geschrieben, Entscheidungen fallen aber laufend. Dokumente nachzuziehen kostet Zeit die niemand hat.
 
-**DECISIONS.md ist die Lösung:** Eine einzige Datei dokumentiert alle strategischen Pivots, Abweichungen und bewussten "Nicht-mehr-gültig"-Entscheidungen. Wer DECISIONS.md liest, weiß was noch gilt und was nicht — ohne PRD und Konzept komplett zu lesen.
+**DECISIONS.md ist die Lösung:** Eine einzige Datei dokumentiert alle strategischen Pivots, Abweichungen und bewussten "Nicht-mehr-gültig"-Entscheidungen. Wer DECISIONS.md liest, weiß was noch gilt und was nicht, ohne PRD und Konzept komplett zu lesen.
 
 ## Regel
 
@@ -22,7 +22,7 @@ Jedes Projekt mit einem PRD, CONCEPT.md oder Visionsdokument führt eine `docs/D
 - Max sagt explizit "das haben wir so entschieden" zu etwas Nicht-Offensichtlichem
 - Eine frühere Annahme hat sich als falsch erwiesen
 
-**Timing:** Sofort wenn die Entscheidung fällt — nicht im nächsten Sprint, nicht "später". Wer die Entscheidung trifft, schreibt den Eintrag. Das ist der erste Schritt, bevor Code oder Copy geändert wird.
+**Timing:** Sofort wenn die Entscheidung fällt, nicht im nächsten Sprint, nicht "später". Wer die Entscheidung trifft, schreibt den Eintrag. Das ist der erste Schritt, bevor Code oder Copy geändert wird.
 
 ## Format
 
@@ -48,10 +48,10 @@ Erkenntnis dazu geführt hat.>
 
 Projekte mit PRD + CONCEPT.md + PLAN.md folgen dieser Lese-Reihenfolge beim Session-Start:
 
-1. **DECISIONS.md** — was ist anders als in PRD/Konzept beschrieben?
-2. **CONCEPT.md** — was ist das Produkt, welches Problem löst es?
-3. **PRD** — wie wird ein Feature konkret spezifiziert?
-4. **PLAN.md** — was wird gerade gebaut, in welcher Reihenfolge?
+1. **DECISIONS.md**, was ist anders als in PRD/Konzept beschrieben?
+2. **CONCEPT.md**, was ist das Produkt, welches Problem löst es?
+3. **PRD**, wie wird ein Feature konkret spezifiziert?
+4. **PLAN.md**, was wird gerade gebaut, in welcher Reihenfolge?
 
 **Widersprüche:** DECISIONS.md gewinnt immer. PLAN.md gewinnt bei der Reihenfolge.
 
@@ -59,8 +59,8 @@ Projekte mit PRD + CONCEPT.md + PLAN.md folgen dieser Lese-Reihenfolge beim Sess
 
 | Datei | Inhalt | DECISIONS.md vs. |
 |---|---|---|
-| `CONCEPT.md` (029) | Was das Produkt ist — Vision, Positionierung, Zielgruppen | DECISIONS.md dokumentiert Änderungen an der Positionierung |
-| `PLAN.md` (024) | Was gebaut wird — offene + erledigte Tasks | DECISIONS.md dokumentiert warum bestimmte Richtungen nicht mehr verfolgt werden |
+| `CONCEPT.md` (029) | Was das Produkt ist, Vision, Positionierung, Zielgruppen | DECISIONS.md dokumentiert Änderungen an der Positionierung |
+| `PLAN.md` (024) | Was gebaut wird, offene + erledigte Tasks | DECISIONS.md dokumentiert warum bestimmte Richtungen nicht mehr verfolgt werden |
 | PRD | Feature-Spezifikation für die Entwicklung | DECISIONS.md markiert welche PRD-Abschnitte überholt sind |
 
 ## Audit

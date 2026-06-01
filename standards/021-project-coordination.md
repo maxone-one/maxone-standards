@@ -1,4 +1,4 @@
-# 021 — Projekt-Koordination (Spec-Archiv · Dep-Currency · Cross-Project-Broadcast)
+# 021: Projekt-Koordination (Spec-Archiv · Dep-Currency · Cross-Project-Broadcast)
 
 **Status:** active
 **Seit:** 2026-05-04 (Spec-Archiv), 2026-05-11 (Dep-Currency + Broadcast)
@@ -12,21 +12,21 @@
 
 ---
 
-## A — Spec-Archiv
+## A: Spec-Archiv
 
 Jede Phase besteht aus drei Dateien, nie einer:
-- `PRD.md` — Spezifikation (was/warum/wie)
-- `TODO.md` — offene Items (kontinuierlich → DONE.md)
-- `DONE.md` — append-only Log mit Sign-Off
+- `PRD.md`, Spezifikation (was/warum/wie)
+- `TODO.md`, offene Items (kontinuierlich → DONE.md)
+- `DONE.md`, append-only Log mit Sign-Off
 
 **Pfad:** `docs/phases/<phase-name>/` oder `briefings/<phase-name>/`
 
 **Abschluss:** wenn TODO.md leer + Sign-Off in DONE.md → alles nach `docs/archive/<phase>/`, Stub `DEPRECATED.md` mit Forward-Pointer am ursprünglichen Pfad.
 
 **Drei Kategorien für Arbeit außerhalb aktiver Phasen:**
-- **A** — Mid-Phase Scope-Add (in TODO.md mit Tag `[scope-add — YYYY-MM-DD]`)
-- **B** — Post-Completion Feature (eigene Mini-Phase, wenn > 1h oder Sign-Off nötig)
-- **C** — Micro-Maintenance (< 1h, in `LIVING.md` im Repo-Root, append-only, jährlich rotieren)
+- **A**, Mid-Phase Scope-Add (in TODO.md mit Tag `[scope-add — YYYY-MM-DD]`)
+- **B**, Post-Completion Feature (eigene Mini-Phase, wenn > 1h oder Sign-Off nötig)
+- **C**, Micro-Maintenance (< 1h, in `LIVING.md` im Repo-Root, append-only, jährlich rotieren)
 
 **Cross-Repo Mirror:** `maxone-one/specs-archive` synct alle `docs/archive/**` via systemd-timer auf maxone-prod alle 60s. Schreibrichtung nur Projekt → Mirror.
 
@@ -34,12 +34,12 @@ Jede Phase besteht aus drei Dateien, nie einer:
 
 ---
 
-## B — Tech-Stack-Currency
+## B: Tech-Stack-Currency
 
 Dependency-Drift wird proaktiv gepflegt. Pflicht-Kadenz:
 
-- **Patch + Minor: alle 4–6 Wochen** — `npm update` in einem PR. Bei grünem `tsc` + Build + Tests → merge + deploy ohne Rückfrage.
-- **Major-Bumps: einzeln** — pro Paket eigener PR, CHANGELOG lesen, Reihenfolge: Build-Tools (vite, typescript) vor Lint-Tools vor App-Libraries.
+- **Patch + Minor: alle 4-6 Wochen**, `npm update` in einem PR. Bei grünem `tsc` + Build + Tests → merge + deploy ohne Rückfrage.
+- **Major-Bumps: einzeln**, pro Paket eigener PR, CHANGELOG lesen, Reihenfolge: Build-Tools (vite, typescript) vor Lint-Tools vor App-Libraries.
 - **Security-Fix (npm audit high/critical):** separater PR, nicht im Feature-Branch parken.
 
 **Sweep starten:**
@@ -51,7 +51,7 @@ npm audit           # was ist sicherheitsrelevant?
 
 Wenn `npm outdated` > 5 Patch/Minor oder Repo > 6 Wochen ohne Sweep: **erst Sweep, dann Feature**.
 
-**Unfixbare Pakete** (vom Registry entfernt): Migration planen — `xlsx` → `exceljs`/papaparse, `request` → native `fetch`, `moment` → `date-fns`.
+**Unfixbare Pakete** (vom Registry entfernt): Migration planen, `xlsx` → `exceljs`/papaparse, `request` → native `fetch`, `moment` → `date-fns`.
 
 **Pausierte Projekte:** mindestens 1× pro Quartal `npm outdated` + `npm audit` Snapshot. Bei Vulns: Sweep auch im pausierten State.
 
@@ -61,7 +61,7 @@ Wenn `npm outdated` > 5 Patch/Minor oder Repo > 6 Wochen ohne Sweep: **erst Swee
 
 ---
 
-## C — Cross-Project Incident Broadcast (CPIB)
+## C: Cross-Project Incident Broadcast (CPIB)
 
 Sobald ein Fehler oder eine Änderung mehr als ein Projekt betrifft, MUSS innerhalb der laufenden Session eine Broadcast-Datei angelegt werden:
 
@@ -97,7 +97,7 @@ maxone-standards/broadcasts/BCAST-YYYY-MM-DD-<slug>.md
 fix(<projekt>): resolve BCAST-YYYY-MM-DD-<slug>
 ```
 
-**Warum:** Drift entsteht wenn Änderung in A still B–N bricht. Vorfall 2026-04-22: `maxone.studio`→`maxone.one`-Wechsel, hardkodierte Studio-URLs in mehreren Projekten, Entdeckung Wochen später.
+**Warum:** Drift entsteht wenn Änderung in A still B-N bricht. Vorfall 2026-04-22: `maxone.studio`→`maxone.one`-Wechsel, hardkodierte Studio-URLs in mehreren Projekten, Entdeckung Wochen später.
 
 ---
 

@@ -1,4 +1,4 @@
-# 002 — Secrets & TLS (Zentraler Store · DNS-01-Pflicht)
+# 002: Secrets & TLS (Zentraler Store · DNS-01-Pflicht)
 
 **Status:** active
 **Seit:** 2026-03 (Store), 2026-04-22 (TLS)
@@ -11,9 +11,13 @@
 
 ---
 
-## A — Zentraler Secrets-Store
+## A: Zentraler Secrets-Store
 
-Alle Secrets liegen unter `/opt/secrets/<projekt>/keys.env` auf maxone-prod als Single Source of Truth. Globale Keys (Brevo API, INWX) unter `/opt/secrets/global/`. Projekt-`.env` referenziert vom Store — nie umgekehrt.
+**SSoT für alle Credentials: Vaultwarden** auf `https://tresor.maxone.one`. Passwörter, API Keys, Tokens und SSH Keys werden dort als strukturierte Items verwaltet. Die `/opt/secrets/*/keys.env`-Dateien auf maxone-prod sind Deployment-Kopien, die aus dem Vault befüllt werden.
+
+**Claude-Zugang:** `bw` CLI auf maxone-prod (`BW_SESSION`-Token in `/opt/secrets/vaultwarden/bw-session.env`) oder Vaultwarden-MCP-Server.
+
+Alle Secrets liegen zusätzlich unter `/opt/secrets/<projekt>/keys.env` auf maxone-prod. Globale Keys (Brevo API, INWX) unter `/opt/secrets/global/`. Projekt-`.env` referenziert vom Store, nie umgekehrt.
 
 **Struktur:**
 
@@ -38,7 +42,7 @@ Alle Secrets liegen unter `/opt/secrets/<projekt>/keys.env` auf maxone-prod als 
 5. JEDEN Endpunkt testen
 6. Drive-Backup
 7. VECTOR informieren
-8. Alten Key löschen — nur wenn alles grün
+8. Alten Key löschen, nur wenn alles grün
 
 **Niemals:**
 - Credentials im Klartext in CLI-Befehlen (`docker exec -e`, `curl -u`, `ssh ... "echo KEY"`)
@@ -52,9 +56,9 @@ Alle Secrets liegen unter `/opt/secrets/<projekt>/keys.env` auf maxone-prod als 
 
 ---
 
-## B — TLS via DNS-01 (niemals HTTP-01)
+## B: TLS via DNS-01 (niemals HTTP-01)
 
-Alle neuen Projekte nutzen Traefik-ACME-Resolver `letsencrypt` mit DNS-01-Challenge via INWX. HTTP-01 ist **verboten** — auch als Fallback.
+Alle neuen Projekte nutzen Traefik-ACME-Resolver `letsencrypt` mit DNS-01-Challenge via INWX. HTTP-01 ist **verboten**, auch als Fallback.
 
 **Traefik-Label:**
 ```yaml
@@ -69,7 +73,7 @@ traefik.http.routers.<name>.tls.domains[0].main=<domain>
 traefik.http.routers.<name>.tls.domains[0].sans=*.<domain>
 ```
 
-**INWX API-Endpoint:** `https://api.domrobot.com/jsonrpc/` — NICHT `api.inwx.de` (dauerhaft unerreichbar).
+**INWX API-Endpoint:** `https://api.domrobot.com/jsonrpc/`, NICHT `api.inwx.de` (dauerhaft unerreichbar).
 
 **Warum:** HTTP-01 koppelt alle Projekte am Account-Rate-Limit. Ein einzelner kaputter Container kann das Let's-Encrypt-Kontingent sprengen und blockiert alle anderen Projekte für bis zu eine Woche. DNS-01 isoliert Projekte voneinander.
 

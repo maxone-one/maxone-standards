@@ -11,13 +11,13 @@ Vor jedem Deploy auf Prod abhaken. Bei Kundenprojekten: PFLICHT.
 
 ## Server-Status
 
-- [ ] Server hat Memory frei (`free -h` — mindestens 2 GB frei)
-- [ ] Andere Container healthy (`docker ps` — keine Restarting)
+- [ ] Server hat Memory frei (`free -h`, mindestens 2 GB frei)
+- [ ] Andere Container healthy (`docker ps`, keine Restarting)
 - [ ] Backup der DB vorhanden (falls Schema-Änderung)
 
 ## Deploy-Workflow
 
-- [ ] Image-Build läuft auf CI / lokal — NICHT auf Prod
+- [ ] Image-Build läuft auf CI / lokal, NICHT auf Prod
 - [ ] Image-Tag ist eindeutig (Commit-SHA, kein `:latest`-only)
 - [ ] Blue/Green: alter Slot bleibt aktiv bis neuer healthy
 

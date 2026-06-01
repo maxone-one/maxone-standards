@@ -1,4 +1,4 @@
-# 013 — Security Scanning (gitleaks · Semgrep OWASP)
+# 013: Security Scanning (gitleaks · Semgrep OWASP)
 
 **Status:** active
 **Seit:** 2026-04-27
@@ -11,7 +11,7 @@
 
 ---
 
-## A — Secret-Scan (gitleaks)
+## A: Secret-Scan (gitleaks)
 
 Vor jedem `live`-Status MUSS `gitleaks detect` ohne Findings durchlaufen. Findings im aktuellen Code = HARTER STOPP.
 
@@ -36,7 +36,7 @@ gitleaks detect --source . --no-banner --redact
 
 ---
 
-## B — Static Analysis (Semgrep)
+## B: Static Analysis (Semgrep)
 
 Vor jedem `live`-Status MUSS `semgrep --config=p/owasp-top-ten` ohne Findings der Severity `ERROR` durchlaufen. Findings = HARTER STOPP bis behoben oder freigegeben.
 
@@ -61,7 +61,7 @@ Plus Eintrag in LAUNCH-REVIEW.md Section J.
 
 **Tools installieren:** `make install-tools`
 
-**Warum:** Veracode 2025/26: 45 % der KI-generierten Samples bauen OWASP-Top-10-Lücken ein — Rate hat sich nicht verbessert trotz Hersteller-Versprechen. XSS: 86 % Failure-Rate. SSRF: alle 5 getesteten AI-Coding-Tools (Cursor, Claude Code, Codex, Replit, Devin) bauten dieselbe Lücke ein (Tenzai, März 2026).
+**Warum:** Veracode 2025/26: 45 % der KI-generierten Samples bauen OWASP-Top-10-Lücken ein, Rate hat sich nicht verbessert trotz Hersteller-Versprechen. XSS: 86 % Failure-Rate. SSRF: alle 5 getesteten AI-Coding-Tools (Cursor, Claude Code, Codex, Replit, Devin) bauten dieselbe Lücke ein (Tenzai, März 2026).
 
 ---
 

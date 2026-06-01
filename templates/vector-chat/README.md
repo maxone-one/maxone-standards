@@ -1,4 +1,4 @@
-# Vector-Chat-Widget — Einbindung
+# Vector-Chat-Widget: Einbindung
 
 Snippet pro Framework. Ziel: in 1 Minute pro Projekt eingebunden.
 
@@ -27,9 +27,9 @@ stört (Wizards, Print, Admin).
 
 ## Dateien hier
 
-- `index.html.snippet` — für statische HTML-Seiten und Astro/SvelteKit `app.html`
-- `next-layout.tsx.snippet` — Next.js App Router (`app/layout.tsx`)
-- `svelte-app.html.snippet` — SvelteKit (`src/app.html`)
-- `vue-index.html.snippet` — Vue/Vite
+- `index.html.snippet`, für statische HTML-Seiten und Astro/SvelteKit `app.html`
+- `next-layout.tsx.snippet`, Next.js App Router (`app/layout.tsx`)
+- `svelte-app.html.snippet`, SvelteKit (`src/app.html`)
+- `vue-index.html.snippet`, Vue/Vite
 
-Kein Auto-Tooling — kopieren, anpassen, fertig.
+Kein Auto-Tooling, kopieren, anpassen, fertig.

@@ -1,4 +1,4 @@
-# TESTING — <PROJEKT>
+# TESTING: <PROJEKT>
 
 ## Was abgedeckt ist
 
@@ -15,7 +15,7 @@
 
 ## Was NICHT abgedeckt ist
 
-- [ ] <Liste der Lücken — wichtig, weil "Tests grün" ohne diese Liste falsch verstanden wird>
+- [ ] <Liste der Lücken, wichtig, weil "Tests grün" ohne diese Liste falsch verstanden wird>
 - [ ] Browser-Rendering (kein Playwright)
 - [ ] E2E mit Login (manuell)
 

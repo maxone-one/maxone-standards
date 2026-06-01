@@ -1,4 +1,4 @@
-# Checkliste: 026 — Self-Hosted-First (keine Abos)
+# Checkliste: 026: Self-Hosted-First (keine Abos)
 
 Vor jeder neuen Tool-/Service-Einführung UND einmal pro Quartal Bestand
 prüfen.
@@ -11,7 +11,7 @@ prüfen.
       durchgeführt
 - [ ] **Suche** auf Docker Hub nach offiziellem Image
 - [ ] **Suche** auf GitHub-Releases (≥ 1.000 Stars + Commits < 6 Monate)
-- [ ] Lizenz-Check: OSS (MIT/Apache/GPL/AGPL) — kein „Source-Available
+- [ ] Lizenz-Check: OSS (MIT/Apache/GPL/AGPL), kein „Source-Available
       mit kommerzieller Auflage"
 - [ ] Maintenance-Check: letzter Commit < 6 Monate, ≥ 1 aktiver Maintainer
 - [ ] Resourcen-Footprint: passt auf Hetzner-VPS (RAM/Disk/CPU)
@@ -20,14 +20,14 @@ prüfen.
       CONCEPT.md (Standard 015)
 - [ ] **Wenn etwas passt:** Deploy via Standard 027-Pipeline geplant
 
-## B. SaaS / Abo niemals einsetzen — Ausnahmen-Liste
+## B. SaaS / Abo niemals einsetzen: Ausnahmen-Liste
 
 Diese vier Kategorien dürfen Abo sein:
 
-- [ ] **Domain-Registrar** (INWX) — strukturell notwendig
-- [ ] **TLS-CA** (Let's Encrypt) — kostenlos, OSS, nicht substituierbar
-- [ ] **VPS-Hoster** (Hetzner) — Hardware-Miete, kein Software-Abo
-- [ ] **Payment-Processor** (Stripe) — regulatorisch notwendig wenn das
+- [ ] **Domain-Registrar** (INWX), strukturell notwendig
+- [ ] **TLS-CA** (Let's Encrypt), kostenlos, OSS, nicht substituierbar
+- [ ] **VPS-Hoster** (Hetzner), Hardware-Miete, kein Software-Abo
+- [ ] **Payment-Processor** (Stripe), regulatorisch notwendig wenn das
       Projekt Zahlungen verarbeitet
 
 Alles andere → SELBST hosten oder NICHT einsetzen.

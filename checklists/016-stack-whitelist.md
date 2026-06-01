@@ -1,4 +1,4 @@
-# Checkliste: 016 — Stack-Whitelist & Plattform-Blacklist
+# Checkliste: 016: Stack-Whitelist & Plattform-Blacklist
 
 Pflicht bei Gate 1 (Standard 015 CONCEPT.md) und bei Gate 3 (Standard 013
 LAUNCH-REVIEW.md). Detailliert in `CONCEPT.md` Section „Stack-Wahl",

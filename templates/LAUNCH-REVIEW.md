@@ -1,4 +1,4 @@
-# LAUNCH-REVIEW — <PROJEKTNAME>
+# LAUNCH-REVIEW: <PROJEKTNAME>
 
 > Pflicht-Dokument nach [Standard 013](https://github.com/maxone-one/maxone-standards/blob/main/standards/013-launch-gate-review.md).
 > Vor `status: live` ausfüllen. Ohne Sign-Off kein Live-Status.
@@ -11,8 +11,8 @@
 - **Projekt:** <name>
 - **Domain(s):** <z.B. example.com>
 - **Stack:** <z.B. Next.js 15 / Supabase / Stripe>
-- **Externe Dienste:** <Auflistung — Hetzner, Brevo, Stripe, OpenAI, ...>
-- **Datenkategorien:** <z.B. E-Mail, Bestelldaten, Rechnungsadressen — keine besonderen Kategorien gem. Art. 9 DSGVO>
+- **Externe Dienste:** <Auflistung, Hetzner, Brevo, Stripe, OpenAI, ...>
+- **Datenkategorien:** <z.B. E-Mail, Bestelldaten, Rechnungsadressen, keine besonderen Kategorien gem. Art. 9 DSGVO>
 - **Erwartete Nutzerzahl bei Launch:** <Schätzung>
 
 ---
@@ -58,7 +58,7 @@
 - [ ] Consent-Banner für nicht-essentielle: ja / n/a (keine)
 - [ ] Tracker werden ERST nach Consent geladen: ja / verifiziert wie ...
 - [ ] AVV / DPA mit jedem Verarbeiter: Hetzner ✅, ... ✅
-- [ ] Standard 041: `registry/projects.yml -> data_processors` vollstaendig
+- [ ] Standard 041: `registry/projects.yml -> data_processors` vollständig
       und mit `reviewed_at` aktualisiert
 - [ ] Google Fonts: lokal / Consent / nicht verwendet
 - [ ] Externe Embeds: keine / Two-Click / Consent
@@ -140,7 +140,7 @@
 
 ---
 
-## Sign-Off — 2026-MM-DD
+## Sign-Off: 2026-MM-DD
 
 - **Verantwortlich:** Vor- Nachname (@github-user)
 - **Rolle:** <Geschäftsführer / CTO / Lead Dev / ...>

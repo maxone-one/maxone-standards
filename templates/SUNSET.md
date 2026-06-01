@@ -1,4 +1,4 @@
-# SUNSET — <Projektname>
+# SUNSET: <Projektname>
 
 **Sunset-Datum:** YYYY-MM-DD
 **Status:** sunset-pending | sunset
@@ -63,7 +63,7 @@
 - [ ] Letzter Commit verlinkt SUNSET.md
 - [ ] `registry/projects.yml` status auf `sunset`
 - [ ] GitHub-Repo archiviert (Settings → Archive)
-- [ ] Repo-Description um „[ARCHIVED — sunset YYYY-MM-DD]" ergänzt
+- [ ] Repo-Description um „[ARCHIVED, sunset YYYY-MM-DD]" ergänzt
 
 ## H. VECTOR & Monitoring
 

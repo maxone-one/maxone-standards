@@ -1,4 +1,4 @@
-# Checkliste: 018 — Bundle-Drift-Audit
+# Checkliste: 018: Bundle-Drift-Audit
 
 Pflicht vor jedem Live-Gang und nach jeder Migration die Hostnamen ändert.
 
@@ -9,14 +9,14 @@ Pflicht vor jedem Live-Gang und nach jeder Migration die Hostnamen ändert.
 - [ ] Build-Cache vor Production-Build geleert (`.vite/`, `.next/cache/`,
       `.svelte-kit/`, `node_modules/.cache/`)
 - [ ] Production-Build mit explizit gesetztem Mode (`NODE_ENV=production`,
-      `vite build`, `next build` — nicht `dev`)
+      `vite build`, `next build`, nicht `dev`)
 - [ ] Source-Maps in der Bundle-Konfig deaktiviert oder auf `hidden`
       (Vite: `build.sourcemap: false`, Next.js:
       `productionBrowserSourceMaps: false`)
 - [ ] Falls Sentry/Datadog: Source-Maps via CI hochladen, dann lokale
       `.map`-Dateien aus Asset-Output löschen vor Container-Image-Build
 
-## B. Migrationen — alte Hostnamen raus
+## B. Migrationen: alte Hostnamen raus
 
 - [ ] Alle `*.maxone.studio`-URLs aus Source migriert (außer
       `mail.maxone.studio`, `autoconfig.maxone.studio`)
@@ -46,7 +46,7 @@ Pflicht vor jedem Live-Gang und nach jeder Migration die Hostnamen ändert.
 
 - [ ] Kein Service-Role-Key (`"role":"service_role"` in JWT-Payload)
 - [ ] Kein Stripe Secret-Key (`sk_live_*`)
-- [ ] Kein Anthropic API-Key (`sk-ant-*`) — wir nutzen sowieso CLI
+- [ ] Kein Anthropic API-Key (`sk-ant-*`), wir nutzen sowieso CLI
 - [ ] Keine Brevo SMTP-Credentials
 - [ ] Nur `anon`-Key bzw. `NEXT_PUBLIC_`/`VITE_PUBLIC_`-Prefix Variablen
       im Bundle (Standard 022 verstärkt das)

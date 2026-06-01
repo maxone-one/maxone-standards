@@ -1,4 +1,4 @@
-# 011 — Live-Domain-Audits (DSGVO-Tracker · Bundle-Drift)
+# 011: Live-Domain-Audits (DSGVO-Tracker · Bundle-Drift)
 
 **Status:** active
 **Seit:** 2026-04-27
@@ -11,12 +11,12 @@
 
 ---
 
-## A — DSGVO-Tracker-Audit
+## A: DSGVO-Tracker-Audit
 
 Beim Initial-Load der Live-Domain dürfen KEINE personenbezogenen Daten (IP-Adresse, Cookies, Browser-Fingerprint) an Drittdienste fließen, bevor der Nutzer eingewilligt hat.
 
 **Konkrete Pflichten:**
-- **Google Fonts:** lokal via `@fontsource/*` oder self-hosted `.woff2` — niemals CDN ohne Consent
+- **Google Fonts:** lokal via `@fontsource/*` oder self-hosted `.woff2`, niemals CDN ohne Consent
 - **Tracker (GA, GTM, Facebook Pixel):** erst nach Consent laden (Consent-Mode v2 oder Consent-Banner)
 - **Externe Embeds (YouTube, Vimeo, Maps):** Two-Click-Lösung oder `youtube-nocookie.com`
 - **Maps:** OpenStreetMap (Leaflet/MapLibre) + self-hosted Tiles statt Google Maps
@@ -29,11 +29,11 @@ Beim Initial-Load der Live-Domain dürfen KEINE personenbezogenen Daten (IP-Adre
 
 ---
 
-## B — Bundle-Drift-Audit
+## B: Bundle-Drift-Audit
 
 Das live ausgelieferte JS/CSS-Bundle darf nicht enthalten:
 
-- **Veraltete Hostnamen** aus Migrationen (z.B. `panel.maxone.studio`, `agent.maxone.studio` — Migration auf `.one` abgeschlossen 2026-04-16)
+- **Veraltete Hostnamen** aus Migrationen (z.B. `panel.maxone.studio`, `agent.maxone.studio`, Migration auf `.one` abgeschlossen 2026-04-16)
 - **Source-Maps** in Production (`.map`-Dateien öffentlich abrufbar)
 - **Plattform-Wasserzeichen** der Blacklist-Anbieter (`lovable`, `bolt.new`, `base44`, `built with v0`, `replit-agent`)
 - **Dev-Hosts und Loopback-URLs** (`localhost:`, `127.0.0.1:`, `host.docker.internal`)
@@ -41,12 +41,12 @@ Das live ausgelieferte JS/CSS-Bundle darf nicht enthalten:
 
 **Build-Settings um Source-Maps zu verhindern:**
 - Vite: `build.sourcemap: false`
-- SvelteKit: `vite.build.sourcemap: 'hidden'` (für Sentry-Upload) — nie public
+- SvelteKit: `vite.build.sourcemap: 'hidden'` (für Sentry-Upload), nie public
 - Next.js: `productionBrowserSourceMaps: false`
 
 **Bei jeder Migration:** Build-Cache leeren (`.vite/`, `.next/cache/`), neu bauen, Audit gegen **Live-Domain** laufen lassen (nicht Repo).
 
-**Warum — Vorfälle:**
+**Warum, Vorfälle:**
 - repivot: nach `.studio`→`.one`-Migration lud Browser weiter `panel.maxone.studio/functions/v1/impressum` wegen altem Vite-Cache
 - maxone.one: 2 Wochen Source-Maps im Bundle durch `--sourcemap=true` im Prod-Build → TypeScript-Quellcode öffentlich
 - Lovable/Bolt-Watermark im Bundle = verlässlicher Indikator für umgangene Verbots-Liste

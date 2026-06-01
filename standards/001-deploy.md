@@ -1,4 +1,4 @@
-# 001 — Deploy (Blue/Green · Kein Prod-Build · Pipeline · Warmup)
+# 001: Deploy (Blue/Green · Kein Prod-Build · Pipeline · Warmup)
 
 **Status:** active
 **Seit:** 2026-04-22 (erweitert 2026-04-29)
@@ -13,7 +13,7 @@
 
 ---
 
-## A — Blue/Green Deployment
+## A: Blue/Green Deployment
 
 Jedes Live-Projekt deployed im Blue/Green-Pattern. Der alte Slot bleibt aktiv bis der neue Slot vom Health-Check als healthy erkannt wird. Erst dann swappt Traefik.
 
@@ -25,7 +25,7 @@ Ausnahmen (`deploy: single` erlaubt für): interne Tools ohne externen Traffic, 
 
 ---
 
-## B — Kein Docker-Build auf Produktions-Servern
+## B: Kein Docker-Build auf Produktions-Servern
 
 Docker-Images werden NIE auf Produktions-Servern gebaut. Build erfolgt lokal oder im GitHub-Runner. Der Server bekommt nur fertige Images via `docker save | gzip | ssh ... | docker load`.
 
@@ -33,13 +33,13 @@ Docker-Images werden NIE auf Produktions-Servern gebaut. Build erfolgt lokal ode
 
 **Verboten auf Prod:** `docker compose up --build`, `docker build .`, `npm run build` / `next build`, `docker compose build`
 
-**Warum:** Next.js/Vite-Builds verbrauchen 4–8 GB RAM. Bei 10+ parallelen Containern → OOM → Downtime für alle Projekte. Mehrfach passiert.
+**Warum:** Next.js/Vite-Builds verbrauchen 4-8 GB RAM. Bei 10+ parallelen Containern → OOM → Downtime für alle Projekte. Mehrfach passiert.
 
 ---
 
-## C — Deploy-Pipeline
+## C: Deploy-Pipeline
 
-Fester Pfad — manuelle SSH-Bauten und Ad-hoc-Rsync sind verboten:
+Fester Pfad, manuelle SSH-Bauten und Ad-hoc-Rsync sind verboten:
 
 ```
 git push → GitHub-Runner (ubuntu-latest) baut Image →
@@ -50,7 +50,7 @@ alter Slot bleibt 5 min als Rollback-Reserve
 ```
 
 **Vier Pflicht-Eigenschaften:**
-1. Build läuft NICHT auf Prod-Server. Das schließt den self-hosted Runner `voltfair-server` ein (lebt auf maxone-prod) — `runs-on: self-hosted` + `docker build` = Build auf Prod = **FAIL**.
+1. Build läuft NICHT auf Prod-Server. Das schließt den self-hosted Runner `voltfair-server` ein (lebt auf maxone-prod), `runs-on: self-hosted` + `docker build` = Build auf Prod = **FAIL**.
 2. Artefakt ist ein vollständiges Docker-Image mit `image:`-Tag.
 3. Zero-Downtime via Blue/Green.
 4. Pipeline als GitHub-Actions-Workflow versioniert unter `.github/workflows/deploy.yml`.
@@ -85,13 +85,13 @@ jobs:
         run: ssh ... "./deploy.sh $TARGET"
 ```
 
-**Rollback:** der alte Slot bleibt 5 min nach Swap — Label-Switch ohne neuen Deploy.
+**Rollback:** der alte Slot bleibt 5 min nach Swap, Label-Switch ohne neuen Deploy.
 
-**Manuelle Deploys** nur bei CI-Ausfall + Sicherheits-Fix + Vorab-Ankündigung an Max. Laufen ebenfalls via `docker save | ssh | docker load` vom Lokalrechner — niemals `docker build` auf Prod.
+**Manuelle Deploys** nur bei CI-Ausfall + Sicherheits-Fix + Vorab-Ankündigung an Max. Laufen ebenfalls via `docker save | ssh | docker load` vom Lokalrechner, niemals `docker build` auf Prod.
 
 ---
 
-## D — Post-Deploy Warmup
+## D: Post-Deploy Warmup
 
 Zwischen "neuer Slot ist healthy" und "Traefik swappt Traffic" MUSS ein Warmup-Schritt laufen, der die wichtigsten öffentlichen Routen einmal pre-rendert.
 
@@ -114,7 +114,7 @@ docker network connect coolify "${PROJEKT}-app-$NEXT"
 sleep 3
 ```
 
-**Warum Traefik-Trennung:** ohne `disconnect` routet Traefik automatisch sobald der Health-Check positiv ist — vor dem Prewarm. Der erste User sieht Cold-Start (1–8 s "weiße Seite"). Vorfall: stadtlahnflow.de 2026-05-12.
+**Warum Traefik-Trennung:** ohne `disconnect` routet Traefik automatisch sobald der Health-Check positiv ist, vor dem Prewarm. Der erste User sieht Cold-Start (1-8 s "weiße Seite"). Vorfall: stadtlahnflow.de 2026-05-12.
 
 **Nicht Pflicht für:** `deploy: single` (Cold-Start unvermeidbar → Migration auf Blue/Green ist die richtige Antwort), Static-Sites ohne SSR (`warmup_required: false` in Registry), Infra-Container (`tags: infra`): WARN statt FAIL.
 

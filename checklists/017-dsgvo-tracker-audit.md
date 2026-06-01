@@ -1,4 +1,4 @@
-# Checkliste: 017 — DSGVO-Tracker-Audit
+# Checkliste: 017: DSGVO-Tracker-Audit
 
 Pflicht vor jedem Live-Gang (zusammen mit Standard 013 Section D).
 
@@ -64,7 +64,7 @@ Pflicht vor jedem Live-Gang (zusammen mit Standard 013 Section D).
 - [ ] Banner zeigt VOR jedem nicht-essentiellen Tracker (Network-Tab
       vor und nach Klick vergleichen)
 - [ ] Klare Ablehn-Option auf erster Ebene (kein „Settings > Optionen >
-      Reject all" — DSGVO-konform = ein Klick)
+      Reject all", DSGVO-konform = ein Klick)
 - [ ] Auswahl wird respektiert (Tracker bleiben aus, wenn abgewählt)
 - [ ] Auswahl ist widerrufbar (irgendwo auf der Site, z.B. Footer-Link
       „Cookie-Einstellungen")

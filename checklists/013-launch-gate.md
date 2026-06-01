@@ -1,7 +1,7 @@
-# Checkliste: 013 — Launch-Gate Review
+# Checkliste: 013: Launch-Gate Review
 
 Pflicht vor jedem `dev` → `live` Übergang. Jeder Punkt wird im Projekt-eigenen
-`LAUNCH-REVIEW.md` abgehakt — nicht hier. Diese Datei ist die Master-Liste.
+`LAUNCH-REVIEW.md` abgehakt, nicht hier. Diese Datei ist die Master-Liste.
 
 Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
 **explizit mit `n/a — Begründung`** beantworten, nicht überspringen.
@@ -82,7 +82,7 @@ Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
 
 ## F. Frontend-Secrets / Public Bundle
 
-- [ ] Bundle nach Build durchsucht (`grep -r "sk_" dist/` o.ä.) — keine
+- [ ] Bundle nach Build durchsucht (`grep -r "sk_" dist/` o.ä.), keine
       privaten Keys (Stripe, Supabase Service-Role, OpenAI, …)
 - [ ] Nur `NEXT_PUBLIC_*` / `VITE_*` / `PUBLIC_*` Keys im Frontend, und
       diese sind explizit sicher für Public (Anon-Key, Stripe-PK)
@@ -141,7 +141,7 @@ Code reproduzierbar dieselben Klassen einbaut. Diese Sektion fängt sie ab.
       169.254.169.254 (AWS-Metadata), 100.64/10 (Carrier-NAT).
       Manuelle Review der Treffer von:
       `grep -rEn 'fetch\(.*req\.|axios\..*req\.' src/`
-      Hintergrund: Tenzai 2026 — alle 5 getesteten AI-Coding-Tools
+      Hintergrund: Tenzai 2026, alle 5 getesteten AI-Coding-Tools
       bauen dieselbe SSRF-Lücke ein, 100 %.
 
 - [ ] **Backend-Secrets:** Standard 022 (`gitleaks`) hat 0 Findings im
@@ -170,7 +170,7 @@ Code reproduzierbar dieselben Klassen einbaut. Diese Sektion fängt sie ab.
       eigene Infra durchgeführt UND kompletter Code-Re-Read durch zweite
       Person (Mensch oder VAULT-Persona-Session). Ursprung in
       `LAUNCH-REVIEW.md` Section J dokumentiert.
-      Hintergrund: Escape.tech 2026 — von 5.600 produktiv deployten
+      Hintergrund: Escape.tech 2026, von 5.600 produktiv deployten
       Lovable/Bolt/Base44-Apps haben 2.000 hochkritische Lücken, 400
       exponierte Secrets, 175 PII-Leaks live.
 

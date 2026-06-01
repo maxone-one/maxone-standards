@@ -1,4 +1,4 @@
-# 023 — Admin-UI (Dashboard-Layout · DevPanel · App-Launcher)
+# 023: Admin-UI (Dashboard-Layout · DevPanel · App-Launcher)
 
 **Status:** active
 **Seit:** 2026-05-17 (Dashboard + DevPanel), 2026-05-18 (App-Launcher)
@@ -12,16 +12,16 @@
 
 ---
 
-## A — Dashboard-Layout-Konsistenz
+## A: Dashboard-Layout-Konsistenz
 
-### Content-Wrapper — eine Strategie pro Projekt, konsequent auf allen Seiten
+### Content-Wrapper: eine Strategie pro Projekt, konsequent auf allen Seiten
 
-**Strategie A — Full-width** (Default für neue Projekte):
+**Strategie A, Full-width** (Default für neue Projekte):
 ```tsx
 <div className="w-full px-4 py-6 md:px-6 md:py-8">
 ```
 
-**Strategie B — Constrained** (nur wenn Lesetext/Formulare/narrative Flows dominieren, in CLAUDE.md dokumentieren):
+**Strategie B, Constrained** (nur wenn Lesetext/Formulare/narrative Flows dominieren, in CLAUDE.md dokumentieren):
 ```tsx
 <div className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-8">
 ```
@@ -65,9 +65,9 @@
 
 ---
 
-## B — DevPanel: Floating Developer Tool
+## B: DevPanel: Floating Developer Tool
 
-Jedes Projekt mit Auth- und Admin-Kontext bekommt eine `DevPanel`-Komponente — floating, draggbar, nur für Admins sichtbar.
+Jedes Projekt mit Auth- und Admin-Kontext bekommt eine `DevPanel`-Komponente, floating, draggbar, nur für Admins sichtbar.
 
 **Admin-Gate:** Serverseitig via `GET /api/dev/context` → 401 = Panel unsichtbar; 200 = Panel sichtbar. Kein Client-Side-Guard allein.
 
@@ -93,7 +93,7 @@ const STORAGE_TAB  = "<project>-devpanel-tab";
 
 **Staging-Release-Button** (Branch-Split-Projekte): wenn `isStaging === true`, zeigt Build-Tab "Auf Prod freigeben"-Button → `POST /api/admin/release` → GitHub Merges API (`main` → `release`).
 
-**Einbindung:** einmalig im Root-Layout — `<DevPanel />`. Rendert selbstständig `null` bei 401.
+**Einbindung:** einmalig im Root-Layout, `<DevPanel />`. Rendert selbstständig `null` bei 401.
 
 **Verboten:** `NODE_ENV === 'development'`-only Gate; fehlende Storage-Key-Prefixes; `IS_STAGING` als `NEXT_PUBLIC_IS_STAGING`.
 
@@ -101,9 +101,9 @@ const STORAGE_TAB  = "<project>-devpanel-tab";
 
 ---
 
-## C — Admin App Launcher
+## C: Admin App Launcher
 
-Jedes Projekt mit mehr als einer top-level Admin-Sektion bekommt eine `AppLauncher`-Komponente — schmale fixierte Sidebar am linken Rand des Admin-Layouts.
+Jedes Projekt mit mehr als einer top-level Admin-Sektion bekommt eine `AppLauncher`-Komponente, schmale fixierte Sidebar am linken Rand des Admin-Layouts.
 
 **Layout:**
 ```

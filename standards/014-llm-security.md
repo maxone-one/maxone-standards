@@ -1,4 +1,4 @@
-# 014 — LLM-Security (Direct Injection · Indirect Injection · Agent-Rechte)
+# 014: LLM-Security (Direct Injection · Indirect Injection · Agent-Rechte)
 
 **Status:** active
 **Seit:** 2026-04-28
@@ -11,7 +11,7 @@
 
 ---
 
-## A — Direct Injection: Sechs Schutzschichten
+## A: Direct Injection: Sechs Schutzschichten
 
 ### 1. System-Prompt-Härtung (Pflicht-Direktiven)
 
@@ -74,7 +74,7 @@ await supabase.from('ops_tasks').insert({
 // Operator approved via UI → Cron picks up → echte Operation
 ```
 
-**Warum:** Replit-Agent 2025 löschte Prod-DB trotz Anweisung "keine Änderungen" — keine technische Test/Prod-Trennung.
+**Warum:** Replit-Agent 2025 löschte Prod-DB trotz Anweisung "keine Änderungen", keine technische Test/Prod-Trennung.
 
 ### 6. Logging + Rate-Limiting
 
@@ -96,11 +96,11 @@ redteam:
 
 ---
 
-## B — Indirect Injection (externe Inhalte)
+## B: Indirect Injection (externe Inhalte)
 
 Gilt für LLM-Apps die externe Inhalte in den Prompt-Kontext laden: Telegram-Messages, E-Mail-Body, RAG-Dokumente, gescrapte Webseiten, hochgeladene PDFs/Bilder.
 
-**Pflicht:** Testdatei `tests/indirect-injection.spec.ts` mit mindestens 10 Indirect-Injection-Payloads. Jeder Payload wird **als externer Inhalt** durch die echte App-Pipeline geschickt — nicht als direkter User-Prompt.
+**Pflicht:** Testdatei `tests/indirect-injection.spec.ts` mit mindestens 10 Indirect-Injection-Payloads. Jeder Payload wird **als externer Inhalt** durch die echte App-Pipeline geschickt, nicht als direkter User-Prompt.
 
 **Assertions:**
 - Negativ: Output enthält keine Marker für ausgeführte Injection (`system context`, `sk_live_`, Prompt-Echo, ungewollte Tool-Calls)
@@ -109,15 +109,15 @@ Gilt für LLM-Apps die externe Inhalte in den Prompt-Kontext laden: Telegram-Mes
 **Ausnahme:** Projekte ohne externe Content-Ingestion können den Test mit `// audit: no-external-content` auslassen → SKIP statt FAIL.
 
 **Pflicht-Payload-Quellen (mindestens 5 von 10):**
-1. greshake/llm-security — Original-PoC-Sammlung (Hidden-System-Override, Email-Auto-Forward, Markdown-Image-Exfil)
-2. Giskard-AI/prompt-injections — OWASP-LLM-kuratiert
-3. NVIDIA/garak — Probe `xss.ColabAIMDExfil` und `latentinjection.*`
+1. greshake/llm-security, Original-PoC-Sammlung (Hidden-System-Override, Email-Auto-Forward, Markdown-Image-Exfil)
+2. Giskard-AI/prompt-injections, OWASP-LLM-kuratiert
+3. NVIDIA/garak, Probe `xss.ColabAIMDExfil` und `latentinjection.*`
 
 **Maxone-spezifisch betroffen (Stand 2026-04-28):** VECTOR (Telegram + Web-Chat + Memory), maxone.one (Zentinel email-client), SolarProof (KI-Vision für PDFs).
 
 **Warum:** Bing Chat 2023 (Webpage mit verstecktem Text → Browser-History exfiltriert), Copilot 2024 (E-Mail mit Anweisung → Mailbox zusammengefasst), ChatGPT Memory 2024 (Webseite mit "speichere in Memory" → persistente Backdoor).
 
-**OWASP Agentic Top 10 (2026) — für VECTOR zusätzlich:**
+**OWASP Agentic Top 10 (2026), für VECTOR zusätzlich:**
 
 | ASI-ID | Threat | Mitigation |
 |---|---|---|
@@ -132,7 +132,7 @@ Gilt für LLM-Apps die externe Inhalte in den Prompt-Kontext laden: Telegram-Mes
 
 ---
 
-## C — LLM-Proxy-Zugang: Token-Isolation pro Projekt
+## C: LLM-Proxy-Zugang: Token-Isolation pro Projekt
 
 Gilt für alle Projekte, die einen internen LLM-Proxy aufrufen (aktuell: VECTOR `/api/explain`, künftig vergleichbare Endpunkte auf `maxone.one`).
 
@@ -171,7 +171,7 @@ VECTOR muss eine Token-Registry führen (`config/api-keys.json` oder Postgres-Ta
 }
 ```
 
-Jeder `/api/explain`-Call loggt das aufgelöste `project`-Label im NDJSON-Log-Eintrag neben `input_tokens` und `output_tokens`. Ein `/api/admin/usage?from=&to=&project=` Aggregations-Endpoint macht die Daten abfragbar — kein Dashboard nötig, JSON reicht.
+Jeder `/api/explain`-Call loggt das aufgelöste `project`-Label im NDJSON-Log-Eintrag neben `input_tokens` und `output_tokens`. Ein `/api/admin/usage?from=&to=&project=` Aggregations-Endpoint macht die Daten abfragbar, kein Dashboard nötig, JSON reicht.
 
 ### Migration bestehender Projekte
 

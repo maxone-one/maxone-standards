@@ -1,7 +1,7 @@
-# 027 — Image Pipeline
+# 027: Image Pipeline
 
 **Status:** Active (2026-05-20)
-**Scope:** Alle maxone-Properties (maxone.one, voltfair.de, vanfree.de, SLF, snapflow, plansey, repivot, katchi, vector, kitchen-station, alle kuenftigen)
+**Scope:** Alle maxone-Properties (maxone.one, voltfair.de, vanfree.de, SLF, snapflow, plansey, repivot, katchi, vector, kitchen-station, alle künftigen)
 **Owner:** Max Karastelev
 
 ## Regel
@@ -11,14 +11,14 @@ Jedes hochgeladene Bild auf einer maxone-Property MUSS durch eine zentrale Verar
 1. Original-EXIF/IPTC/XMP komplett strippt (Privacy + Konsistenz)
 2. maxone-Brand-EXIF einschreibt (Provenance + Trust)
 3. JPEG mit mozjpeg als Speicher-Format nutzt
-4. Auslieferung an Browser ueber Next.js AVIF/WebP-Optimization
+4. Auslieferung an Browser über Next.js AVIF/WebP-Optimization
 
 ## Warum
 
-- **Privacy:** Hochgeladene Bilder enthalten GPS-Koordinaten, Geraete-IDs, Software-Signaturen — duerfen nie public werden
+- **Privacy:** Hochgeladene Bilder enthalten GPS-Koordinaten, Geräte-IDs, Software-Signaturen, dürfen nie public werden
 - **Brand-Konsistenz:** Bilder auf jeder maxone-Property tragen einheitliche EXIF-Spur (Sony A7 IV + 24-70mm GM II @ 35mm, Artist=Max Karastelev, Copyright=© maxone.one)
-- **Performance:** AVIF reduziert LCP um 200-500ms ggue. JPEG → besseres Core-Web-Vital-Ranking
-- **Recht:** Copyright-Vermerk in EXIF dokumentiert Urheberschaft fuer Stock-Site-Uploads, Backup-Recovery, externe Embed-Faelle
+- **Performance:** AVIF reduziert LCP um 200-500ms ggü. JPEG → besseres Core-Web-Vital-Ranking
+- **Recht:** Copyright-Vermerk in EXIF dokumentiert Urheberschaft für Stock-Site-Uploads, Backup-Recovery, externe Embed-Fälle
 
 ## Pflicht-Implementation
 
@@ -66,9 +66,9 @@ images: {
 },
 ```
 
-Begruendung:
-- `formats` standardmaessig nur `image/webp` → AVIF muss explizit aktiviert werden
-- `minimumCacheTTL` default 60s → fuer immutable Bild-URLs viel zu kurz, 1 Jahr ist Standard-Industrie-Wert
+Begründung:
+- `formats` standardmäßig nur `image/webp` → AVIF muss explizit aktiviert werden
+- `minimumCacheTTL` default 60s → für immutable Bild-URLs viel zu kurz, 1 Jahr ist Standard-Industrie-Wert
 
 ## Audit-Spec
 
@@ -79,17 +79,17 @@ CI-Check via `scripts/audit.mjs` (TODO):
 
 2. **Kein roher sharp-jpeg-Aufruf in Server-Actions:**
    `grep -r "sharp(.*).jpeg(.*).toBuffer" app/ --include="actions.ts" --include="route.ts"` → 0 Treffer
-   (Alle muessen ueber den Helper laufen)
+   (Alle müssen über den Helper laufen)
 
 3. **next.config hat AVIF + Cache:**
-   Parse `next.config.ts|js`, pruefe `images.formats` enthaelt `image/avif` UND `images.minimumCacheTTL >= 31536000`
+   Parse `next.config.ts|js`, prüfe `images.formats` enthält `image/avif` UND `images.minimumCacheTTL >= 31536000`
 
 4. **EXIF-Spot-Check (manuell, einmal pro Property):**
    Test-Upload → `sharp(out).metadata()` → EXIF muss `Sony`, `Max Karastelev`, `maxone.one`, `FE 24-70` enthalten
 
 ## Ausnahmen
 
-- **User-Avatare / Bewerbungsfotos:** Strip ja, Brand-EXIF nein (semantisch falsch — das sind keine maxone-Bilder)
+- **User-Avatare / Bewerbungsfotos:** Strip ja, Brand-EXIF nein (semantisch falsch, das sind keine maxone-Bilder)
 - **Logo-Uploads (Provider/Hersteller):** Strip ja, Brand-EXIF nein
 - **Screenshots (Pioneer-Feedback /melden):** Bleibt PNG, kein Re-Encode
 - **Externe URLs (z.B. Datenblatt-PDFs, Hersteller-Logos via remotePatterns):** Pipeline nicht anwendbar

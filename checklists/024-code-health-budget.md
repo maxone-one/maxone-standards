@@ -1,4 +1,4 @@
-# Checkliste: 024 — Code-Health-Budget
+# Checkliste: 024: Code-Health-Budget
 
 Quartalsweise pro Projekt mit `status: live` + eigenem Code-Repo.
 
@@ -14,7 +14,7 @@ echo "Refactoring-Anteil: $((REFACTOR * 100 / TOTAL))%"
 ```
 
 - [ ] Anteil ≥ 15 % → PASS
-- [ ] Anteil 8–14 % → Refactor-Sprint nächstes Quartal planen
+- [ ] Anteil 8-14 % → Refactor-Sprint nächstes Quartal planen
 - [ ] Anteil < 8 % → sofort handeln, größere Refactoring-Phase
       einlegen
 
@@ -26,7 +26,7 @@ npx jscpd --min-tokens 50 --reporters json,html \
 ```
 
 - [ ] Duplikations-Anteil < 5 % → PASS
-- [ ] 5–10 % → Top-3-Cluster im nächsten Sprint konsolidieren
+- [ ] 5-10 % → Top-3-Cluster im nächsten Sprint konsolidieren
 - [ ] > 10 % → kritisch, Refactoring vor neuen Features
 
 ## C. Datei-Längen-Limits
@@ -79,6 +79,6 @@ Wahrscheinlichkeit im 3. Quartal.
 
 ## Cross-Reference
 
-- 005 Test-First — Coverage ist orthogonal
-- 013 Section A — Black-Box-% beim Initial-Launch
-- 021 Re-Review — quartalsweise auch HANDOFF-Update
+- 005 Test-First, Coverage ist orthogonal
+- 013 Section A, Black-Box-% beim Initial-Launch
+- 021 Re-Review, quartalsweise auch HANDOFF-Update

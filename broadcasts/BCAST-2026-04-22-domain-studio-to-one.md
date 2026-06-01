@@ -43,7 +43,7 @@ Hardkodierte `maxone.studio`-URLs in Projekt-Code:
 
 **Datei-Pattern:** `src/**/*.{ts,tsx,js,jsx}` + `docker-compose.yml`
 **Fail-Grep:** `maxone\.studio`
-**Pass-Grep:** (leer — Abwesenheit des Fail-Patterns ist Beweis)
+**Pass-Grep:** (leer, Abwesenheit des Fail-Patterns ist Beweis)
 
 ## Abschluss
 
@@ -52,4 +52,4 @@ Geschlossen: alle Projekte resolved. VULN-Eintrag: G5 Cross-Project Silent Break
 
 ---
 
-*Angelegt von: Claude (Max Karastelev) — 2026-05-11 (retroaktiv)*
+*Angelegt von: Claude (Max Karastelev), 2026-05-11 (retroaktiv)*

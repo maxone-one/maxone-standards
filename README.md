@@ -1,14 +1,14 @@
 # maxone-standards
 
 Zentrale Quelle für Architektur-, Deploy-, Security- und Text-Standards aller
-maxone-Projekte. Kein Runtime-Code — nur Regeln, Templates, Checklisten und
+maxone-Projekte. Kein Runtime-Code, nur Regeln, Templates, Checklisten und
 Tools, um diese Regeln auf alle Projekte (eigene + Kunden) anzuwenden und ihre
 Einhaltung zu überprüfen.
 
 ## Warum
 
 Mit aktuell 11+ eigenen Projekten passiert es regelmäßig, dass eine Änderung
-an einem Projekt mehrere andere bricht — weil jedes Projekt seine eigene
+an einem Projekt mehrere andere bricht, weil jedes Projekt seine eigene
 Variante von Deploy, Secrets, Tests, Pfaden hat. Bei zukünftigen Kunden­
 projekten ist das nicht akzeptabel.
 
@@ -128,6 +128,6 @@ node scripts/apply-template.mjs --template=docker-compose.blue-green --project=p
 ## Nicht-Ziele
 
 - Keine Runtime-Logik, kein Code der gedeployed wird
-- Kein Ersatz für `CLAUDE.md` (globale Verhaltensregeln) — `standards/` ist
+- Kein Ersatz für `CLAUDE.md` (globale Verhaltensregeln), `standards/` ist
   die ausführliche Doku, `CLAUDE.md` der Quick-Reference für Claude
-- Kein Build-System / Mono-Repo — Projekte bleiben eigenständig
+- Kein Build-System / Mono-Repo, Projekte bleiben eigenständig

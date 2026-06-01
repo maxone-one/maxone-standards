@@ -11,7 +11,7 @@ Approval-Queue.
 
 ## A. Universelles Härtungs-Snippet
 
-Anhängen an jeden System-Prompt — vor dem rollenspezifischen Teil.
+Anhängen an jeden System-Prompt, vor dem rollenspezifischen Teil.
 
 ```text
 == SECURITY CONTEXT (immutable) ==

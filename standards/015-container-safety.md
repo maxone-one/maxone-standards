@@ -1,4 +1,4 @@
-# 015 — Container Safety (Misconfig-Audit · Disk-Guard)
+# 015: Container Safety (Misconfig-Audit · Disk-Guard)
 
 **Status:** active
 **Seit:** 2026-04-28 (Misconfig), 2026-05-18 (Disk-Guard)
@@ -11,21 +11,21 @@
 
 ---
 
-## A — Container-Misconfig-Audit
+## A: Container-Misconfig-Audit
 
 ### Hard-Fails
 
-1. **Kein `privileged: true`** — außer mit `# audit: privileged-required` + Begründung in Folgezeile
-2. **Keine Inline-Secrets** in `environment:` — `PASSWORD=...`, `API_KEY=hardcoded` etc. müssen aus `env_file:` kommen. Variablen-Refs (`${VAR_NAME}`) ohne Default sind OK.
-3. **Kein `:latest`-Tag bei Registry-Pulls** ohne gleichzeitiges `build:`. Maxone-CI-Build-Pattern (`image: <projekt>-app:latest` + `build:`) ist Ausnahme — das Image kommt via `docker save | docker load`, nicht per Pull.
+1. **Kein `privileged: true`**, außer mit `# audit: privileged-required` + Begründung in Folgezeile
+2. **Keine Inline-Secrets** in `environment:`, `PASSWORD=...`, `API_KEY=hardcoded` etc. müssen aus `env_file:` kommen. Variablen-Refs (`${VAR_NAME}`) ohne Default sind OK.
+3. **Kein `:latest`-Tag bei Registry-Pulls** ohne gleichzeitiges `build:`. Maxone-CI-Build-Pattern (`image: <projekt>-app:latest` + `build:`) ist Ausnahme, das Image kommt via `docker save | docker load`, nicht per Pull.
 
 ### Warnings
 
-4. **`mem_limit:` Pflicht** — OOM-Schutz auf shared Hosts
-5. **`restart:` Pflicht** — Auto-Recovery (`unless-stopped`)
-6. **Kein Bind-Mount auf `/var/run/docker.sock`** — außer mit `# audit: docker-socket-required` (Traefik, VECTOR, Watchtower haben es legitim)
-7. **`env_file:` muss auf `/opt/secrets/<projekt>/keys.env` zeigen** — nicht auf `.env` im Repo
-8. **Healthcheck-Endpoint kein SSR-Pfad** — Root `/` oder vollständig gerenderte Seiten verboten (Next.js SSR kann 5–7 s dauern, überschreitet 5s-Timeout). Erlaubt: `/api/version`, `/api/health`, `/healthz`
+4. **`mem_limit:` Pflicht**, OOM-Schutz auf shared Hosts
+5. **`restart:` Pflicht**, Auto-Recovery (`unless-stopped`)
+6. **Kein Bind-Mount auf `/var/run/docker.sock`**, außer mit `# audit: docker-socket-required` (Traefik, VECTOR, Watchtower haben es legitim)
+7. **`env_file:` muss auf `/opt/secrets/<projekt>/keys.env` zeigen**, nicht auf `.env` im Repo
+8. **Healthcheck-Endpoint kein SSR-Pfad**, Root `/` oder vollständig gerenderte Seiten verboten (Next.js SSR kann 5-7 s dauern, überschreitet 5s-Timeout). Erlaubt: `/api/version`, `/api/health`, `/healthz`
 
 **Bewusste Ausnahmen per Annotation:**
 ```yaml
@@ -57,15 +57,15 @@ services:
 
 ---
 
-## B — Disk-Guard (maxone-prod)
+## B: Disk-Guard (maxone-prod)
 
 **Drei Pflichten gleichzeitig:**
 
-1. **`docker builder prune -af` ohne `--until=`-Filter** — Build-Cache vollständig leeren. Der alte `--until=24h`-Filter war direkte Ursache des disk-full-Vorfalls 2026-05-18.
+1. **`docker builder prune -af` ohne `--until=`-Filter**, Build-Cache vollständig leeren. Der alte `--until=24h`-Filter war direkte Ursache des disk-full-Vorfalls 2026-05-18.
 
-2. **Cleanup-Cron alle 4 Stunden** (`0 */4 * * *`) — vorher täglich, aber lokale Docker-Builds akkumulieren BuildKit-Cache in Stunden, nicht Tagen.
+2. **Cleanup-Cron alle 4 Stunden** (`0 */4 * * *`), vorher täglich, aber lokale Docker-Builds akkumulieren BuildKit-Cache in Stunden, nicht Tagen.
 
-3. **`/opt/disk-guard.sh` alle 10 Minuten** — wenn Disk > 80 %: sofort `docker builder prune -af` + `docker image prune -f` + Telegram-Alert.
+3. **`/opt/disk-guard.sh` alle 10 Minuten**, wenn Disk > 80 %: sofort `docker builder prune -af` + `docker image prune -f` + Telegram-Alert.
 
 **Script `/opt/_ops/docker-cleanup.sh`:**
 ```bash

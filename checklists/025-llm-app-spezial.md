@@ -1,4 +1,4 @@
-# Checkliste: 025 — LLM-App-Spezial
+# Checkliste: 025: LLM-App-Spezial
 
 Vor Live-Schaltung jeder Anwendung, die ein LLM in Runtime aufruft.
 Auch bei jedem Re-Review (Standard 021) erneut durchgehen.
@@ -72,11 +72,11 @@ Auch bei jedem Re-Review (Standard 021) erneut durchgehen.
 
 ## H. Cross-Cutting
 
-- [ ] **Standard 003 Secrets Store** — LLM-API-Token aus Store,
+- [ ] **Standard 003 Secrets Store**, LLM-API-Token aus Store,
       niemals hardcoded
-- [ ] **CLAUDE.md** — bei maxone IMMER Claude CLI, niemals
+- [ ] **CLAUDE.md**, bei maxone IMMER Claude CLI, niemals
       Anthropic API
-- [ ] **Standard 013 Section E** — keine LLM-Tools auf Prod-DB ohne
+- [ ] **Standard 013 Section E**, keine LLM-Tools auf Prod-DB ohne
       Sandbox
 
 ## I. Spezialfälle in unserem Stack

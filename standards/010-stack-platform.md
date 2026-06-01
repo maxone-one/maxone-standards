@@ -1,4 +1,4 @@
-# 010 — Stack & Platform Policy (Whitelist · Self-Hosted-First)
+# 010: Stack & Platform Policy (Whitelist · Self-Hosted-First)
 
 **Status:** active
 **Seit:** 2026-04-27 (Whitelist), 2026-04-28 (Self-Hosted-First)
@@ -11,9 +11,9 @@
 
 ---
 
-## A — Stack-Whitelist & Plattform-Blacklist
+## A: Stack-Whitelist & Plattform-Blacklist
 
-Der Stack jedes Projekts MUSS aus der Whitelist stammen. Blacklist-Komponenten sind verboten — Ausnahmen nur mit dokumentiertem Migrations-Pfad in CONCEPT.md und Sign-Off, dass die Migration vor Gate 3 abgeschlossen ist.
+Der Stack jedes Projekts MUSS aus der Whitelist stammen. Blacklist-Komponenten sind verboten, Ausnahmen nur mit dokumentiertem Migrations-Pfad in CONCEPT.md und Sign-Off, dass die Migration vor Gate 3 abgeschlossen ist.
 
 ### Whitelist
 
@@ -31,7 +31,7 @@ Der Stack jedes Projekts MUSS aus der Whitelist stammen. Blacklist-Komponenten s
 
 **Reverse Proxy:** Traefik ✅ Default · Caddy ✅ · Nginx ✅
 
-### Blacklist — verboten ohne Migrations-Pfad
+### Blacklist: verboten ohne Migrations-Pfad
 
 | Plattform | Warum verboten | Vorfälle |
 |---|---|---|
@@ -51,19 +51,19 @@ Der Stack jedes Projekts MUSS aus der Whitelist stammen. Blacklist-Komponenten s
 
 ---
 
-## B — Self-Hosted-First (keine Abos)
+## B: Self-Hosted-First (keine Abos)
 
 Jede Komponente wird in dieser Reihenfolge ausgewählt:
 
 1. **Existierendes self-hostbares Paket nutzen** (Docker-Image, OSS-Binary)
 2. **Selbst bauen** (nur wenn nichts Passendes vorhanden)
-3. **Niemals Abo / SaaS / Cloud-Subscription** — keine wiederkehrenden Zahlungen, keine API-Keys mit monatlicher Quote
+3. **Niemals Abo / SaaS / Cloud-Subscription**, keine wiederkehrenden Zahlungen, keine API-Keys mit monatlicher Quote
 
 **Einzige Ausnahmen:** Domain-Registry/DNS-Provider (Naturmonopol), TLS-CA (Let's Encrypt, kostenlos), VPS-Hoster (Hardware-Miete).
 
 **Bestehende self-hosted Komponenten:** Stalwart (Mail), Umami (Analytics), Supabase self-hosted, Claude CLI (Abo per User, deckt alle Projekte), Traefik (Reverse Proxy), self-hosted GitHub-Runner.
 
-**Bei SaaS-Anfrage:** stop — diese Regel ist nicht verhandelbar. Einfachheit ist nicht der Maßstab, Souveränität und Kostenkontrolle sind es.
+**Bei SaaS-Anfrage:** stop, diese Regel ist nicht verhandelbar. Einfachheit ist nicht der Maßstab, Souveränität und Kostenkontrolle sind es.
 
 **Warum:** 10 € × 8 Services × 12 Monate = 960 € Fixkosten vs. 12 € monatlich für einen Hetzner-VPS der alle 8 Services hostet. Datensouveränität: Kunden-Daten verlassen unsere Hetzner-Server nicht.
 

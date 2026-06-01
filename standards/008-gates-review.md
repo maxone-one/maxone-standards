@@ -1,4 +1,4 @@
-# 008 — Gates & Review (Konzept-Gate · Launch-Gate · Pentest · Re-Review)
+# 008: Gates & Review (Konzept-Gate · Launch-Gate · Pentest · Re-Review)
 
 **Status:** active
 **Seit:** 2026-04-27 (erweitert 2026-04-28)
@@ -13,19 +13,19 @@
 
 ---
 
-## A — Gate 1: Konzept vor Code
+## A: Gate 1: Konzept vor Code
 
 Bevor die erste Code-Zeile geschrieben wird, MUSS im Repo-Root eine `CONCEPT.md` liegen. Kein Konzept → kein Code.
 
 **Pflicht-Sektionen in `CONCEPT.md`:**
-- `## Problem / Ziel` — ein Satz
-- `## Nutzer` — wer (anonym/eingeloggt/zahlend?)
-- `## Datenmodell` — Entitäten + Sensitivität
-- `## Auth-Modell` — wer darf was lesen/schreiben (Default: niemand außer Owner)
-- `## Externe Dienste` — jeder mit Verarbeitungsrolle, AVV-Status, Server-Region
-- `## Threat-Model` — Top 3–5 wahrscheinlichste Schaden-Szenarien
-- `## Stack-Wahl` — Framework, DB, Hosting, AI-Tool + WARUM
-- `## Out of Scope` — was absichtlich NICHT gebaut wird
+- `## Problem / Ziel`, ein Satz
+- `## Nutzer`, wer (anonym/eingeloggt/zahlend?)
+- `## Datenmodell`, Entitäten + Sensitivität
+- `## Auth-Modell`, wer darf was lesen/schreiben (Default: niemand außer Owner)
+- `## Externe Dienste`, jeder mit Verarbeitungsrolle, AVV-Status, Server-Region
+- `## Threat-Model`, Top 3-5 wahrscheinlichste Schaden-Szenarien
+- `## Stack-Wahl`, Framework, DB, Hosting, AI-Tool + WARUM
+- `## Out of Scope`, was absichtlich NICHT gebaut wird
 
 **Sign-Off-Format:**
 ```markdown
@@ -37,11 +37,11 @@ Bevor die erste Code-Zeile geschrieben wird, MUSS im Repo-Root eine `CONCEPT.md`
 
 Bei Konzept-Änderungen (Datenmodell, Auth-Modell, externe Dienste): CONCEPT.md updaten + neuen Gate-1-Block anhängen.
 
-**Warum:** OWASP A04:2021 "Insecure Design" ist die Klasse die kein nachgelagertes Tool findet — fehlendes Auth-Modell, zu große Trust-Boundary, Lock-in durch proprietäre Plattform. Vibe-Coding zementiert Konzept-Lücken.
+**Warum:** OWASP A04:2021 "Insecure Design" ist die Klasse die kein nachgelagertes Tool findet, fehlendes Auth-Modell, zu große Trust-Boundary, Lock-in durch proprietäre Plattform. Vibe-Coding zementiert Konzept-Lücken.
 
 ---
 
-## B — Gate 3: Launch-Gate (LAUNCH-REVIEW.md)
+## B: Gate 3: Launch-Gate (LAUNCH-REVIEW.md)
 
 Vor `status: live` MUSS eine `LAUNCH-REVIEW.md` im Repo-Root liegen. Kein Sign-Off → kein Live-Status.
 
@@ -69,9 +69,9 @@ Bei größeren Änderungen (neues Tracking, neue 3rd-Party-API, Schema-Migration
 
 ---
 
-## C — Pentest-Light
+## C: Pentest-Light
 
-Jede Live-Domain wird automatisiert auf bekannte Vibe-Coding-Schwachstellen geprüft — ohne Anmeldedaten, ohne invasive Payloads.
+Jede Live-Domain wird automatisiert auf bekannte Vibe-Coding-Schwachstellen geprüft, ohne Anmeldedaten, ohne invasive Payloads.
 
 **Prüft:**
 - Keine versehentlich exposed Files (`.env`, `.git/`, Source-Maps)
@@ -93,11 +93,11 @@ Jede Live-Domain wird automatisiert auf bekannte Vibe-Coding-Schwachstellen gepr
 - `X-Frame-Options` fehlt → WARN
 - `Server`-Header verrät Version → WARN
 
-**Was NICHT gefunden wird:** BOLA, SSRF, RLS-Brute-Force, XSS — das ist manueller Gate-3-Scope.
+**Was NICHT gefunden wird:** BOLA, SSRF, RLS-Brute-Force, XSS, das ist manueller Gate-3-Scope.
 
 ---
 
-## D — Re-Review-Reminder
+## D: Re-Review-Reminder
 
 Jedes Live-Projekt durchläuft alle **180 Tage** einen verkürzten Gate-3-Re-Review. Stichtag = `last_review_date` in `registry/projects.yml`.
 
@@ -127,4 +127,4 @@ Nach Re-Review `last_review_date` aktualisieren + Tabellen-Eintrag in LAUNCH-REV
 
 **Pentest:** Common-Path-Probe + Header-Check (mit `--local-only` übersprungen).
 
-**Re-Review:** `last_review_date` fehlt → FAIL; 180–269 Tage → WARN; ≥ 270 Tage → FAIL.
+**Re-Review:** `last_review_date` fehlt → FAIL; 180-269 Tage → WARN; ≥ 270 Tage → FAIL.

@@ -1,4 +1,4 @@
-# 016 — Mail (Architektur · Passwort-Sync)
+# 016: Mail (Architektur · Passwort-Sync)
 
 **Status:** active
 **Seit:** 2026-04-28 (Architektur), 2026-05-16 (Passwort-Sync)
@@ -11,17 +11,17 @@
 
 ---
 
-## A — Mail-Architektur
+## A: Mail-Architektur
 
 **Acht unverhandelbare Regeln** (destilliert aus 20 Bibel-Regeln + 5 Vorfällen):
 
 1. **Outbound = Brevo** über `https://api.brevo.com/v3/smtp/email`. Niemals Stalwart-SMTP, niemals nodemailer direkt zu einem anderen MTA.
-2. **Stalwart-Logs zeigen niemals ausgehende App-Mails** — wer dort nach Outbound sucht, sucht falsch.
+2. **Stalwart-Logs zeigen niemals ausgehende App-Mails**, wer dort nach Outbound sucht, sucht falsch.
 3. **Inbound + Sent-Folder = Stalwart** über JMAP (`http://stalwart-mail:8080/jmap/session`, intern). Nie die Public-URL aus Edge-Functions.
 4. **Brevo-Domain-Pre-Flight Pflicht** vor jedem Send: ohne `authenticated:true && verified:true` in `GET /v3/senders/domains` wird der Send lokal abgewiesen (Status `rejected_unauthenticated_domain`).
-5. **Health-Checks gegen Stalwart NIE mit Fake-Auth-Headern** — Stalwart bannt nach 2 fehlgeschlagenen Auth-Versuchen. `fetch('http://stalwart-mail:8080/jmap/session')` ohne Authorization ist korrekt.
+5. **Health-Checks gegen Stalwart NIE mit Fake-Auth-Headern**, Stalwart bannt nach 2 fehlgeschlagenen Auth-Versuchen. `fetch('http://stalwart-mail:8080/jmap/session')` ohne Authorization ist korrekt.
 6. **JMAP-Endpoints direkt:** `/jmap/session`, nie `/.well-known/jmap` (307-Redirect, Deno-Fetch folgt ihm nicht zuverlässig).
-7. **JMAP-Template-Segmente erhalten:** `uploadUrl` enthält `{accountId}` — per `.replace("{accountId}", this._accountId)` ersetzen, **niemals** per `.split("{")[0]` strippen.
+7. **JMAP-Template-Segmente erhalten:** `uploadUrl` enthält `{accountId}`, per `.replace("{accountId}", this._accountId)` ersetzen, **niemals** per `.split("{")[0]` strippen.
 8. **Bei "Mail nicht angekommen?": IMMER zuerst Brevo Events API** (`GET /v3/smtp/statistics/events?email=…`), nicht Stalwart-Logs.
 
 **Pre-Flight-Pattern (Regel 4, Pflicht-Snippet):**
@@ -65,13 +65,13 @@ const url = (this.uploadUrl || `${this.baseUrl}/jmap/upload/{accountId}/`)
 
 ---
 
-## B — Mailbox-Passwort-Sync
+## B: Mailbox-Passwort-Sync
 
 Wer ein Mailbox-Passwort in Stalwart ändert, MUSS in derselben Operation alle abhängigen Stores aktualisieren:
 
 | Store | Ort | Methode |
 |---|---|---|
-| Stalwart RocksDB | `/opt/stalwart/data/` | `PATCH /api/principal/<account>` — Pflicht-Start |
+| Stalwart RocksDB | `/opt/stalwart/data/` | `PATCH /api/principal/<account>`, Pflicht-Start |
 | maxone `email_accounts` | Supabase `maxone.email_accounts` | Konto entfernen + neu anlegen |
 | SnappyMail-Session | Browser-Cookie | Logout + Re-Login durch Nutzer |
 
@@ -95,7 +95,7 @@ docker restart stalwart-mail   # löscht in-memory Ban (~3 Min Zeitfenster)
 # SOFORT danach: Sync-Reihenfolge durchführen — sonst startet Zyklus neu
 ```
 
-**Warum:** 2026-05-16 `hey@viktoria-from.de` — Passwort über Atelier-Endpunkt geändert, nur Stalwart aktualisiert. `email-client`-MDN-Checker (IP `10.0.2.3`) authentifizierte sich alle 3 Min mit altem Passwort → 45+ Ban-Events zwischen 15:41 und 21:34 UTC. Stalwart-Neustart löscht nur den in-memory-Ban — ohne Store-Sync startet Zyklus 2 Min später neu.
+**Warum:** 2026-05-16 `hey@viktoria-from.de`, Passwort über Atelier-Endpunkt geändert, nur Stalwart aktualisiert. `email-client`-MDN-Checker (IP `10.0.2.3`) authentifizierte sich alle 3 Min mit altem Passwort → 45+ Ban-Events zwischen 15:41 und 21:34 UTC. Stalwart-Neustart löscht nur den in-memory-Ban, ohne Store-Sync startet Zyklus 2 Min später neu.
 
 ---
 

@@ -1,4 +1,4 @@
-# 006 — Domain-Policy: .one statt .studio
+# 006: Domain-Policy: .one statt .studio
 
 **Status:** active
 **Seit:** 2026-04-16 (User-Direktive)
@@ -7,20 +7,20 @@
 ## Regel
 
 Alle neuen Resourcen (Subdomains, Mail-Sender, DNS-Records, OAuth-Apps,
-Service-URLs, Doku-Links) werden auf `maxone.one` angelegt — nie auf
+Service-URLs, Doku-Links) werden auf `maxone.one` angelegt, nie auf
 `maxone.studio`.
 
 ## Warum
 
 `*.maxone.studio` ist seit 2026-04-16 produktiv abgeschaltet. ALLE
 Traefik-Router auf maxone-prod wurden auf `*.maxone.one` umgestellt.
-User-Direktive: "alles auf .one — nie wieder .studio (vorerst nicht)".
+User-Direktive: "alles auf .one, nie wieder .studio (vorerst nicht)".
 
 ## Ausnahme
 
 `mail.maxone.studio` + `autoconfig.maxone.studio` bleiben aktiv (Stalwart
 Mail-Server, MX/SPF/DKIM/Autoconfig-Clients). Migration ist invasiv und
-separat zu planen — nicht in dieser Regel umfasst.
+separat zu planen, nicht in dieser Regel umfasst.
 
 ## Wie anwenden
 

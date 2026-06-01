@@ -1,4 +1,4 @@
-# 022 — SSoT & Version-Marker (Version-Marker · Cron-Dedup · Kein Hardcode)
+# 022: SSoT & Version-Marker (Version-Marker · Cron-Dedup · Kein Hardcode)
 
 **Status:** active
 **Seit:** 2026-05-17
@@ -12,13 +12,13 @@
 
 ---
 
-## A — Version-Marker
+## A: Version-Marker
 
 Jedes deploybare Web-Projekt weist seinen Build an drei Stellen aus:
 
-1. **`BUILD_ID` als ENV im Container** — Short-SHA (7–8 Zeichen). Lesbar per `docker inspect ... | grep BUILD_ID=`.
-2. **`/api/version` Endpoint** — `{ "build_id": "abc1234", "deployed_at": "..." }`
-3. **Sichtbarer Banner im Footer** — `v: abc1234`, klein, klickbar auf GitHub-Commit
+1. **`BUILD_ID` als ENV im Container**, Short-SHA (7-8 Zeichen). Lesbar per `docker inspect ... | grep BUILD_ID=`.
+2. **`/api/version` Endpoint**, `{ "build_id": "abc1234", "deployed_at": "..." }`
+3. **Sichtbarer Banner im Footer**, `v: abc1234`, klein, klickbar auf GitHub-Commit
 
 Alle drei MÜSSEN denselben Wert tragen. Drift = manueller Server-Build = Audit-FAIL.
 
@@ -42,7 +42,7 @@ ENV BUILD_ID=${BUILD_ID}
 
 ---
 
-## B — Cron-E-Mail-Dedup-Schutz
+## B: Cron-E-Mail-Dedup-Schutz
 
 Jeder Cron-Job der E-Mails versendet MUSS sicherstellen: Zähler wird **ausschließlich nach erfolgreichem Dedup-Write** inkrementiert.
 
@@ -72,13 +72,13 @@ totals.sent++;
 
 Gilt analog für Boolean-Flags (`reminder_sent_7d`, `reminder_sent_14d`).
 
-**Logging-Konvention:** `[CronName] INSERT_LOG_FAILED { step, user_id, pg_code }` — damit VECTOR bei Drift Alarm schlagen kann.
+**Logging-Konvention:** `[CronName] INSERT_LOG_FAILED { step, user_id, pg_code }`, damit VECTOR bei Drift Alarm schlagen kann.
 
 **Warum:** 2026-05-17 in 9 Stellen in voltfair.de gefunden. Fehler-Kette: Mail versendet → DB-Insert schlägt fehl → Zähler trotzdem erhöht → kein Marker in DB → nächster Cron-Lauf sendet erneut. Stiller Fehler, kein Alert, Zähler positiv.
 
 ---
 
-## C — SSoT & kein Hardcode
+## C: SSoT & kein Hardcode
 
 Kein Wert der in mehr als einer Datei verwendet wird, darf hardcoded im Komponentencode stehen.
 

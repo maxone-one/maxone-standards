@@ -1,6 +1,6 @@
-# Checkliste: 014 — Sunset
+# Checkliste: 014: Sunset
 
-Pflicht beim Stilllegen jedes Projekts. Reihenfolge ist wichtig — erst
+Pflicht beim Stilllegen jedes Projekts. Reihenfolge ist wichtig, erst
 Daten sichern, dann erst abreißen.
 
 ---
@@ -24,7 +24,7 @@ Daten sichern, dann erst abreißen.
 - [ ] User-Liste mit Mailadressen exportiert (für Sunset-Notification)
 - [ ] Export-Format und Pfad in `SUNSET.md` Section B dokumentiert
 - [ ] Aufbewahrungsfrist im Archiv festgelegt (typisch:
-      6 Jahre bei Customer-Daten — Steuer-/Aufbewahrungsfristen,
+      6 Jahre bei Customer-Daten, Steuer-/Aufbewahrungsfristen,
       sonst 3 Jahre)
 
 ## C. Drittdienste-Bereinigung
@@ -36,7 +36,7 @@ Pro Eintrag aus 013 Section D bzw. 015 Section „Externe Dienste":
 - [ ] **Stripe**: Subscriptions canceled, Webhook deaktiviert,
       Account-Modus auf „inactive" oder Account geschlossen
 - [ ] **Supabase**: Snapshot in `/opt/secrets/<projekt>/snapshot.sql.gz`,
-      dann Project paused (nicht direkt deleted — 30d Grace)
+      dann Project paused (nicht direkt deleted, 30d Grace)
 - [ ] **Sentry / Plausible / Umami**: Daten exportiert, Property gelöscht
 - [ ] **Externe APIs (OpenAI, Anthropic, Brevo etc.)**: API-Keys
       rotiert oder revoked
@@ -54,7 +54,7 @@ Pro Eintrag aus 013 Section D bzw. 015 Section „Externe Dienste":
 - [ ] Volume gelöscht (`docker volume rm`)
 - [ ] `/opt/<projekt>/` auf Drive gesichert, dann auf Server gelöscht
 - [ ] `/opt/secrets/<projekt>/` auf Drive gesichert, dann auf Server
-      gelöscht (Secrets-Store-Hierarchie aus CLAUDE.md beachten —
+      gelöscht (Secrets-Store-Hierarchie aus CLAUDE.md beachten
       Drive-Backup ist Pflicht)
 - [ ] Docker-Netzwerke geprüft auf hängende Endpoints
       (`docker network inspect coolify`)
@@ -64,7 +64,7 @@ Pro Eintrag aus 013 Section D bzw. 015 Section „Externe Dienste":
 
 - [ ] DNS-A-Record bei INWX entfernt ODER auf Wartungs-Container umgeleitet
 - [ ] CAA-Record bereinigt (falls projekt-spezifisch)
-- [ ] Cert läuft natürlich aus (kein manueller Eingriff nötig — Traefik
+- [ ] Cert läuft natürlich aus (kein manueller Eingriff nötig, Traefik
       versucht keine Renewal mehr für nicht-vorhandene Domain)
 - [ ] Wartungs-Seite-Container (falls Domain bleibt) liefert HTTP 200
       mit Hinweis „Service eingestellt am DD.MM.YYYY"
@@ -75,7 +75,7 @@ Pro Eintrag aus 013 Section D bzw. 015 Section „Externe Dienste":
 - [ ] `registry/projects.yml`: status von `sunset-pending` auf `sunset`
 - [ ] Letzter Commit auf `main` referenziert SUNSET.md
 - [ ] GitHub: Settings → „Archive this repository" (read-only)
-- [ ] Repo-Beschreibung um „[ARCHIVED — sunset YYYY-MM-DD]" ergänzen
+- [ ] Repo-Beschreibung um „[ARCHIVED, sunset YYYY-MM-DD]" ergänzen
 - [ ] CI-Workflows deaktiviert / kostenlose Runner-Minuten nicht weiter
       gebrannt
 

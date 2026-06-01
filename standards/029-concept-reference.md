@@ -1,4 +1,4 @@
-# 029 — Konzept-Referenz (CONCEPT.md)
+# 029: Konzept-Referenz (CONCEPT.md)
 
 **Status:** active
 **Seit:** 2026-05-30
@@ -11,13 +11,13 @@ vollständige Produkt-Konzept: Vision, Positionierung, Produkttiers,
 Zielgruppen, Geschäftsmodell, Sprache.
 
 **Zweck:** Ein Agent (Claude, Codex, Vybora) der in das Projekt einsteigt, soll
-das Konzept aus dieser Datei verstehen — ohne Code zu lesen, ohne zu raten,
+das Konzept aus dieser Datei verstehen, ohne Code zu lesen, ohne zu raten,
 ohne zu fragen. `CONCEPT.md` ist die einzige Wahrheit über *was* das Produkt ist
 und *wie* darüber gesprochen wird.
 
 **Timing:** Die Datei wird angelegt bevor Code oder Copy für ein neues Projekt
 entsteht. Sie wird aktualisiert sobald sich Positionierung, Produkttiers,
-Geschäftsmodell oder Zielgruppen ändern — nicht nachträglich, sondern als
+Geschäftsmodell oder Zielgruppen ändern, nicht nachträglich, sondern als
 erster Schritt bei richtungsverändernden Entscheidungen.
 
 ## Pflicht-Abschnitte

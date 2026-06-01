@@ -1,4 +1,4 @@
-# 024 — Plan-Tracker (PLAN.md)
+# 024: Plan-Tracker (PLAN.md)
 
 **Status:** active
 **Seit:** 2026-05-18
@@ -8,12 +8,12 @@
 
 Jedes Projekt führt eine `PLAN.md` im Repo-Root mit zwei Pflicht-Abschnitten:
 
-1. **`## Noch offen`** — alle freigegebenen, noch nicht umgesetzten Pläne
-2. **`## Erledigt`** — abgeschlossene Pläne mit Datum
+1. **`## Noch offen`**, alle freigegebenen, noch nicht umgesetzten Pläne
+2. **`## Erledigt`**, abgeschlossene Pläne mit Datum
 
 **Timing-Regel:** Wenn ein Plan in einer Session freigegeben wird (Max sagt "ja,
 mach das"), wird `PLAN.md` aktualisiert **bevor** der erste Code geändert wird.
-Das ist der explizite Startschuss — nicht das Commit, nicht das Deploy.
+Das ist der explizite Startschuss, nicht das Commit, nicht das Deploy.
 
 **Kein PRD nötig:** PLAN.md ist das Planungsdokument, wenn kein CONCEPT.md
 vorhanden ist. Auch ein Einzeiler ("Fix Login-Bug") ist ein gültiger Eintrag.
@@ -34,7 +34,7 @@ vorhanden ist. Auch ein Einzeiler ("Fix Login-Bug") ist ein gültiger Eintrag.
 - [x] **<Titel>** — <Kurzbeschreibung> — <Datum>
 ```
 
-Checkboxen sind nicht zwingend (`- [ ]` / `- [x]`), aber empfohlen — sie sind
+Checkboxen sind nicht zwingend (`- [ ]` / `- [x]`), aber empfohlen, sie sind
 schnell scanbar und von Werkzeugen lesbar.
 
 Leere Abschnitte sind gültig:
@@ -53,18 +53,18 @@ _(noch nichts abgeschlossen)_
 
 | Standard | Was es abdeckt | PLAN.md vs. |
 |---|---|---|
-| **006 — HANDOFF.md** | Server-seitig: Infra-Zustand, letzte Deploys, Ops-TODOs | PLAN.md ist Repo-seitig: Feature- und Fix-Pläne |
-| **015 — CONCEPT.md** | Konzeptionell: Problem, Datenmodell, Auth, Threats | PLAN.md ist operativ: Was tun wir diese Session / diesen Sprint? |
-| **013 — LAUNCH-REVIEW** | Einmaliges Pre-Live-Gate | PLAN.md ist laufend — überlebt den Launch |
+| **006, HANDOFF.md** | Server-seitig: Infra-Zustand, letzte Deploys, Ops-TODOs | PLAN.md ist Repo-seitig: Feature- und Fix-Pläne |
+| **015, CONCEPT.md** | Konzeptionell: Problem, Datenmodell, Auth, Threats | PLAN.md ist operativ: Was tun wir diese Session / diesen Sprint? |
+| **013, LAUNCH-REVIEW** | Einmaliges Pre-Live-Gate | PLAN.md ist laufend, überlebt den Launch |
 
 Wenn CONCEPT.md vorhanden: PLAN.md kann darauf verweisen (`Details: siehe CONCEPT.md §3`).
-Wenn kein CONCEPT.md: PLAN.md ist das einzige Planungsdokument — `## Noch offen`
+Wenn kein CONCEPT.md: PLAN.md ist das einzige Planungsdokument, `## Noch offen`
 darf dann ausführlicher sein.
 
 ## Warum
 
 Zwischen Sessions geht Kontext verloren. Ohne persistierten, freigegebenen Plan
-beginnt Claude beim nächsten Öffnen des Projekts von vorne — und kann beginnen,
+beginnt Claude beim nächsten Öffnen des Projekts von vorne, und kann beginnen,
 Dinge zu "erinnern", die nie vereinbart wurden (Halluzination durch
 Kontextverlust). PLAN.md ist die einzige Wahrheit darüber, was vereinbart ist.
 
@@ -80,17 +80,17 @@ Kontextverlust). PLAN.md ist die einzige Wahrheit darüber, was vereinbart ist.
 
 `scripts/audit.mjs` prüft pro Projekt mit `status: live` oder `status: dev`:
 
-1. **PLAN.md existiert** im Repo-Root — `FAIL` wenn nicht.
-2. **`## Noch offen` Abschnitt** vorhanden — `FAIL` wenn nicht.
-3. **`## Erledigt` Abschnitt** vorhanden — `FAIL` wenn nicht.
+1. **PLAN.md existiert** im Repo-Root, `FAIL` wenn nicht.
+2. **`## Noch offen` Abschnitt** vorhanden, `FAIL` wenn nicht.
+3. **`## Erledigt` Abschnitt** vorhanden, `FAIL` wenn nicht.
 
-Der Inhalt der Abschnitte wird nicht geprüft — ein leerer Abschnitt ist gültig.
+Der Inhalt der Abschnitte wird nicht geprüft, ein leerer Abschnitt ist gültig.
 Der Audit prüft nur die Struktur, nicht die Qualität.
 
 ## Migration
 
 - **Neue Projekte:** PLAN.md vor Gate 1 (Standard 008) anlegen.
-- **Bestand:** Sofort anlegen — auch leer. Inhalt kommt beim nächsten
+- **Bestand:** Sofort anlegen, auch leer. Inhalt kommt beim nächsten
   echten Plan-Sprint.
-- Keine Ausnahmen für `status: live` — PLAN.md ist eine leere Datei,
+- Keine Ausnahmen für `status: live`, PLAN.md ist eine leere Datei,
   das Anlegen dauert 30 Sekunden.

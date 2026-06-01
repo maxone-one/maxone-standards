@@ -13,7 +13,7 @@ Diese Checkliste sicherstellt, dass Kunden-Projekte nicht den gleichen
 
 ## Technische Trennung
 
-- [ ] Eigener Brevo-Account (kein Shared-Key — siehe Standard 003)
+- [ ] Eigener Brevo-Account (kein Shared-Key, siehe Standard 003)
 - [ ] Eigene Subdomain / Domain unter Kontrolle des Kunden ODER von Max
 - [ ] Eigene Container-Namen (`<kunde>-<projekt>-*`, nicht generisch)
 - [ ] DB getrennt (eigene Supabase-Instanz oder eigenes Schema)
@@ -26,7 +26,7 @@ Diese Checkliste sicherstellt, dass Kunden-Projekte nicht den gleichen
 
 ## SLA
 
-- [ ] Verfügbarkeitszusage dokumentiert (z.B. 99% / Mo–Fr 9–18 Uhr)
+- [ ] Verfügbarkeitszusage dokumentiert (z.B. 99% / Mo-Fr 9-18 Uhr)
 - [ ] Monitoring eingerichtet (VECTOR Health-Check + Telegram-Alarm)
 - [ ] Backup-Frequenz festgelegt und getestet (Restore mind. 1x geübt)
 

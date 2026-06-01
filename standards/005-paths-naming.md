@@ -1,4 +1,4 @@
-# 005 — Pfade und Container-Naming
+# 005: Pfade und Container-Naming
 
 **Status:** active
 **Seit:** etabliert, formalisiert 2026-04-27
@@ -18,14 +18,14 @@ Backups, Updates) trivial.
 ## Konventionen
 
 **Server-Pfade:**
-- `/opt/<projekt>/` — Code, docker-compose.yml, .env
-- `/opt/<projekt>/HANDOFF.md` — Briefing (siehe 006)
-- `/opt/secrets/<projekt>/keys.env` — Secrets (siehe 003)
-- `/opt/backups/<projekt>/` — Lokale Backups vor DB-Restore
+- `/opt/<projekt>/`, Code, docker-compose.yml, .env
+- `/opt/<projekt>/HANDOFF.md`, Briefing (siehe 006)
+- `/opt/secrets/<projekt>/keys.env`, Secrets (siehe 003)
+- `/opt/backups/<projekt>/`, Lokale Backups vor DB-Restore
 
 **Lokale Pfade (Windows):**
-- `c:\Users\max\Projects\<projekt>\` — Repo-Root
-- `c:\Users\max\Projects\<projekt>\<projekt>.code-workspace` — Workspace
+- `c:\Users\max\Projects\<projekt>\`, Repo-Root
+- `c:\Users\max\Projects\<projekt>\<projekt>.code-workspace`, Workspace
 
 **Container-Namen:**
 - Single: `<projekt>-app`

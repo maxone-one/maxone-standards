@@ -1,10 +1,10 @@
-# 017 — Routine-Platform: keine Cron-Logik in IDE/Claude-Sitzungen
+# 017: Routine-Platform: keine Cron-Logik in IDE/Claude-Sitzungen
 
 **Status:** active
 **Seit:** 2026-04-28
 **Gilt für:** alle Projekte mit wiederkehrenden Aufgaben (Audits,
 Backups, Health-Checks, Reminders, Re-Review-Cron, Mail-Watchdogs,
-Bundle-Drift-Scans, …) — egal ob Code-Repo, Server-Service oder
+Bundle-Drift-Scans, …), egal ob Code-Repo, Server-Service oder
 Standalone-Skript.
 
 ## Regel
@@ -15,7 +15,7 @@ und User-Login-Zustand ist.
 
 **Erlaubte Plattformen (Pflicht-Auswahl):**
 
-1. **Heartbeats — server-seitig, idle-fähig:**
+1. **Heartbeats, server-seitig, idle-fähig:**
    - GitHub Actions `schedule:`-Trigger (vorzugsweise auf `self-hosted`
      Runner `voltfair-server`)
    - `systemd`-Timer auf `maxone-prod`/`voltfair-cli`/`voltfair-db`/
@@ -23,8 +23,8 @@ und User-Login-Zustand ist.
    - Hetzner-`crontab` (root oder service-User)
    - Supabase `pg_cron` (für DB-nahe Routinen)
    - Brevo „Marketing-Automation" (nur für Mail-Versand-Trigger)
-2. **Agenten — 24/7-Container mit Scheduler-Loop:**
-   - **VECTOR** (`vector-blue`/`vector-green` auf maxone-prod) — siehe
+2. **Agenten, 24/7-Container mit Scheduler-Loop:**
+   - **VECTOR** (`vector-blue`/`vector-green` auf maxone-prod), siehe
      `/opt/vector/IDENTITY.md`. VECTOR hat eine `cron`-Loop und kann
      Telegram-/Mail-Reminders, Health-Checks, `ops_tasks`-Drainer
      fahren.
@@ -37,7 +37,7 @@ und User-Login-Zustand ist.
   `schtasks /create`)
 - WSL-`crontab` auf User-NUC (läuft nur, wenn WSL läuft)
 - Claude Code `/schedule` für Datendienste, Backups, Audits,
-  Compliance-Cron — OK ist es nur für **persönliche** Reminder, die
+  Compliance-Cron, OK ist es nur für **persönliche** Reminder, die
   nichts kaputt machen können wenn sie aussetzen
 - IDE-Tasks (Cursor, Vybora, Antigravity, VS Code Tasks-Pane) für
   wiederkehrende Jobs
@@ -52,10 +52,10 @@ und User-Login-Zustand ist.
 HANDOFF.md hatte bis 2026-04-28 vier Optionen für den Drift-Audit am
 2026-05-11:
 
-- Option A — Windows Task Scheduler auf User-NUC
-- Option B — WSL crontab auf User-NUC
-- Option C — manueller Doppelklick auf `scheduled-audit.cmd`
-- Option D — Audit fallen lassen, „läuft eh bei Session-Start"
+- Option A, Windows Task Scheduler auf User-NUC
+- Option B, WSL crontab auf User-NUC
+- Option C, manueller Doppelklick auf `scheduled-audit.cmd`
+- Option D, Audit fallen lassen, „läuft eh bei Session-Start"
 
 **Alle vier sind kaputt.** A und B sterben, sobald der NUC aus ist
 oder die WSL-Distro nicht startet. C ist ein User-Reminder ohne
@@ -65,17 +65,17 @@ Erzeugung statt Drift-Schutz.
 
 **Gemeinsame Failure-Modes von IDE-/Claude-abhängigen Routinen:**
 
-1. **Stille Aussetzer** — User merkt erst nach Wochen, dass der
+1. **Stille Aussetzer**, User merkt erst nach Wochen, dass der
    tägliche Drift-Scan nicht mehr läuft. Standards 018 (Bundle-Drift),
    019 (Cert/DNS), 030 (Mail-Architektur) verlieren ihre Wirkung,
    weil sie keine Heartbeats haben.
-2. **Single Point of Failure** — User-Maschine = der einzige Knoten.
+2. **Single Point of Failure**, User-Maschine = der einzige Knoten.
    Hardware-Defekt, OS-Update, IDE-Crash, NVMe-Tausch → Routine weg.
-3. **Keine Audit-Spur** — Wenn die Routine nichts geloggt hat, weil
+3. **Keine Audit-Spur**, Wenn die Routine nichts geloggt hat, weil
    sie nicht lief, ist der Failure unsichtbar. Ein systemd-Timer
    schreibt mindestens `journalctl` rein; eine GH-Actions-Run hat
    eine permanente URL.
-4. **Verlust beim Tool-Wechsel** — Max wechselt zwischen Claude
+4. **Verlust beim Tool-Wechsel**, Max wechselt zwischen Claude
    Code / Cursor / Vybora / Antigravity (siehe globale Multi-
    Umgebung-Regel). Eine Routine, die in der `.vscode/tasks.json`
    einer Umgebung steckt, ist in der nächsten Umgebung verloren.
@@ -86,12 +86,12 @@ Erzeugung statt Drift-Schutz.
   eine eigene Scheduler-Loop (siehe `/opt/vector/IDENTITY.md`).
   Telegram-Reminders, Health-Checks, `ops_tasks`-Bearbeitung laufen
   unabhängig vom User.
-- **`brevo-bounce-watchdog.timer`** (systemd auf maxone-prod) — fängt
+- **`brevo-bounce-watchdog.timer`** (systemd auf maxone-prod), fängt
   jede stillschweigend abgewiesene Sender-Domain (Standard 016 /
   Bibel Regel 12+20).
-- **`zentinel-watchdog`** (systemd auf maxone-prod) — `unban-stalwart.sh`
+- **`zentinel-watchdog`** (systemd auf maxone-prod), `unban-stalwart.sh`
   + `circuit-breaker-drill.sh`.
-- **`zync-healthcheck`** — VECTOR fährt alle 30 min Healthcheck für
+- **`zync-healthcheck`**, VECTOR fährt alle 30 min Healthcheck für
   Growee Instagram Bot, alarmiert via Telegram (siehe globale
   CLAUDE.md, Test-First-Block).
 
@@ -173,7 +173,7 @@ Konkrete Migration für dieses Repo (war der Trigger-Vorfall):
   zu allen 4 Servern für die SSH-Checks). HANDOFF aktualisiert,
   Option A/B/C entfernt.
 - **Stolperstein:** `registry/projects.yml` hat `path_local` mit
-  Windows-Pfaden — auf einem Linux-Runner muss das Audit entweder
+  Windows-Pfaden, auf einem Linux-Runner muss das Audit entweder
   die Projekt-Repos selbst klonen (neuer `repo:`-Schlüssel pro
   Projekt) oder das `path_local` per `--root`-Flag überschreibbar
   machen. Folge-Task; ohne ihn läuft das Audit nicht ohne
@@ -224,35 +224,35 @@ Audit-ID: `017-routine-platform`. Heuristik pro Projekt:
 
 3. **Mindestens ein Heartbeat-Marker, keine IDE-Marker:** PASS.
 
-4. **Heartbeat-Marker UND IDE-Marker:** WARN („IDE-Trigger-Reste —
+4. **Heartbeat-Marker UND IDE-Marker:** WARN („IDE-Trigger-Reste
    Migration nicht abgeschlossen, alten Pfad entfernen").
 
 5. **Nur IDE-Marker, kein Heartbeat:** FAIL („Routine läuft auf User-
-   Maschine — auf GH Actions / systemd / VECTOR migrieren").
+   Maschine, auf GH Actions / systemd / VECTOR migrieren").
 
 ## Cross-Reference
 
-- 021 Re-Review-Reminder — der ursprüngliche Anwendungsfall (Cron
+- 021 Re-Review-Reminder, der ursprüngliche Anwendungsfall (Cron
   alle 180 Tage)
-- VULN-CATALOG F (Drift-Klassen) — alle F-Punkte (DNS, Bundle, Cert,
+- VULN-CATALOG F (Drift-Klassen), alle F-Punkte (DNS, Bundle, Cert,
   Mail) brauchen Detection-Routinen, deren Plattform durch 031
   geregelt ist
-- Globale CLAUDE.md „Multi-Umgebung-Koexistenz" — IDE-Wechsel macht
+- Globale CLAUDE.md „Multi-Umgebung-Koexistenz", IDE-Wechsel macht
   IDE-gebundene Routinen besonders fragil
-- VECTOR `/opt/vector/IDENTITY.md` — die zentrale 24/7-Agent-
+- VECTOR `/opt/vector/IDENTITY.md`, die zentrale 24/7-Agent-
   Plattform, an die viele Routinen abgegeben werden können
-- Standard 001 Deploy-Pipeline — definiert den Self-Hosted-Runner
+- Standard 001 Deploy-Pipeline, definiert den Self-Hosted-Runner
   `voltfair-server` als Build-Plattform; derselbe Runner kann
   GH-Actions-Cron aufnehmen
-- HANDOFF.md — der konkrete Trigger-Vorfall, der diese Regel
+- HANDOFF.md, der konkrete Trigger-Vorfall, der diese Regel
   motiviert hat
 
 ## Externe Quellen
 
-- GitHub Actions `schedule:`-Trigger Doku —
+- GitHub Actions `schedule:`-Trigger Doku
   docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
 - systemd.timer(5) man-page
-- Supabase `pg_cron` Doku — supabase.com/docs/guides/database/extensions/pg_cron
-- 12-factor app §VIII („Concurrency: scale out via the process model") —
+- Supabase `pg_cron` Doku, supabase.com/docs/guides/database/extensions/pg_cron
+- 12-factor app §VIII („Concurrency: scale out via the process model")
   Hintergrund-Prinzip: Routinen sind eigene Prozesse, nicht IDE-
   Subprozesse

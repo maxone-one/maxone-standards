@@ -1,4 +1,4 @@
-# Checkliste: 027 — Deploy-Pipeline
+# Checkliste: 027: Deploy-Pipeline
 
 Vor jedem neuen Projekt-Setup UND vor jedem Pipeline-Refactor.
 
@@ -35,7 +35,7 @@ Vor jedem neuen Projekt-Setup UND vor jedem Pipeline-Refactor.
 ## C. `/api/health`-Endpunkt im Projekt
 
 - [ ] Endpunkt liefert `200 OK` mit JSON `{ "status": "healthy", "ts": ... }`
-- [ ] **Nicht nur statisch** — prüft DB-Connection + KV-Connection wenn
+- [ ] **Nicht nur statisch**, prüft DB-Connection + KV-Connection wenn
       vorhanden
 - [ ] **Kein PII** im Response-Body
 - [ ] Response < 100 ms (sonst fragmentiert Health-Check)
@@ -90,9 +90,9 @@ ssh root@maxone-prod "docker images | grep <projekt>-app"
 
 ## Cross-Reference
 
-- 001 — Blue/Green-Pattern (architektonisches Was)
-- 002 — Niemals Build auf Prod (negative Invariante)
-- 003 — Secrets Store (`env_file:`-Pflichtfeld kommt von dort)
-- 004 — TLS DNS-01 (Traefik-Resolver-Label)
-- **027 = das positive Wie** — die konkrete Pipeline, die 001+002+003+004
+- 001, Blue/Green-Pattern (architektonisches Was)
+- 002, Niemals Build auf Prod (negative Invariante)
+- 003, Secrets Store (`env_file:`-Pflichtfeld kommt von dort)
+- 004, TLS DNS-01 (Traefik-Resolver-Label)
+- **027 = das positive Wie**, die konkrete Pipeline, die 001+002+003+004
   als Eigenschaften erfüllt

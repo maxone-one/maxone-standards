@@ -1,4 +1,4 @@
-# 009 — Compliance-Lifecycle (Sunset · AVV/DPA-Registry)
+# 009: Compliance-Lifecycle (Sunset · AVV/DPA-Registry)
 
 **Status:** active
 **Seit:** 2026-04-27 (Sunset), 2026-05-08 (AVV)
@@ -11,7 +11,7 @@
 
 ---
 
-## A — Sunset-Prozess
+## A: Sunset-Prozess
 
 Wenn ein Projekt stillgelegt wird, läuft es durch einen definierten Prozess statt zu "verwaisen".
 
@@ -35,11 +35,11 @@ live → sunset-pending (max. 30 Tage) → sunset → archived
 
 ---
 
-## B — AVV/DPA-Registry
+## B: AVV/DPA-Registry
 
 Dieser Standard deckt **beide Richtungen** der DSGVO Art. 28-Pflicht ab.
 
-### Richtung 1: Max ist Verantwortlicher — externe Auftragsverarbeiter
+### Richtung 1: Max ist Verantwortlicher: externe Auftragsverarbeiter
 
 Jeder externe Dienstleister der personenbezogene Daten verarbeitet MUSS in `registry/projects.yml → data_processors` dokumentiert sein:
 
@@ -59,7 +59,7 @@ data_processors:
 
 **Typische Auftragsverarbeiter:** Hetzner, Supabase, Brevo, Mollie, Sentry/Umami, Anthropic/OpenAI, Google Workspace
 
-### Richtung 2: Max ist Auftragsverarbeiter — AVV an Kunden
+### Richtung 2: Max ist Auftragsverarbeiter: AVV an Kunden
 
 Wenn Max eine Plattform im Auftrag einer Kundenorganisation betreibt, MUSS er dieser Organisation einen AVV ausstellen:
 

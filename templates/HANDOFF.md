@@ -1,4 +1,4 @@
-# HANDOFF — <PROJEKT>
+# HANDOFF: <PROJEKT>
 
 > Briefing für Claude / neue Mitarbeiter. Vor jeder Arbeit am Projekt erst hier
 > reinlesen. Bei Änderungen am Stack, Deploy, Secrets: HIER aktualisieren.
@@ -45,8 +45,8 @@
 
 ## Tests
 
-- **Smoke:** `node test/smoke.mjs` — was wird getestet?
-- **Unit:** `npm test` — welche Logik?
+- **Smoke:** `node test/smoke.mjs`, was wird getestet?
+- **Unit:** `npm test`, welche Logik?
 - **Staging:** `SITE=<staging-url> npm test`
 
 ## Bekannte Eigenheiten

@@ -1,4 +1,4 @@
-# CONCEPT — <PROJEKTNAME>
+# CONCEPT: <PROJEKTNAME>
 
 > Pflicht-Dokument nach [Standard 015](https://github.com/maxone-one/maxone-standards/blob/main/standards/015-concept-gate.md).
 > Vor erster Code-Zeile ausfüllen, Sign-Off einholen.
@@ -22,7 +22,7 @@ Arbeit").
 | Rolle              | Anonym? | Eingeloggt? | Zahlend? | Anzahl bei Launch |
 |--------------------|---------|-------------|----------|-------------------|
 | z.B. Endkunde      | ja      | optional    | nein     | ?                 |
-| z.B. Admin         | nein    | ja          | nein     | 1–2               |
+| z.B. Admin         | nein    | ja          | nein     | 1-2               |
 | z.B. Pro-Nutzer    | nein    | ja          | ja       | ~10               |
 
 ## Datenmodell
@@ -35,10 +35,10 @@ Welche Entitäten gibt es, was wird gespeichert, wie sensibel?
 | `orders`    | user_id, items, total, address         | personenbezogen + finanzbezogen                   |
 | `messages`  | sender_id, recipient_id, body          | personenbezogen, möglicherw. Art. 9 wenn medizin. |
 
-**Besondere Kategorien (Art. 9 DSGVO):** ja / nein — falls ja, welche?
+**Besondere Kategorien (Art. 9 DSGVO):** ja / nein, falls ja, welche?
 *(Gesundheit, Religion, ethn. Herkunft, Sexualleben, Biometrie, …)*
 
-**DSFA fällig:** ja / nein / unklar — Begründung: ...
+**DSFA fällig:** ja / nein / unklar, Begründung: ...
 
 ## Auth-Modell
 
@@ -57,8 +57,8 @@ Policy). Service-Role nur server-seitig.
 ## Externe Dienste
 
 Jeder Drittdienst, der Daten verarbeitet, mit Verarbeitungsrolle und
-AVV-Status. Dienste, die personenbezogene Daten im Auftrag verarbeiten, muessen
-vor Live-Gang zusaetzlich in `registry/projects.yml -> data_processors` nach
+AVV-Status. Dienste, die personenbezogene Daten im Auftrag verarbeiten, müssen
+vor Live-Gang zusätzlich in `registry/projects.yml -> data_processors` nach
 Standard 041 stehen.
 
 | Dienst         | Zweck                         | Server-Region | AVV/DPA           | Datenkategorie      |
@@ -79,7 +79,7 @@ Standard 041 stehen.
 Whitelist-Plattform (siehe Standard 016, geplant). Lovable / Bolt / Base44
 / v0 nur mit dokumentiertem Migrationspfad.
 
-## Threat-Model (Top 3–5)
+## Threat-Model (Top 3-5)
 
 Was ist das wahrscheinlichste Schadensszenario? Pro Risiko: wie wird es
 abgewendet?
@@ -109,7 +109,7 @@ abgewendet?
 | Externe AI-Modelle  | Anthropic (CLI, kein API) / …         | siehe globale Regel CLAUDE.md               |
 
 **Nicht-Wahl:** Plattformen aus Standard 016 Blacklist (Lovable, Bolt,
-Base44, v0) — Begründung warum ausgeschlossen: Lock-in, AVV-Lücken,
+Base44, v0), Begründung warum ausgeschlossen: Lock-in, AVV-Lücken,
 dokumentierte Sicherheitsvorfälle.
 
 ## Out of Scope
@@ -117,9 +117,9 @@ dokumentierte Sicherheitsvorfälle.
 Was wird absichtlich NICHT gebaut, um Scope-Creep zu verhindern? Jeder
 Punkt mit Begründung.
 
-- Beispiel: „Mehrsprachigkeit" — initial nur DE, EN später wenn Kunden danach
+- Beispiel: „Mehrsprachigkeit", initial nur DE, EN später wenn Kunden danach
   fragen. Verhindert übermässigen i18n-Overhead vor Product-Market-Fit.
-- Beispiel: „mobile App" — PWA reicht, native App erst ab 1k Nutzer.
+- Beispiel: „mobile App", PWA reicht, native App erst ab 1k Nutzer.
 
 ## Offene Fragen
 
@@ -131,14 +131,14 @@ verschiebt Gate 1.
 
 ---
 
-## Gate 1 — Konzept-Sign-Off
+## Gate 1: Konzept-Sign-Off
 
 - **Vorgeschlagen von:** Vor- Nachname (@github-user) am 2026-MM-DD
 - **Reviewed von:** Vor- Nachname (@github-user) am 2026-MM-DD
-- **Gate 1:** PASSIERT — Code-Bau freigegeben
+- **Gate 1:** PASSIERT, Code-Bau freigegeben
 - **Bekannte Risiken aus Threat-Model:**
   - ...
-- **DSFA fällig (DSGVO Art. 35):** ja / nein / unklar — geprüft am 2026-MM-DD
+- **DSFA fällig (DSGVO Art. 35):** ja / nein / unklar, geprüft am 2026-MM-DD
 - **Standard 016 (Stack-Whitelist) konform:** ja / nein (Begründung wenn nein)
 
 ---
@@ -150,7 +150,7 @@ ergänzen, hier neuen Sign-Off-Block anhängen.
 
 > *(Beispiel-Eintrag)*
 >
-> ### Re-Review 2026-MM-DD — Anlass: neuer Drittdienst „...", neue Tabelle „..."
+> ### Re-Review 2026-MM-DD, Anlass: neuer Drittdienst „...", neue Tabelle „..."
 >
 > - Reviewed von: ... am 2026-MM-DD
 > - Geänderte Sektionen: Datenmodell, Externe Dienste

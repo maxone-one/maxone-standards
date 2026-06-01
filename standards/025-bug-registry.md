@@ -1,4 +1,4 @@
-# 025 — Bug Registry (BUGS.md)
+# 025: Bug Registry (BUGS.md)
 
 **Status:** active
 **Seit:** 2026-05-18
@@ -16,7 +16,7 @@ Ohne persistente Wissensbasis dreht Claude immer wieder dieselben Korrekturschle
 
 ## Regel
 
-Jedes Projekt mit Status `live` oder `dev` bekommt eine `BUGS.md` im Repo-Root —
+Jedes Projekt mit Status `live` oder `dev` bekommt eine `BUGS.md` im Repo-Root
 eine persistente Bug-Wissensbasis. Claude liest sie vor jeder Debugging-Session
 und hält sie nach jedem Schritt aktuell.
 
@@ -59,13 +59,13 @@ und hält sie nach jedem Schritt aktuell.
 Vor dem ersten Debugging-Schritt: `BUGS.md` lesen und prüfen ob der gemeldete
 Bug bereits einen Eintrag hat.
 
-### 2. Eintrag anlegen — spätestens beim ersten fehlgeschlagenen Ansatz
+### 2. Eintrag anlegen: spätestens beim ersten fehlgeschlagenen Ansatz
 
 Ein neuer Eintrag wird angelegt, sobald:
 - ein Ansatz fehlschlägt **oder**
 - ein Bug mehr als eine Session benötigt
 
-Nicht abwarten bis der Fix gefunden ist — der Eintrag entsteht während der
+Nicht abwarten bis der Fix gefunden ist, der Eintrag entsteht während der
 Untersuchung, nicht danach.
 
 ```markdown
@@ -82,14 +82,14 @@ Untersuchung, nicht danach.
 
 ### 3. Fehlgeschlagenen Ansatz sofort dokumentieren
 
-Direkt nach dem Erkennen, dass ein Ansatz nicht funktioniert — nicht erst am
+Direkt nach dem Erkennen, dass ein Ansatz nicht funktioniert, nicht erst am
 Session-Ende. Format:
 
 ```
 - YYYY-MM-DD — Ansatz: <was versucht wurde> → Warum gescheitert: <Grund>
 ```
 
-Der "Warum gescheitert"-Teil ist Pflicht. "Hat nicht funktioniert" reicht nicht —
+Der "Warum gescheitert"-Teil ist Pflicht. "Hat nicht funktioniert" reicht nicht
 die Ursache des Scheiterns ist die eigentliche Information.
 
 ### 4. Bug schließen
@@ -100,7 +100,7 @@ Sobald ein Fix verifiziert ist (nicht nur committed, sondern getestet):
 - `**Geschlossen:** YYYY-MM-DD` ergänzen
 - Eintrag in die `## Geschlossene Bugs`-Sektion verschieben
 
-Fehlgeschlagene Ansätze bleiben im geschlossenen Eintrag — sie sind wertvoller
+Fehlgeschlagene Ansätze bleiben im geschlossenen Eintrag, sie sind wertvoller
 als der Fix selbst, weil sie Folgefehler verhindern.
 
 ### 5. BUGS.md wird committet
@@ -118,14 +118,14 @@ chore(bugs): update BUG-001 — fehlgeschlagener Ansatz ergänzt
 
 ### 6. IDs sind fortlaufend und eindeutig
 
-`BUG-001`, `BUG-002`, ... — niemals eine ID wiederverwenden, auch nicht nach
+`BUG-001`, `BUG-002`, ..., niemals eine ID wiederverwenden, auch nicht nach
 Löschen eines Eintrags. Geschlossene Einträge bleiben in `BUGS.md`, werden
 nicht gelöscht.
 
-### 7. Muster-Feld — Cross-Project Erkennung und Global Fix
+### 7. Muster-Feld: Cross-Project Erkennung und Global Fix
 
 Das optionale `**Muster:**`-Feld taggt einen Bug mit einem Slug, der das
-zugrundeliegende Muster beschreibt — unabhängig vom Projekt:
+zugrundeliegende Muster beschreibt, unabhängig vom Projekt:
 
 ```
 **Muster:** `css-var-missing-fallback`
@@ -173,11 +173,11 @@ Ein leeres `BUGS.md` zum Kopieren liegt unter
 
 ## Was BUGS.md nicht ist
 
-- **Kein Ticket-System** — keine Prioritäten, keine Assignees, keine Sprints.
+- **Kein Ticket-System**, keine Prioritäten, keine Assignees, keine Sprints.
   Dafür gibt es Linear/GitHub Issues.
-- **Kein Changelog** — fixe Bugs gehören ins Commit, nicht hierher als einzige
+- **Kein Changelog**, fixe Bugs gehören ins Commit, nicht hierher als einzige
   Dokumentation. BUGS.md ergänzt das Commit, es ersetzt es nicht.
-- **Kein HANDOFF.md-Ersatz** — HANDOFF beschreibt den aktuellen Projektzustand.
+- **Kein HANDOFF.md-Ersatz**, HANDOFF beschreibt den aktuellen Projektzustand.
   BUGS beschreibt die Debugging-Geschichte.
 
 ## Audit-Checks
@@ -196,6 +196,6 @@ Ein leeres `BUGS.md` zum Kopieren liegt unter
 
 ## Verwandte Standards
 
-- **006** — HANDOFF.md (aktueller Projektzustand — Pflichtlektüre neben BUGS.md)
-- **005** — Test-First (Tests verhindern Bug-Regression)
-- **044** — SSoT & kein Hardcode (viele Bugs entstehen aus dupliziertem Zustand)
+- **006**, HANDOFF.md (aktueller Projektzustand, Pflichtlektüre neben BUGS.md)
+- **005**, Test-First (Tests verhindern Bug-Regression)
+- **044**, SSoT & kein Hardcode (viele Bugs entstehen aus dupliziertem Zustand)

@@ -1,4 +1,4 @@
-# 030 — Manufacturer Asset Sourcing (Logos + Produktbilder)
+# 030: Manufacturer Asset Sourcing (Logos + Produktbilder)
 
 **Status:** Active (2026-05-30)
 **Scope:** Alle Projekte die Hersteller-Logos oder Produktbilder von Drittanbietern zeigen (venfree, SLF, voltfair, künftige Katalog-Properties)
@@ -10,7 +10,7 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
 
 ---
 
-## A — Logos
+## A: Logos
 
 ### Bezugsreihenfolge
 
@@ -36,13 +36,13 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
 
 ### Speicherung
 
-- SVGs lokal unter `public/logos/<slug>.svg` — nie hot-linken (URLs ändern sich ohne Vorwarnung)
+- SVGs lokal unter `public/logos/<slug>.svg`, nie hot-linken (URLs ändern sich ohne Vorwarnung)
 - `manufacturers.logo_url` zeigt auf den lokalen Pfad `/logos/<slug>.svg`
 - Tochtergesellschaften erben das Logo der Muttergesellschaft (`logo_url = '/logos/zennio.svg'` für `zennio-deutschland`)
 
 ---
 
-## B — Produktbilder
+## B: Produktbilder
 
 ### Bezugsreihenfolge
 
@@ -55,12 +55,12 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
    ```
    Funktioniert auch wenn Bilder lazy-geladen sind (keine `data-src` nötig).
 
-2. **`data-zoom`-Attribut** — für traditionelle Produkt-Seiten (Theben, MDT):
+2. **`data-zoom`-Attribut**, für traditionelle Produkt-Seiten (Theben, MDT):
    ```js
    document.querySelector('img[alt*="Produktname"]')?.getAttribute('data-zoom')
    ```
 
-3. **WordPress `wp-content/uploads/`** — Zennio und andere WP-basierte Sites listen alle Produkt-Thumbnails im Listing-Grid direkt als `<img src="...wp-content/uploads/...">`.
+3. **WordPress `wp-content/uploads/`**, Zennio und andere WP-basierte Sites listen alle Produkt-Thumbnails im Listing-Grid direkt als `<img src="...wp-content/uploads/...">`.
 
 4. **Bekannte URL-Muster per Hersteller** (Stand 2026-05-30):
 
@@ -80,7 +80,7 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
    - Produktseiten-URL: `https://www.jung-group.com/de-DE/p/<name-slug>/<SKU>`
    - **Bild-URL vollständig vorhersagbar:** `https://www.jung-group.com/downloads/catalogue/images/280x280_webp/JUNG_{SKU_NODASH}.webp`
    - `{SKU_NODASH}` = SKU mit allen Bindestrichen entfernt (z.B. `1701-SE` → `JUNG_1701SE.webp`)
-   - Kein Scraping nötig — Bild-URL aus SKU allein berechenbar
+   - Kein Scraping nötig, Bild-URL aus SKU allein berechenbar
 
    **Gira**
    - Produktseiten-URL: `https://www.gira.de/produkte/<kategorie>/<bestell-nr>`
@@ -98,7 +98,7 @@ Logos und Produktbilder von Drittherstellern werden **nicht geraten, nicht gener
    - Bild-CDN: `https://assets.hager.com/step-content/P/{hash}/11/std.lang.all/{SKU}.webp`
    - Preis im JSON-LD ist immer 0 (Hager zeigt keine Endkundenpreise)
 
-3. **Fallback: eibhandel.de oder knxwarehouse.com** — für Produkte ohne eigene Seite beim Hersteller
+3. **Fallback: eibhandel.de oder knxwarehouse.com**, für Produkte ohne eigene Seite beim Hersteller
 
 ### Playwright-Snippet (Produktbild extrahieren)
 
@@ -114,21 +114,21 @@ const imageUrl = img?.getAttribute('data-zoom')        // beste Qual.
 
 - **Option A (bevorzugt):** `image_url` in `catalog_products` zeigt auf Hersteller-CDN-URL
   - Vorteil: kein Storage-Aufwand, Bilder immer aktuell
-  - Risiko: URL kann sich ändern — bei 404-Monitoring (Standard 022) absichern
+  - Risiko: URL kann sich ändern, bei 404-Monitoring (Standard 022) absichern
 
 - **Option B:** Bild herunterladen → Supabase Storage → stabile eigene URL
   - Pflicht wenn: Bild aus Auth-geschütztem Bereich stammt, oder Hersteller Hot-Linking explizit verbietet
 
-- `catalog_products.image_url` ist `text NULL` — bleibt leer wenn kein Bild gefunden
+- `catalog_products.image_url` ist `text NULL`, bleibt leer wenn kein Bild gefunden
 
 ---
 
-## C — Scraping-Prozess (Batch-Update)
+## C: Scraping-Prozess (Batch-Update)
 
 ### Wann ausführen
 
 - Bei Erstanlage neuer Hersteller im Katalog
-- Bei Quarterly-Refresh (Preise + Bilder synchron — Standard 021-B)
+- Bei Quarterly-Refresh (Preise + Bilder synchron, Standard 021-B)
 - Wenn mehr als 20 % der Produkte eines Herstellers kein `image_url` haben
 
 ### Schritt-für-Schritt
@@ -154,10 +154,10 @@ Vor jedem Scraping-Lauf sicherstellen dass die Produkte in der DB echte Produkte
 
 ---
 
-## D — Rechtliches
+## D: Rechtliches
 
 - Logos und Produktbilder bleiben Eigentum der jeweiligen Hersteller
-- Verwendung auf venfree.de fällt unter Produktinformations-Darstellung (§ 23 UrhG — freie Benutzung für Abbildungen von Produkten)
+- Verwendung auf venfree.de fällt unter Produktinformations-Darstellung (§ 23 UrhG, freie Benutzung für Abbildungen von Produkten)
 - Bei Direktkontakt mit Hersteller (FEGA & Schmitt, Rexel etc.) explizit nach Bildrechten fragen
 - Wasserzeichen-freie Bilder aus Pressematerial bevorzugen
 

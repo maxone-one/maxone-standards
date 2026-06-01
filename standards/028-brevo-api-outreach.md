@@ -1,25 +1,25 @@
-# 028 — Brevo Transactional API für Outreach-Sends
+# 028: Brevo Transactional API für Outreach-Sends
 
 **Status:** active  
-**Gilt für:** SLF (stadtlahnflow.de) — übertragbar auf jedes Projekt mit Outreach-Versand  
+**Gilt für:** SLF (stadtlahnflow.de), übertragbar auf jedes Projekt mit Outreach-Versand  
 **Zuletzt aktualisiert:** 2026-05-28
 
 ---
 
 ## Problem
 
-Wir nutzen nodemailer + Brevo SMTP-Relay für alle Mails — auch für Outreach-Kampagnen.
+Wir nutzen nodemailer + Brevo SMTP-Relay für alle Mails, auch für Outreach-Kampagnen.
 Das führt zu:
 
 - **Tracking-Flickenteppich:** eigener Pixel (`/api/track`), eigener Click-Redirect,
-  eigene `outreach_events`-Tabelle, Brevo-Webhook als Backup — vier Systeme für eine Aufgabe.
+  eigene `outreach_events`-Tabelle, Brevo-Webhook als Backup, vier Systeme für eine Aufgabe.
 - **Manuelle Suppression:** Bounces, Unsubscribes und Spam-Complaints werden selbst in die
-  `leads`-Tabelle geschrieben. Brevo pflegt die Suppression-Liste parallel unabhängig — kein Sync.
+  `leads`-Tabelle geschrieben. Brevo pflegt die Suppression-Liste parallel unabhängig, kein Sync.
 - **Null historische Opens:** SMTP-Sends ohne explizit konfigurierten Pixel liefern 0 Öffnungen,
   weil Brevo über SMTP nur dann trackt, wenn Tracking im Account aktiviert ist und der Pixel
   injiziert wird.
 - **Selbstgebautes Rate-Limiting:** `delay(500)` zwischen jedem Send, selbst verwaltet.
-- **Kein message-ID-Anker:** Events kommen ohne eindeutige Mail-ID — Korrelation läuft über
+- **Kein message-ID-Anker:** Events kommen ohne eindeutige Mail-ID, Korrelation läuft über
   E-Mail-Adresse + Zeitfenster, was bei Re-Sends falsche Zuordnungen erzeugen kann.
 
 ---
@@ -61,7 +61,7 @@ Authorization: api-key <BREVO_API_KEY>
 
 ### 1. Zentraler Brevo-Client
 
-**`src/lib/brevo-send.ts`** — Single Source of Truth für alle API-Sends.
+**`src/lib/brevo-send.ts`**, Single Source of Truth für alle API-Sends.
 
 ```typescript
 export interface BrevoRecipient {
@@ -91,7 +91,7 @@ export async function sendViaBrevoApi(
 
 - Liest `BREVO_API_KEY` aus ENV
 - Wirft bei HTTP-Fehler eine typisierte Exception
-- Gibt `{ messageId }` zurück — der Aufrufer speichert ihn in `outreach_send_log`
+- Gibt `{ messageId }` zurück, der Aufrufer speichert ihn in `outreach_send_log`
 
 ### 2. HTML-Pipeline für Outreach
 
@@ -99,12 +99,12 @@ Die Template-Replacements (`{{VORNAME}}`, `{{PROFIL_SLUG}}` etc.) laufen weiterh
 Das fertige HTML wird als `htmlContent` an die API übergeben.
 
 **Was entfällt:**
-- `injectOpenPixel()` — Brevo injiziert automatisch
-- `createTransport().sendMail()` — ersetzt durch `sendViaBrevoApi()`
+- `injectOpenPixel()`, Brevo injiziert automatisch
+- `createTransport().sendMail()`, ersetzt durch `sendViaBrevoApi()`
 
 **Was bleibt:**
-- `buildUnsubscribeFooter()` — unsere Abmeldelogik (`/api/unsubscribe`) bleibt
-- `{{LEAD_HASH}}` / `{{BATCH_ID}}` — weiterhin für Unsubscribe-URL und `/api/track/click`
+- `buildUnsubscribeFooter()`, unsere Abmeldelogik (`/api/unsubscribe`) bleibt
+- `{{LEAD_HASH}}` / `{{BATCH_ID}}`, weiterhin für Unsubscribe-URL und `/api/track/click`
 
 ### 3. messageId speichern
 
@@ -137,9 +137,9 @@ ALTER TABLE outreach_send_log
 
 Dateien in Reihenfolge:
 
-1. `src/lib/brevo-send.ts` — neuer Client (kein Produktions-Impact)
-2. `src/app/api/cron/outreach/route.ts` — Hauptpfad, größter Impact
-3. `src/lib/outreach-send.ts` — `sendPlannedBatch()`
+1. `src/lib/brevo-send.ts`, neuer Client (kein Produktions-Impact)
+2. `src/app/api/cron/outreach/route.ts`, Hauptpfad, größter Impact
+3. `src/lib/outreach-send.ts`, `sendPlannedBatch()`
 4. `src/app/api/admin/outreach/send-persoenlich/route.ts`
 5. `src/app/api/admin/outreach/send/route.ts`
 6. `src/app/api/admin/outreach/send-apology/route.ts`
@@ -180,6 +180,6 @@ test -f src/lib/brevo-send.ts
 
 ## Nicht-Ziele
 
-- Brevo-Template-Engine nutzen — unsere Templates bleiben in der DB, Rendering bei uns
-- SMTP komplett abschalten — bleibt für Transaktional/Notifications
-- Kontakt-Listen in Brevo pflegen — wir bleiben Source of Truth in Supabase
+- Brevo-Template-Engine nutzen, unsere Templates bleiben in der DB, Rendering bei uns
+- SMTP komplett abschalten, bleibt für Transaktional/Notifications
+- Kontakt-Listen in Brevo pflegen, wir bleiben Source of Truth in Supabase

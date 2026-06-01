@@ -18,7 +18,7 @@ kann das Projekt als "live-ready" gelten.
 - [ ] Ordner: `/opt/<projekt>/` auf Server
 - [ ] `HANDOFF.md` auf Server (Template aus `maxone-standards/templates/`)
 - [ ] Secrets: `/opt/secrets/<projekt>/keys.env` (Permissions 700/600)
-- [ ] Brevo-Account angelegt (wenn Mail nötig) — eigener SMTP-Key
+- [ ] Brevo-Account angelegt (wenn Mail nötig), eigener SMTP-Key
 
 ## Deploy-Setup
 

@@ -1,4 +1,4 @@
-# 018 — Auth & DB-Isolation (Supabase SSR Auth · DB pro Projekt)
+# 018: Auth & DB-Isolation (Supabase SSR Auth · DB pro Projekt)
 
 **Status:** active
 **Seit:** 2026-04-28 (Auth), 2026-05-18 (DB-Isolation)
@@ -11,7 +11,7 @@
 
 ---
 
-## A — Supabase SSR Auth
+## A: Supabase SSR Auth
 
 In jedem Next.js-Projekt mit Supabase-Auth läuft die Auth-Middleware auf **allen** Routes außer Static-Assets. Niemals selektiven Matcher auf `/dashboard`, `/admin` etc. begrenzen.
 
@@ -62,7 +62,7 @@ export async function middleware(request: NextRequest) {
 }
 ```
 
-**SvelteKit** (`src/hooks.server.ts`): `setAll`-Callback mit `try/catch` — ohne es killt der async Auth-Refresh den Node-Prozess:
+**SvelteKit** (`src/hooks.server.ts`): `setAll`-Callback mit `try/catch`, ohne es killt der async Auth-Refresh den Node-Prozess:
 ```ts
 setAll: (cookies) => {
   try {
@@ -74,18 +74,18 @@ setAll: (cookies) => {
 
 **Niemals:** selektiver Matcher, `auth.getUser()` ohne Middleware-Refresh davor, custom Cookie-Namen ohne geprüften Sync.
 
-**Warum:** Middleware ist der einzige Ort wo refreshte Tokens zurück in Cookies geschrieben werden. Server Components haben read-only `cookies()`. Symptom bei selektivem Matcher: "nach Deploys muss ich mich immer wieder einloggen" — nicht reproduzierbar genug für einen klaren Bug, aber zermürbend für B2B-Nutzer. SLF-Vorfall 2026-04-28.
+**Warum:** Middleware ist der einzige Ort wo refreshte Tokens zurück in Cookies geschrieben werden. Server Components haben read-only `cookies()`. Symptom bei selektivem Matcher: "nach Deploys muss ich mich immer wieder einloggen", nicht reproduzierbar genug für einen klaren Bug, aber zermürbend für B2B-Nutzer. SLF-Vorfall 2026-04-28.
 
 ---
 
-## B — DB-Isolation
+## B: DB-Isolation
 
 Jedes Projekt betreibt seine eigene, isolierte Datenbankinstanz. Keine zwei Projekte teilen sich denselben Supabase-Projekt-URL oder dieselbe PostgreSQL-Instanz.
 
 **Verboten:**
 - Selbe Supabase-URL in zwei Projekten → **FAIL**
 - Direktverbindung auf Container einer anderen Instanz (`DATABASE_URL=...@supabase-db:5432`) → **FAIL**
-- Getrenntes Schema in gemeinsamer PG-Instanz — Row-Level-Security allein reicht nicht → **verboten**
+- Getrenntes Schema in gemeinsamer PG-Instanz, Row-Level-Security allein reicht nicht → **verboten**
 
 **Erlaubt:** API-Zugriff auf andere Projekte über deren öffentliche API. Infra-Agenten (z.B. vector) mit dokumentierter `registry/exceptions.yml`-Ausnahme für Monitoring-Zugriff (read-only, kein Schreiben auf fremde DBs).
 
@@ -103,7 +103,7 @@ Jedes Projekt betreibt seine eigene, isolierte Datenbankinstanz. Keine zwei Proj
 
 ---
 
-## D — Wired-Team Access Control
+## D: Wired-Team Access Control
 
 Jeder KI-Mitarbeiter ist eine separate Identität mit eigenem Postfach, eigenen Credentials und eigenem MCP-Key-Scope. Niemand sieht in die Mailbox eines Kollegen.
 

@@ -1,4 +1,4 @@
-# Checkliste: 019 — Cert + DNS-Realität
+# Checkliste: 019: Cert + DNS-Realität
 
 Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 
@@ -8,7 +8,7 @@ Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 
 - [ ] A-Record (oder AAAA) zeigt auf einen eigenen Server (aus `config/servers.local.yml`)
 - [ ] Falls **Cloudflare-Proxy aktiv**: DNS-Eintrag bewusst gewählt
-      (Performance vs. DSGVO — Cloudflare ist US-Cloud, AVV
+      (Performance vs. DSGVO, Cloudflare ist US-Cloud, AVV
       DSGVO-konform aber Lock-in)
 - [ ] Falls **fremder Hoster** (Vercel, Netlify, Lovable, etc.):
       LAUNCH-REVIEW.md Section J Punkt 8 begründet warum kein
@@ -25,7 +25,7 @@ Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 - [ ] Auto-Renewal aktiv: Traefik-`acme.json` enthält die Domain,
       letzter Renewal < 80 Tage her
 
-## C. Migrationen — DNS-Hygiene
+## C. Migrationen: DNS-Hygiene
 
 - [ ] Vor DNS-Umstellung: TTL des A-Records auf 300s reduzieren
       (24h vorher), nach Stabilisierung wieder auf 3600s
@@ -45,7 +45,7 @@ Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 - [ ] DNS-Login (INWX) im Passwort-Tresor
 - [ ] Falls TLS-Renewal kaputt: manueller Befehl dokumentiert
       (`docker exec traefik traefik certificate ...` oder
-      `/opt/traefik/scripts/renew.sh` — siehe HANDOFF.md auf Server)
+      `/opt/traefik/scripts/renew.sh`, siehe HANDOFF.md auf Server)
 - [ ] Telegram-Bot für VECTOR-Cert-Alarm konfiguriert (optional, aber
       empfohlen für Kunden-Sites)
 
@@ -53,7 +53,7 @@ Pflicht vor jedem Live-Gang und nach jeder Domain-Migration.
 
 ## Manueller Check-Workflow (~3 min pro Domain)
 
-1. `dig +short A <domain>` — IP gegen Server-Liste vergleichen
+1. `dig +short A <domain>`, IP gegen Server-Liste vergleichen
 2. `echo | openssl s_client -connect <domain>:443 -servername <domain>
    2>/dev/null | openssl x509 -noout -dates -issuer -subject`
    - `notAfter` → Restlaufzeit

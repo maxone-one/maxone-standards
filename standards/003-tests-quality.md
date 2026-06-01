@@ -1,4 +1,4 @@
-# 003 — Tests & Code-Qualität (Test-First · Code-Health-Budget)
+# 003: Tests & Code-Qualität (Test-First · Code-Health-Budget)
 
 **Status:** active
 **Seit:** 2026-04-17 (Test-First), 2026-04-28 (Code-Health)
@@ -11,7 +11,7 @@
 
 ---
 
-## A — Test-First
+## A: Test-First
 
 Bevor jemand "ist live" / "funktioniert" / "fertig deployed" sagt, muss die Teststrecke selbst durchlaufen sein. **Nicht den User testen lassen.**
 
@@ -26,11 +26,11 @@ Bevor jemand "ist live" / "funktioniert" / "fertig deployed" sagt, muss die Test
 
 **Bug-Regression:** Jeder User-gemeldete Bug → Test der ihn reproduziert, VOR dem Fix. Sonst keine Regression-Garantie.
 
-**Playwright** (Pflicht bei UI/Layout/Optik): `mcp__playwright__browser_*`. Nach jeder Session `browser_close` aufrufen — sonst blockiert der Browser andere Projekte.
+**Playwright** (Pflicht bei UI/Layout/Optik): `mcp__playwright__browser_*`. Nach jeder Session `browser_close` aufrufen, sonst blockiert der Browser andere Projekte.
 
 ---
 
-## B — Code-Health-Budget
+## B: Code-Health-Budget
 
 Pro Quartal pro Projekt: **mindestens 15 % der Commits** sind Refactoring oder Duplikations-Reduktion (`refactor:`/`test:`-Präfix in Conventional Commits).
 
@@ -39,7 +39,7 @@ Pro Quartal pro Projekt: **mindestens 15 % der Commits** sind Refactoring oder D
 - Keine Funktion > 100 Zeilen ohne `// HEALTH-EXEMPT: <Begründung>`
 - Keine Quelldatei > 500 Zeilen ohne Split-Plan in HANDOFF.md
 
-**Warum:** GitClear-Studie 2024–2026: KI-Codebases haben Refactoring-Anteil von < 10 % (war 25 % ohne KI) und 4× mehr Duplikation. CodeRabbit: KI-co-authored Code hat 2,74× mehr Security-Findings. Tech-Debt ist Security-Debt mit Verzögerung.
+**Warum:** GitClear-Studie 2024-2026: KI-Codebases haben Refactoring-Anteil von < 10 % (war 25 % ohne KI) und 4× mehr Duplikation. CodeRabbit: KI-co-authored Code hat 2,74× mehr Security-Findings. Tech-Debt ist Security-Debt mit Verzögerung.
 
 **Quartalsauswertung:**
 
@@ -81,6 +81,6 @@ npx jscpd --min-tokens 50 --reporters json --output ./jscpd-report ./src
 - Funktions-Längen-Scan (JS/TS Regex): > 100 Zeilen → WARN, > 200 Zeilen → FAIL
 - `// HEALTH-EXEMPT:`-Kommentar in vorausgehenden 3 Zeilen → SKIP
 
-`jscpd`-Lauf als separater Cron — Audit prüft nur ob aktueller Report unter `audits/jscpd-<projekt>-<quartal>.json` existiert.
+`jscpd`-Lauf als separater Cron, Audit prüft nur ob aktueller Report unter `audits/jscpd-<projekt>-<quartal>.json` existiert.
 
 **Ausnahmen** (`code_health: exempt`): reine Konfig-/Doku-Repos, generierter Code (Protobuf, OpenAPI-Clients), Vendor-Code-Re-Hosting.
