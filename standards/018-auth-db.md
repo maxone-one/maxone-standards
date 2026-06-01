@@ -103,6 +103,22 @@ Jedes Projekt betreibt seine eigene, isolierte Datenbankinstanz. Keine zwei Proj
 
 ---
 
+## D — Wired-Team Access Control
+
+Jeder KI-Mitarbeiter ist eine separate Identität mit eigenem Postfach, eigenen Credentials und eigenem MCP-Key-Scope. Niemand sieht in die Mailbox eines Kollegen.
+
+| Mitarbeiter  | Eigene Mailbox | Max' Mailbox | Alle anderen Mailboxen | Zentinel-Admin |
+|--------------|----------------|--------------|------------------------|----------------|
+| Vector       | ✅             | ✅           | ✅ volle Kontrolle     | ✅             |
+| Vigil        | ✅             | ✅           | ✅ volle Kontrolle     | ✅             |
+| Alle anderen | ✅             | ❌           | ❌                     | ❌             |
+
+**Technische Umsetzung:** Stalwart hat einen Principal pro Mitarbeiter (eigene Credentials). In `maxone.email_accounts` ist jeder Agent als eigene Zeile mit `jmap_user = eigene Adresse` aktiv. In `maxone.mcp_keys` gilt: `allowed_account_ids = [eigene UUID]` für alle außer Vector/Vigil, die `NULL` (Admin-Scope) bekommen. `mcp_audit_log` protokolliert jede Aktion mit `key_label`.
+
+**Onboarding neuer Agenten:** Principal in Stalwart anlegen, `email_accounts`-Zeile aktivieren, `mcp_keys`-Eintrag anlegen. Template: `ops/create-agent-principal.py` im Zentinel-Repo.
+
+---
+
 ## Audit
 
 **Auth:**
