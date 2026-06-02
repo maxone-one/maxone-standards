@@ -1,0 +1,8 @@
+# Vorlage für registry/paths.local.yml (gitignored)
+# Kopiere diese Datei nach registry/paths.local.yml und trage deine lokalen Pfade ein.
+# audit.mjs lädt sie automatisch und merged die Werte in die Registry.
+
+# Beispiel:
+# my-project:
+#   path_local: /home/user/projects/my-project
+#   path_server: /opt/my-project

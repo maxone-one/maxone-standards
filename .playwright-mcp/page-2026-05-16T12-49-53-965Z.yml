@@ -1,0 +1,231 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - list [ref=e4]:
+      - listitem:
+        - link "Zur Hauptnavigation (ALT + 1)" [ref=e5] [cursor=pointer]:
+          - /url: "#nav"
+      - listitem:
+        - link "Zum Inhaltsbereich (ALT + 2)" [ref=e6] [cursor=pointer]:
+          - /url: "#main"
+      - listitem:
+        - link "Zum Fußbereich (ALT + 3)" [ref=e7] [cursor=pointer]:
+          - /url: "#footer"
+    - banner [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - link "ELSTERIhr Online-Finanzamt. Zur ELSTER-Startseite" [ref=e12] [cursor=pointer]:
+            - /url: /eportal/start
+            - generic [ref=e13]: ELSTER
+            - generic [ref=e14]: Ihr Online-Finanzamt
+          - button "Hilfe" [ref=e16] [cursor=pointer]:
+            - generic [ref=e18]: Hilfe
+          - button "Chat" [ref=e20] [cursor=pointer]:
+            - generic [ref=e22]: Chat
+          - button "Suche" [ref=e26] [cursor=pointer]:
+            - generic [ref=e28]: Suche
+        - list [ref=e29]:
+          - listitem [ref=e30]:
+            - list "Sprachauswahl" [ref=e31]:
+              - listitem [ref=e32]:
+                - generic "Deutsch (ausgewählt)" [ref=e33]:
+                  - text: Deutsch (ausgewählt)
+                  - generic [ref=e34]: de
+              - listitem [ref=e36]:
+                - text: "|"
+                - button "English" [ref=e37] [cursor=pointer]:
+                  - generic [ref=e40]: en
+          - listitem [ref=e41]:
+            - button "Kontrastmodus einschalten" [ref=e42] [cursor=pointer]:
+              - generic [ref=e44]: Kontrastmodus einschalten
+          - listitem [ref=e45]:
+            - link "Benutzerkonto erstellen" [ref=e46] [cursor=pointer]:
+              - /url: /eportal/registrierung
+          - listitem [ref=e47]:
+            - link "Login" [ref=e48] [cursor=pointer]:
+              - /url: /eportal/login
+  - generic [ref=e49]:
+    - navigation "Hauptmenü" [ref=e51]:
+      - generic [ref=e53]:
+        - link "ELSTER" [ref=e54] [cursor=pointer]:
+          - /url: /eportal/start
+        - list [ref=e55]:
+          - listitem [ref=e56]:
+            - link "Mein ELSTER" [ref=e57] [cursor=pointer]:
+              - /url: /eportal/meinelster
+              - generic [ref=e59]: Mein ELSTER
+          - listitem [ref=e60]:
+            - link "Mein Benutzerkonto" [ref=e61] [cursor=pointer]:
+              - /url: /eportal/meinKonto
+              - generic [ref=e63]: Mein Benutzerkonto
+          - listitem [ref=e64]:
+            - link "Formulare und Leistungen" [ref=e65] [cursor=pointer]:
+              - /url: /eportal/formulare-leistungen
+              - generic [ref=e67]: Formulare und Leistungen
+          - listitem [ref=e68]:
+            - link "Benutzergruppen" [ref=e69] [cursor=pointer]:
+              - /url: /elsterweb/infoseite/benutzergruppen
+              - generic [ref=e71]: Benutzergruppen
+          - listitem [ref=e72]:
+            - link "Weitere Softwareprodukte" [ref=e73] [cursor=pointer]:
+              - /url: /elsterweb/softwareprodukt
+              - generic [ref=e75]: Weitere Softwareprodukte
+    - main [ref=e76]:
+      - heading "Login-Optionen" [level=1] [ref=e79]
+      - generic [ref=e80]:
+        - generic [ref=e82]:
+          - tablist "Anmeldeoptionen" [ref=e83]:
+            - listitem [ref=e84]:
+              - 'tab "Sie befinden sich hier: Zertifikatsdatei" [selected] [ref=e85] [cursor=pointer]':
+                - generic [ref=e87]:
+                  - generic [ref=e88]: "Sie befinden sich hier:"
+                  - text: Zertifikatsdatei
+            - listitem [ref=e89]:
+              - tab "ElsterSecure" [ref=e90] [cursor=pointer]:
+                - generic [ref=e92]: ElsterSecure
+            - listitem [ref=e93]:
+              - tab "Personalausweis" [ref=e94] [cursor=pointer]:
+                - generic [ref=e96]: Personalausweis
+            - listitem [ref=e97]:
+              - tab "Sicherheitsstick" [ref=e98] [cursor=pointer]:
+                - generic [ref=e100]: Sicherheitsstick
+            - listitem [ref=e101]:
+              - tab "Signaturkarte" [ref=e102] [cursor=pointer]:
+                - generic [ref=e104]: Signaturkarte
+          - 'tabpanel "Sie befinden sich hier: Zertifikatsdatei" [ref=e105]':
+            - heading "Zertifikatsdatei" [level=2] [ref=e106]
+            - generic [ref=e107]:
+              - generic [active] [ref=e238]:
+                - generic [ref=e245]: Beim Login ist ein Fehler aufgetreten! Bitte starten Sie den Browser erneut und führen Sie das Login nochmal durch.
+                - generic "Fehlermeldung - Grafik Ausrufezeichen" [ref=e242]:
+                  - generic [ref=e243]: Fehlermeldung - Grafik Ausrufezeichen
+              - generic [ref=e108]:
+                - generic [ref=e109]: Zertifikatsdatei
+                - generic [ref=e110]:
+                  - generic "Datei auswählen oder ablegen" [ref=e112]:
+                    - generic: Max_elster.pfx
+                    - button "Feld leeren" [ref=e236] [cursor=pointer]:
+                      - generic [ref=e237]:
+                        - generic "Feld leeren":
+                          - generic:
+                            - generic: Feld leeren
+                  - button "Durchsuchen" [ref=e115] [cursor=pointer]
+              - generic [ref=e118]:
+                - generic [ref=e120]: Passwort
+                - generic [ref=e122]:
+                  - textbox "Passwort" [ref=e123]
+                  - checkbox "Passwort anzeigen" [ref=e246] [cursor=pointer]:
+                    - generic:
+                      - generic:
+                        - generic: Passwort anzeigen
+              - button "Login" [ref=e130] [cursor=pointer]
+            - link "Zertifikatsdatei verloren oder Zertifikat abgelaufen? Passwort vergessen?" [ref=e132] [cursor=pointer]:
+              - /url: /eportal/zugangserneuerung
+              - text: Zertifikatsdatei verloren oder Zertifikat abgelaufen?
+              - text: Passwort vergessen?
+        - complementary [ref=e134]:
+          - heading "Wo finde ich meine heruntergeladene Zertifikatsdatei?" [level=2] [ref=e135]
+          - paragraph [ref=e136]:
+            - text: "Sie können auch nach der abgespeicherten Zertifikatsdatei suchen. Nutzen Sie dazu die Suche Ihres Betriebssystems (z. B. Windows) und geben Sie als Suchbegriff folgendes ein:"
+            - strong [ref=e137]:
+              - emphasis [ref=e138]: "*. pfx"
+          - paragraph [ref=e139]:
+            - strong [ref=e140]: Noch keine Zertifikatsdatei?
+          - paragraph [ref=e141]:
+            - text: Hier
+            - link "Benutzerkonto erstellen" [ref=e142] [cursor=pointer]:
+              - /url: /eportal/registrierung
+            - text: .
+  - contentinfo [ref=e144]:
+    - generic [ref=e146]:
+      - generic [ref=e147]:
+        - generic [ref=e148]:
+          - generic "Grafik ELSTER Logo grüner Stern" [ref=e149]:
+            - generic [ref=e150]: Grafik ELSTER Logo grüner Stern
+          - heading "ELSTER" [level=2] [ref=e151]
+        - generic [ref=e152]:
+          - list [ref=e154]:
+            - listitem [ref=e155]:
+              - link "Aktuelles" [ref=e156] [cursor=pointer]:
+                - /url: /eportal/infoseite/aktuelles
+            - listitem [ref=e157]:
+              - link "Rechtliches" [ref=e158] [cursor=pointer]:
+                - /url: /eportal/infoseite/rechtliches
+            - listitem [ref=e159]:
+              - link "Nutzen und Vorteile" [ref=e160] [cursor=pointer]:
+                - /url: /eportal/infoseite/nutzen_und_vorteile
+            - listitem [ref=e161]:
+              - link "Sicherheit" [ref=e162] [cursor=pointer]:
+                - /url: /eportal/infoseite/sicherheit_(allgemein)
+            - listitem [ref=e163]:
+              - link "Inhalte in Leichter Sprache" [ref=e164] [cursor=pointer]:
+                - /url: /elsterweb/infoseite/leichte_sprache
+          - list [ref=e166]:
+            - listitem [ref=e167]:
+              - link "Presse und Medien" [ref=e168] [cursor=pointer]:
+                - /url: /eportal/infoseite/presse_und_medien
+            - listitem [ref=e169]:
+              - link "Systemanforderungen" [ref=e170] [cursor=pointer]:
+                - /url: /eportal/infoseite/systemanforderungen
+            - listitem [ref=e171]:
+              - link "MeinELSTER+" [ref=e172] [cursor=pointer]:
+                - /url: /eportal/infoseite/meinelsterplus
+            - listitem [ref=e173]:
+              - link "ElsterSecure" [ref=e174] [cursor=pointer]:
+                - /url: /eportal/infoseite/elstersecure
+            - listitem [ref=e175]:
+              - link "ELSTER-Unternehmenskonto" [ref=e176] [cursor=pointer]:
+                - /url: /elsterweb/infoseite/nezo
+      - generic [ref=e177]:
+        - heading "Zertifikate" [level=2] [ref=e179]
+        - list [ref=e180]:
+          - listitem [ref=e181]:
+            - link "ISO 27001 Sicherheit im Verfahren ELSTER. Weitere Informationen zum ISO 27001 Zertifikat von ELSTER" [ref=e182] [cursor=pointer]:
+              - /url: /eportal/helpGlobal?themaGlobal=help_datasecurity#zertinfo
+              - figure [ref=e184]:
+                - img "Logo ISO 27001 Zertifikat von ELSTER" [ref=e186]
+              - generic [ref=e188]: ISO 27001 Sicherheit im Verfahren ELSTER
+          - listitem [ref=e189]:
+            - link "Sie verlassen die Seite Vom BIK geprüfter Webauftritt. Zum Prüfbericht, Link öffnet neues Fenster" [ref=e190] [cursor=pointer]:
+              - /url: https://bitvtest.de/archiv/2759.htm
+              - generic [ref=e191]: Sie verlassen die Seite
+              - figure [ref=e193]:
+                - img "BIK - Prüfzeichen 95plus, zum Prüfbericht" [ref=e195]
+              - generic [ref=e197]: Vom BIK geprüfter Webauftritt
+          - listitem [ref=e198]:
+            - link "Sie verlassen die Seite Von capito geprüfte Leichte Sprache. Informationen zu Elster in leichter Sprache" [ref=e199] [cursor=pointer]:
+              - /url: https://www.elster.de/elsterweb/infoseite/leichte_sprache
+              - generic [ref=e200]: Sie verlassen die Seite
+              - figure [ref=e202]:
+                - img "Logo Leicht Lesen" [ref=e204]
+              - generic [ref=e206]: Von capito geprüfte Leichte Sprache
+    - generic [ref=e208]:
+      - list [ref=e210]:
+        - listitem [ref=e211]:
+          - link "Forum Sie verlassen die Seite" [ref=e212] [cursor=pointer]:
+            - /url: https://forum.elster.de/anwenderforum/
+            - text: Forum
+            - generic [ref=e213]: Sie verlassen die Seite
+        - listitem [ref=e214]:
+          - button "Hilfe, Häufig gestellte Fragen" [ref=e215] [cursor=pointer]: Hilfe, FAQ
+        - listitem [ref=e216]:
+          - button "Fragen zu ELSTER" [ref=e217] [cursor=pointer]
+        - listitem [ref=e218]:
+          - button "Kontakt" [ref=e219] [cursor=pointer]
+        - listitem [ref=e220]:
+          - link "KONSENS Sie verlassen die Seite" [ref=e221] [cursor=pointer]:
+            - /url: https://www.steuer-it-konsens.de/
+            - text: KONSENS
+            - generic [ref=e222]: Sie verlassen die Seite
+      - generic [ref=e223]:
+        - list [ref=e224]:
+          - listitem [ref=e225]:
+            - button "Datenschutz" [ref=e226] [cursor=pointer]
+          - listitem [ref=e227]:
+            - button "Impressum" [ref=e228] [cursor=pointer]
+          - listitem [ref=e229]:
+            - button "Barrierefreiheit" [ref=e230] [cursor=pointer]
+        - generic [ref=e231]:
+          - generic "Grafik ELSTER Logo grüner Stern" [ref=e232]:
+            - generic [ref=e233]: Grafik ELSTER Logo grüner Stern
+          - text: ELSTER ®
+          - generic [ref=e234]: 228480185 -A42

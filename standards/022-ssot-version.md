@@ -9,6 +9,7 @@
 - [A] Version-Marker (ENV + /api/version + Footer-Banner)
 - [B] Cron-E-Mail-Dedup-Schutz
 - [C] SSoT & kein Hardcode für geteilte Werte
+- [D] Design Token Hierarchy (Primitive vor Semantisch)
 
 ---
 
@@ -100,6 +101,33 @@ Kein Wert der in mehr als einer Datei verwendet wird, darf hardcoded im Komponen
 // Hardcoded Farbe inline
 <div style={{ color: '#16a34a' }}>
 ```
+
+---
+
+## D: Design Token Hierarchy (Primitive vor Semantisch)
+
+Jede Token-Datei (Tailwind, CSS Custom Properties, `landing-styles.ts` o.ä.) MUSS zweistufig aufgebaut sein. Primitive einmal definieren, semantische Token zeigen darauf, nie auf eigene Strings.
+
+```ts
+// RICHTIG
+const P = {
+  smMuted: 'text-sm text-muted-foreground',
+} as const
+
+const UI    = { caption:   P.smMuted }
+const TABLE = { cellMuted: P.smMuted }
+const FORM  = { hint:      P.smMuted }
+```
+
+```ts
+// FALSCH — benanntes Copy-Paste, kein echter SSOT
+const UI    = { caption:   'text-sm text-muted-foreground' }
+const TABLE = { cellMuted: 'text-sm text-muted-foreground' }
+```
+
+**Warum:** Wenn n semantische Token denselben String direkt enthalten, erfordert eine globale Größenänderung n Edits. Semantische Namen und Namespace-Trennung lösen das nicht, sie verstecken es. Mit Primitiven reicht ein einziger Edit.
+
+**Wann Primitive extrahieren:** sobald ein String-Wert in mehr als einem Token direkt vorkommt.
 
 ---
 
