@@ -109,7 +109,25 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 
 ---
 
+## E: Kein Hardcoding von Texten und Titeln
+
+**Regel:** Alle vom Menschen lesbaren Texte (Seitentitel, Labels, Beschreibungen, Feature-Listen) gehören in Übersetzungsdateien (`messages/de.json`, `messages/en.json` o.ä.) und werden per `t('key')` eingebunden. Niemals als String-Literal in TSX/TS/Svelte-Dateien.
+
+**Gilt für:** `<title>`-Tags, `generateMetadata`, OpenGraph-Felder, Alt-Texte, UI-Labels, Feature-Listen, Hero-Texte.
+
+**Ausnahme:** HTML-`<title>`-Tags dürfen den Gedankenstrich (`–`) enthalten (SEO-Konvention, Google-Standard-Trennzeichen zwischen Markenname und Beschreibung).
+
+**Wie anwenden:**
+- Vor jedem Text-Change prüfen: `grep -rn "alter Text" app/ src/` ob der String irgendwo hardcodiert ist
+- Neue Texte immer als i18n-Key anlegen, dann `t('key')` verwenden
+- Bei Branding-Updates beide Orte ändern: Übersetzungsdateien + Code-Scan
+
+**Warum:** 2026-06-02 wurde der Seitentitel in messages/de.json korrekt geändert, aber ein hardcodierter Titel in `app/[locale]/(shell)/page.tsx` wurde übersehen. Der Live-Tab zeigte nach dem Deploy noch den alten Titel.
+
+---
+
 ## Audit
 
 **Umlaute:** `node scripts/check-umlauts.mjs all`, 0 Treffer erwartet. CI: Exit 1 bei neuen ASCII-Fallbacks in Diff.
 **Gedankenstrich:** `grep -r " — " src/` in Textdateien, 0 Treffer erwartet.
+**Hardcoding:** `grep -rn "title: { absolute:" app/ src/` — alle Treffer prüfen ob Literal oder `t('key')`.
