@@ -42,7 +42,7 @@ Beispiele:
 - `db.vector.maxone.one` (VECTOR-Datenbank)
 - `mail.maxone.one` (Zentraler Mailserver)
 
-**Verboten:** Projektnamen als Hostnamen die nicht mehr gelten (`planexo-api`),
+**Verboten:** Projektnamen als Hostnamen die nicht mehr gelten (`altprojekt-api`),
 Personennamen, Marketing-Namen, temporäre Bezeichnungen.
 
 **Warum:** Hostnamen sind langlebig. Sie überdauern Rebrands, Team-Wechsel und
