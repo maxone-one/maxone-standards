@@ -55,7 +55,7 @@ Wenn eine Datei fehlt, alle vier auf einmal anlegen, nicht nur die fehlende.
 - [003-tests-quality.md](003-tests-quality.md), Test-First (Smoke + Unit vor "live") + Code-Health-Budget (Refactoring ≥ 15 %, Duplikation < 5 %)
 - [024-plan-tracker.md](024-plan-tracker.md), PLAN.md mit "## Noch offen" + "## Erledigt" in jedem aktiven Projekt
 - [025-bug-registry.md](025-bug-registry.md), BUGS.md: persistente Bug-Wissensbasis vor jeder Debugging-Session lesen
-- [029-concept-reference.md](029-concept-reference.md), CONCEPT.md: Produkt-Konzept als SSoT für Agenten und Copy
+- [029-concept-reference.md](029-concept-reference.md), CONCEPT.md: Produkt-Konzept als SSoT für Agenten und Copy + Ausbaustufe lebendes Projekt-Brain (code-verankerter Feature-Katalog, Selbsterhaltung, Konsum-Regel)
 - [031-decisions-md.md](031-decisions-md.md), DECISIONS.md: Strategische Entscheidungen die PRD/Konzept überschreiben + Drei-Quellen-Hierarchie
 
 **UI & Produkt:**
