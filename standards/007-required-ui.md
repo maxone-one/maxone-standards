@@ -1,4 +1,4 @@
-# 007: Required UI Components (Impressum · Credits · Vector-Widget · Footer)
+# 007: Required UI Components (Impressum · Credits · Vector-Widget · Footer · Layout-Qualität)
 
 **Status:** active
 **Seit:** etabliert 2026-04-27, One-Liner-Pattern 2026-05-20
@@ -10,6 +10,7 @@
 - [B] Credits aus zentraler API
 - [C] Vector-Chat-Widget
 - [D] Footer-Standard
+- [E] Keine Scrollbalken (Layout-Qualität)
 
 ---
 
@@ -112,6 +113,18 @@ Jedes Customer-facing Projekt hat einen Footer. Variante einmalig pro Projekt w�
 
 ---
 
+## E: Keine Scrollbalken (Layout-Qualität)
+
+Ein Scrollbalken ist ein UI-Defektsignal, kein neutrales Bedienelement. Er bedeutet, dass zu viel Inhalt auf zu wenig Platz gepackt oder der vorhandene Platz nicht effizient genutzt wird. Wo ein Scrollbalken erscheint, wurde das Layout nicht zu Ende gedacht.
+
+**Regel:** Layouts so bauen, dass kein Scrollbalken entsteht. Dichte, mehrspaltige Anordnung statt langer einspaltiger Listen (Grid statt Liste), kompakte Zeilen, vorhandenen Platz bewusst ausnutzen. Bei viel Inhalt zuerst die Informationsdichte erhöhen (mehrspaltig, gruppiert, klappbar), bevor überhaupt gescrollt wird.
+
+**Pflicht-Check:** Vor jedem "fertig" bei UI-Arbeit prüfen, ob irgendwo ein Scrollbalken entsteht. Wenn ja, ist die UI nicht fertig, sondern muss verdichtet werden. Diese Prüfung gehört fest in den Verifikationsschritt jeder Frontend-Aufgabe.
+
+Direktive Max, mehrfach gesagt, verbindlich ab 2026-06-09.
+
+---
+
 ## Audit
 
 `scripts/audit.mjs` prüft pro Projekt:
@@ -136,3 +149,7 @@ Jedes Customer-facing Projekt hat einen Footer. Variante einmalig pro Projekt w�
 - Enthält Link zu `maxone.one`
 - Enthält `new Date().getFullYear()` (kein hardcoded Jahr)
 - Version-Marker: → Standard 022
+
+**Layout-Qualität (E):**
+- Kein statischer Code-Scan ausreichend (Scrollbalken ist viewport- und runtimeabhängig). Manueller Review-Gate Pflicht: bei UI-Arbeit visuell auf üblichen Viewports prüfen, dass kein ungewollter Scrollcontainer entsteht.
+- Heuristik-WARN (optional): lange einspaltige `.map()`-Listen in Übersichts-/Listen-Views ohne Grid-Wrapper als Verdichtungs-Kandidaten melden.
