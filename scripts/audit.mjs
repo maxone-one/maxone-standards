@@ -364,9 +364,9 @@ const localChecks = {
     const isLive = project.status === 'live';
     if (!existsSync(conceptPath)) {
       // Bei laufenden Projekten ist CONCEPT.md retroaktiv (WARN), nur dev verlangt FAIL
-      if (isLive) return WARN('CONCEPT.md fehlt — retroaktiv nachreichen (Standard 015)');
+      if (isLive) return WARN('CONCEPT.md fehlt — retroaktiv nachreichen (Standard 008)');
       if (isInternal) return WARN('CONCEPT.md fehlt (internes/Infra-Tool, Empfehlung)');
-      return FAIL('CONCEPT.md fehlt — Pflicht vor erster Code-Zeile (Standard 015)');
+      return FAIL('CONCEPT.md fehlt — Pflicht vor erster Code-Zeile (Standard 008)');
     }
     const text = readFileSync(conceptPath, 'utf8');
     const requiredSections = [
@@ -590,7 +590,7 @@ const localChecks = {
 
     const sunsetPath = join(project.path_local, 'SUNSET.md');
     if (!existsSync(sunsetPath)) {
-      return FAIL('SUNSET.md fehlt — Pflicht bei sunset / sunset-pending (Standard 014)');
+      return FAIL('SUNSET.md fehlt — Pflicht bei sunset / sunset-pending (Standard 009)');
     }
     const text = readFileSync(sunsetPath, 'utf8');
     const required = [
@@ -809,7 +809,7 @@ const localChecks = {
     // Issuer
     const issuerOrg = c.issuer?.O || c.issuer?.CN || '(unbekannt)';
     if (!/let'?s encrypt/i.test(issuerOrg)) {
-      issues.push({ severity: 'warn', msg: `Issuer "${issuerOrg}" — Standard 004 verlangt Let's Encrypt` });
+      issues.push({ severity: 'warn', msg: `Issuer "${issuerOrg}" — Standard 012 verlangt Let's Encrypt` });
     }
 
     // Subject / SAN
@@ -958,7 +958,7 @@ const localChecks = {
     const processors = project.data_processors;
 
     if (processors === undefined) {
-      return WARN('data_processors fehlt in registry/projects.yml (Standard 041)');
+      return WARN('data_processors fehlt in registry/projects.yml (Standard 009)');
     }
     if (!Array.isArray(processors)) {
       return WARN('data_processors ist kein Array');
@@ -2271,7 +2271,7 @@ const sshChecks = {
   //   3. Warm-Up-Zeile liegt VOR dem Traefik-Swap (traefik.enable, swap.sh,
   //      .active-slot)
   '033-post-deploy-warmup': (project) => {
-    if (project.deploy !== 'blue-green') return SKIP(`deploy=${project.deploy ?? 'null'} (Standard 033 nur fuer blue-green)`);
+    if (project.deploy !== 'blue-green') return SKIP(`deploy=${project.deploy ?? 'null'} (Standard 001 nur fuer blue-green)`);
     if (project.warmup_required === false) return SKIP('warmup_required=false (Static-Site, registry)');
     if (!project.server || !project.path_server) return SKIP('kein Server');
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
@@ -2505,7 +2505,7 @@ async function main() {
     for (const [url, names] of sharedUrls) {
       console.log(`  FAIL  ${url}`);
       console.log(`        Projekte teilen diese DB: ${names.join(', ')}`);
-      console.log(`        → Jedes Projekt braucht eine eigene Instanz (Standard 051)`);
+      console.log(`        → Jedes Projekt braucht eine eigene Instanz (Standard 018)`);
     }
   }
 
