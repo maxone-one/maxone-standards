@@ -10,6 +10,8 @@
 - [B] Echte Umlaute, niemals ASCII-Ersatz
 - [C] Kein Gedankenstrich
 - [D] Fließender Schreibstil, kein KI-Aufzählungsstil
+- [E] Kein Hardcoding von Texten und Titeln
+- [F] Ehrliches Nudging, nie Dark Patterns
 
 ---
 
@@ -126,8 +128,37 @@ npm run check:umlauts:all      # Audit: alle getackten Quelltexte
 
 ---
 
+## F: Ehrliches Nudging, nie Dark Patterns
+
+**Regel:** Menschen dürfen sanft gelenkt (genudgt) werden, aber nur ehrlich, sparsam und nur dort, wo es ihnen wirklich hilft. Nie verbieten, nie täuschen, nie Dark Patterns. Die Wahlfreiheit bleibt immer voll erhalten.
+
+**Was ein Nudge ist:** eine Gestaltungs-Entscheidung, die einen Weg leichter oder naheliegender macht, ohne Alternativen zu entfernen (eine Voreinstellung, ein hervorgehobener "Empfohlen"-Knopf, ein Hinweis im richtigen Moment). Begriff aus der Verhaltensökonomie (Thaler/Sunstein).
+
+**Gilt für:** UX, Onboarding, Opt-ins, Consent-Dialoge, Paywalls, Copy und Produkt-Flows auf allen maxone-Properties.
+
+**Erlaubt gegen verboten:**
+
+| Ehrlicher Nudge (erlaubt) | Dark Pattern (verboten) |
+|---|---|
+| Vorteil offen anbieten, Ablehnen gleich sichtbar | Vorausgewählte Haken, versteckter oder grau getarnter Ablehnen-Knopf |
+| An echten Mehrwert- oder Grenz-Momenten platziert | Dauerndes Drängen, Nag-Screens, Pop-up-Wände |
+| Transparenter Wert-Tausch ("dafür bekommst du X") | Schuldgefühl- oder Scham-Texte ("Nein, ich will keine Vorteile") |
+| Wahre Aussagen | Fake-Knappheit, erfundener Social Proof, irreführende Zahlen |
+
+**Wie anwenden:**
+- Account- und Opt-in-Nudges nur an echten Grenzen, wo lokal oder anonym nicht mehr reicht (Sync, Bestellen, Teilen, Team). Wo es lokal reicht, wird NICHT genudgt, das wäre ein Lock.
+- Gegenprobe vor jedem Nudge: schubse ich ehrlich und einmalig an der richtigen Stelle, oder dränge, täusche oder beschäme ich? Beim kleinsten Zweifel weglassen.
+- Ablehnen ist immer gleichwertig sichtbar und gleich nah wie Zustimmen.
+
+**Verallgemeinerung:** die Brand-Ebene der Local-First-Produktregel "nie Lock, nur wenn lokal nicht mehr geht".
+
+**Warum:** Max-DNA, 2026-06-09: "nudging sollte in meine dna, das ist genau meins, Max DNA". Ehrlichkeit ist der Marken-Kern von maxone.one (siehe A, wir lügen nie), ein manipulativer Nudge widerspricht ihr direkt.
+
+---
+
 ## Audit
 
 **Umlaute:** `node scripts/check-umlauts.mjs all`, 0 Treffer erwartet. CI: Exit 1 bei neuen ASCII-Fallbacks in Diff.
 **Gedankenstrich:** `grep -r " — " src/` in Textdateien, 0 Treffer erwartet.
-**Hardcoding:** `grep -rn "title: { absolute:" app/ src/` — alle Treffer prüfen ob Literal oder `t('key')`.
+**Hardcoding:** `grep -rn "title: { absolute:" app/ src/`, alle Treffer prüfen ob Literal oder `t('key')`.
+**Nudging:** Review-Check (nicht grep-bar): keine vorausgewählten Opt-in-Haken, kein versteckter oder asymmetrischer Ablehnen-Knopf, keine Nag- oder Schuldgefühl-Texte, keine Account-Prompts wo lokal oder anonym reicht. 0 erwartet.
