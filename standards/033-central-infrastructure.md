@@ -40,7 +40,7 @@ Wenn eine Aufgabe nicht erledigt werden kann weil etwas fehlt:
 
 ## Cross-Project-Profit
 
-Jede Erweiterung wird dokumentiert und sofort auf bestehende Projekte angewendet wenn sie profitieren können. Broadcast via Standard 036-C (Cross-Project).
+Jede Erweiterung wird dokumentiert und sofort auf bestehende Projekte angewendet wenn sie profitieren können. Broadcast via Standard 021-C (Cross-Project).
 
 Beispiele bereits umgesetzter Erweiterungen:
 - `jobsearch` Job-Type im Crawler: findet offene Stellen, prüft ob noch offen, speichert in `job_listings`-Tabelle

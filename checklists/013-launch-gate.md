@@ -59,7 +59,7 @@ Wenn ein Punkt nicht zutrifft (z.B. kein Tracking, kein User-Login):
       aber Skript läuft trotzdem")
 - [ ] **AVV / DPA** abgeschlossen mit jedem Auftragsverarbeiter
       (Hetzner ✅ standardmäßig, Brevo ✅ im Account, Supabase ✅ Plus-Plan)
-- [ ] **Standard 041:** alle Auftragsverarbeiter in
+- [ ] **Standard 009:** alle Auftragsverarbeiter in
       `registry/projects.yml -> data_processors` dokumentiert
       (`service`, `purpose`, `personal_data`, `region`, `avv_status`,
       `evidence`, `reviewed_at`)

@@ -5,9 +5,10 @@
   "type": "module",
   "description": "Governance-Repo für Architektur-, Deploy-, Security- und Test-Standards aller maxone-Projekte",
   "scripts": {
-    "audit": "node scripts/audit.mjs",
+    "audit": "node scripts/check-standard-refs.mjs && node scripts/audit.mjs",
     "audit:local": "node scripts/audit.mjs --local-only",
-    "audit:project": "node scripts/audit.mjs --project"
+    "audit:project": "node scripts/audit.mjs --project",
+    "check:refs": "node scripts/check-standard-refs.mjs"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

@@ -109,4 +109,4 @@ CI-Check via `scripts/audit.mjs` (TODO):
 - Implementation-Referenz: [voltfair.de:lib/images/process-upload.ts](https://github.com/maxone-one/voltfair/blob/main/lib/images/process-upload.ts)
 - Brand-Spec: [Wiki brand/visual-style](https://github.com/maxone-one/dotfiles/blob/main/.claude/wiki/brand/visual-style.md) (nicht im Repo, lokal in `~/.claude/wiki/brand/`)
 - Foto-Setup-Entscheidung: 2026-05-20 (Max + Claude-Session)
-- Verwandte Standards: [040-german-umlauts](./040-german-umlauts.md) (Konsistenz-Prinzip)
+- Verwandte Standards: [020-brand-communication](./020-brand-communication.md) (Konsistenz-Prinzip)

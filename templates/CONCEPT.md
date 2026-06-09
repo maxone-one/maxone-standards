@@ -59,7 +59,7 @@ Policy). Service-Role nur server-seitig.
 Jeder Drittdienst, der Daten verarbeitet, mit Verarbeitungsrolle und
 AVV-Status. Dienste, die personenbezogene Daten im Auftrag verarbeiten, müssen
 vor Live-Gang zusätzlich in `registry/projects.yml -> data_processors` nach
-Standard 041 stehen.
+Standard 009 stehen.
 
 | Dienst         | Zweck                         | Server-Region | AVV/DPA           | Datenkategorie      |
 |----------------|-------------------------------|---------------|--------------------|---------------------|
@@ -69,7 +69,7 @@ Standard 041 stehen.
 | Stripe         | Zahlungen                     | EU/US         | ✅ Standard         | Zahlungsdaten       |
 | OpenAI / Anthropic | (nur falls genutzt)       | US            | …                   | …                   |
 
-**Registry-Abgleich (Standard 041):** geplante `data_processors`:
+**Registry-Abgleich (Standard 009):** geplante `data_processors`:
 
 | Dienst | Zweck | Datenkategorie | Region | AVV/DPA-Status | Nachweis-Ort |
 |--------|-------|----------------|--------|----------------|--------------|
