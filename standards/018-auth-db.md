@@ -151,6 +151,8 @@ Jeder KI-Mitarbeiter ist eine separate Identität mit eigenem Postfach, eigenen 
 
 **Onboarding neuer Agenten:** Principal in Stalwart anlegen, `email_accounts`-Zeile aktivieren, `mcp_keys`-Eintrag anlegen. Template: `ops/create-agent-principal.py` im Zentinel-Repo.
 
+**Externe und Kundenpostfächer (2026-06-18):** Max' Zentinel enthält ausschließlich maxone-eigene Postfächer (Max selbst, alle maxone-Marken, alle Wired-Mitarbeiter). Postfächer echter externer Personen und Kunden (z.B. `hey@viktoria-from.de`) werden NIEMALS an Max' Zentinel angebunden, weder über `add-account` noch per Direkt-Insert. Technisch erzwungen über `maxone.email_accounts.owner_scope` (`maxone` | `external`): `list-accounts` und alle kontoübergreifenden Pfade (`search-all`, Inbox-Überblick, Cron-Sweeps) filtern `owner_scope <> 'external'`, und das Auth-Gate (`index.ts`) weist jede account-bezogene Aktion auf ein `external`-Konto hart ab (auch bei direkt geratener `accountId`, egal ob User- oder MCP-Admin-Aufruf). Vor jeder Kontoanlage und jedem kontoübergreifenden Lauf das Ownership prüfen; im Zweifel auslassen. Trennlinie ist "maxone gegen echte Fremde", nicht "intern gegen Max". Vorfall: `hey@viktoria-from.de` war sichtbar und wurde versehentlich beim Massen-Aufräumen angefasst.
+
 ---
 
 ## Audit
