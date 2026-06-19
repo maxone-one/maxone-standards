@@ -6,8 +6,24 @@
 
 ## Inhalt
 
+- [C] Mail-Gateway-Pflicht: aller Outbound über mail.maxone.one (OBERSTE PRIORITÄT, löst A.1 ab)
 - [A] Mail-Architektur: Outbound=Brevo, Inbound+Sent=Stalwart
 - [B] Mailbox-Passwort-Sync: Ein Passwort, alle Stores
+
+---
+
+## C: Mail-Gateway-Pflicht (OBERSTE PRIORITÄT, 2026-06-19)
+
+Aller ausgehende Mailverkehr im Estate läuft durch genau EIN Gateway: `mail.maxone.one` (Repo `maxone-mailgate`). Kein Projekt ruft je einen Mail-Provider direkt (nicht Brevo, nicht SMTP, nicht SendGrid/Mailgun/SES/Postmark/Resend). Provider-Keys liegen ausschließlich im Gateway.
+
+- **Zwei Klassen, am Gateway erzwungen:** `/v1/tx` (Auth/Login/Checkout/1:1) vs. `/v1/outreach` (Kampagne). Ein tx-Token kann physisch keinen Outreach auslösen.
+- **Outreach ist fail-closed:** sendet nur bei offenem Send-Gate (default `paused`, 12h-Hard-Cap, Sign-Off + Consent-Proof Pflicht) und durchläuft 7 Pflicht-Gates: Kill-Switch, Consent (granted Pflicht), Suppression (globaler Hash), Cooldown, kardinalitätsbasierter Rate-Cap (Tenant + Estate), Footer + List-Unsubscribe, keine `noreply@`-Absender.
+- **tx ist kein Schmuggelweg:** Fan-out-Limit (gleicher Betreff an viele Empfänger) + pro-Empfänger-Limit.
+- **Kein Send ohne Log:** append-only `send_audit` als Single Source of Truth + NDJSON-Zweitkanal für den Wächter. Gateway-DB nicht erreichbar → hartes 503 (fail-closed), auch für tx.
+- **Detektion + Governance:** unabhängiger Wächter `mailwatch` (Schwelle 1) auf maxone-watchdog über ALLE Provider-Accounts, DMARC-`rua` auf allen Domains, jeder Scheduler in `triggers.yaml` (Estate-Census gegen Repo-vs-Server-Drift).
+- **Durchsetzung:** Egress-Default-DROP für Mail-Ports estate-weit (nur das Gateway darf raus, providerunabhängig) + Lint/CI-Verbot direkter Provider-Aufrufe.
+
+Begriff „sentinel" nie verwenden (beißt sich mit Zentinel), der Wächter heißt `mailwatch`. Hintergrund: Vorfall 2026-06-18 (ungewollter Geist-Versand ~150/Tag über Wochen, weil es mehrere unkontrollierte Sendepfade und keine Detektion gab). Volle Architektur (10 Bausteine, Rollout, Akzeptanz): `erfolgsstrategie/.planning/CONCEPT-outbound-mail-safety.html`.
 
 ---
 
@@ -15,7 +31,7 @@
 
 **Acht unverhandelbare Regeln** (destilliert aus 20 Bibel-Regeln + 5 Vorfällen):
 
-1. **Outbound = Brevo** über `https://api.brevo.com/v3/smtp/email`. Niemals Stalwart-SMTP, niemals nodemailer direkt zu einem anderen MTA.
+1. **Outbound = Brevo** über `https://api.brevo.com/v3/smtp/email`. Niemals Stalwart-SMTP, niemals nodemailer direkt zu einem anderen MTA. **(ABGELÖST durch C, 2026-06-19: direkter Brevo-Call ist nur noch IM Gateway `maxone-mailgate` erlaubt. Projekte rufen das Gateway, nie Brevo direkt. Das untenstehende Pre-Flight-Pattern lebt jetzt im Gateway weiter.)**
 2. **Stalwart-Logs zeigen niemals ausgehende App-Mails**, wer dort nach Outbound sucht, sucht falsch.
 3. **Inbound + Sent-Folder = Stalwart** über JMAP (`http://stalwart-mail:8080/jmap/session`, intern). Nie die Public-URL aus Edge-Functions.
 4. **Brevo-Domain-Pre-Flight Pflicht** vor jedem Send: ohne `authenticated:true && verified:true` in `GET /v3/senders/domains` wird der Send lokal abgewiesen (Status `rejected_unauthenticated_domain`).

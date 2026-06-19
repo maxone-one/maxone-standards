@@ -20,7 +20,8 @@ Jede neue Funktion entsteht im zentralen Dienst und profitiert allen Projekten s
 |--------|-----|-------|
 | Crawler | https://crawler.maxone.one | Lead-Discovery, Stellensuche, Inbox-Checks, Web-Scraping |
 | Enricher | https://enricher.maxone.one | Website-Email-Enrichment, Datenanreicherung |
-| Outreacher | https://outreach.maxone.one | E-Mail-Sequenzen, Outbound |
+| Outreacher | https://outreach.maxone.one | E-Mail-Sequenzen, Outbound (Sende-Engine, sendet über das Gateway) |
+| Mail-Gateway | https://mail.maxone.one | EINZIGER Engpass für allen ausgehenden Mailverkehr (tx + outreach), fail-closed + Consent + append-only Audit. Einziger Halter der Provider-Keys. Spec: Standard 016-C. |
 
 Alle drei sind API-first und von KI bedienbar. Neue Fähigkeiten werden als neue Job-Typen, Sources oder Worker eingebaut, nicht als Einzelskripte in Projekten.
 
@@ -53,4 +54,5 @@ Beispiele bereits umgesetzter Erweiterungen:
 - Eigener Crawler-Code in Projekten (kein `fetch` + loop + Regex statt Crawler-API)
 - Eigener Enricher-Code (kein manuelles WHOIS/Scraping statt Enricher-API)
 - Eigene Outreach-Skripte (kein direktes Brevo-Call statt Outreacher-API)
+- **Direkter Mail-Provider-Aufruf aus IRGENDEINEM Repo** (Brevo, SMTP, SendGrid, Mailgun, SES …). Aller Mailversand läuft über das Gateway `mail.maxone.one`, Provider-Keys nur dort. Spec: Standard 016-C.
 - Begründung "das geht nicht" ohne vorherigen Bauversuch

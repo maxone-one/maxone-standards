@@ -1,8 +1,16 @@
 # 028: Brevo Transactional API für Outreach-Sends
 
-**Status:** active  
-**Gilt für:** SLF (stadtlahnflow.de), übertragbar auf jedes Projekt mit Outreach-Versand  
+**Status:** ABGELÖST durch 016-C (Mail-Gateway-Pflicht, 2026-06-19)  
+**Gilt für:** nur noch INTERN im Gateway `maxone-mailgate`  
 **Zuletzt aktualisiert:** 2026-05-28
+
+> **Achtung (2026-06-19):** Projekte rufen die Brevo-API NICHT mehr direkt. Aller
+> Outreach läuft über das zentrale Gateway `mail.maxone.one` (`POST /v1/outreach`),
+> siehe Standard 016-C. Der hier beschriebene Brevo-Client + die Tracking-/
+> Suppression-/Tags-Mechanik leben jetzt IM Gateway (einziger Halter der Provider-
+> Keys). Dieses Dokument bleibt als Referenz für die Provider-interne Umsetzung im
+> Gateway. Hintergrund: Vorfall 2026-06-18 (ungewollter Geist-Versand). Volle
+> Architektur: `erfolgsstrategie/.planning/CONCEPT-outbound-mail-safety.html`.
 
 ---
 
