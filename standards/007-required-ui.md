@@ -10,7 +10,8 @@
 - [B] Credits aus zentraler API
 - [C] Vector-Chat-Widget
 - [D] Footer-Standard
-- [E] Keine Scrollbalken (Layout-Qualität)
+- [E] Keine Scrollbalken (Layout-Qualität) + kein Mobile-Overflow (E.2)
+- [F] Design-first-Validierung vor dem Bau (nie blind bauen)
 
 ---
 
@@ -122,6 +123,55 @@ Ein Scrollbalken ist ein UI-Defektsignal, kein neutrales Bedienelement. Er bedeu
 **Pflicht-Check:** Vor jedem "fertig" bei UI-Arbeit prüfen, ob irgendwo ein Scrollbalken entsteht. Wenn ja, ist die UI nicht fertig, sondern muss verdichtet werden. Diese Prüfung gehört fest in den Verifikationsschritt jeder Frontend-Aufgabe.
 
 Direktive Max, mehrfach gesagt, verbindlich ab 2026-06-09.
+
+### E.2: Kein horizontaler Überlauf auf Mobile (schwimmende Layouts)
+
+Schwimmende Layouts sind ein No-Go. Jede Seite MUSS bei Handy-Breite (Viewport <= 375px, getestet bei 360 UND 320) ohne horizontalen Scroll und ohne seitliches Driften funktionieren. Mobil wird mit dem Daumen bedient, jedes horizontale Überlaufen fällt sofort auf. Laut Max der Default-Fehler bei KI-gebauten Seiten, muss aufhören.
+
+**Häufigste Wurzel + Fix:**
+- Responsive Grids: `grid-template-columns: repeat(auto-fit, minmax(min(Npx, 100%), 1fr))`, NIE `minmax(Npx, 1fr)`. Die feste Min-Breite kann sonst auf schmalen Screens nicht schrumpfen, die Spalte wird breiter als der Viewport.
+- `* { min-width: 0; }` (Grid/Flex-Kinder überlaufen sonst via min-content).
+- `img, video, svg, table { max-width: 100%; }`. Kein `100vw` (enthält die Scrollbar-Breite).
+- Backstop: `html, body { overflow-x: hidden; }`, aber nur als Netz, die Wurzel muss trotzdem stimmen (sonst kaschiert es den Bug).
+- SSoT-/Inline-JS, das Grids setzt (z.B. portfolio.js): dieselbe `minmax(min(...,100%),...)`-Regel.
+
+**Pflicht-Check (Playwright, Mobile-Viewport, nach Scroll bis unten):**
+```js
+const vw = document.documentElement.clientWidth;
+const offenders = [...document.querySelectorAll('*')]
+  .filter(el => { const r = el.getBoundingClientRect(); return r.right > vw + 1 || r.left < -1; });
+// MUSS gelten: document.documentElement.scrollWidth <= vw  UND  offenders.length === 0
+```
+`getBoundingClientRect` deckt echten Überlauf auch unter `overflow-x:hidden` auf, also nicht nur `scrollWidth` prüfen. Vorfall: maxone-Landingpages schwammen (`minmax(420px,1fr)`-Karten), 2026-06-24.
+
+---
+
+## F: Design-first-Validierung vor dem Bau (nie blind bauen)
+
+**Regel (Max-Direktive 2026-07-01, imperativ):** Jedes neue Projekt und jede neue kundenseitige Oberfläche wird zuerst über ein visuelles Design-/Prototyping-Tool validiert, bevor Produktionscode entsteht. **Niemals blind bauen.** Bestehende Projekte werden retroaktiv nachgezogen (design-validiert und angeglichen), priorisiert nach Kundennähe und UX-Wichtigkeit.
+
+**Werkzeuge (gleichwertig, nach Kontext wählen):**
+- **Claude Design** (claude.ai/design), Sync zum Code über `/design-sync` (bidirektional). **Kein Zeichenlimit** im Brief. Stellt vor dem Bau strukturierte Rückfragen (Checkliste unten), die ein guter Brief bereits vollständig vorwegnimmt.
+- **Figma Make / Figma-MCP** (design-to-code + code-to-design). **Prompt-Limit 2000 Zeichen**, also verdichten (echte Umlaute sparen Zeichen).
+- **Framer** oder ähnliche visuelle Tools.
+
+**Ablauf (Gate, verankert im CONCEPT -> PLAN -> Code-Fluss, Standard 008/029):**
+1. Kern-Screens als Design/Prototyp erzeugen.
+2. Prüfen: Optik, Flow, selbsterklärend, mobil, Vertrauen (Standard 007 A-E).
+3. Erst nach OK bauen.
+
+**Brief-Checkliste (die Dimensionen, die Claude Design abfragt, im Brief immer vorwegnehmen):**
+1. Deliverable: interaktiver Prototyp (Screens klickbar verbunden) / statische Hi-Fi-Screens / Varianten zum Vergleich.
+2. Viewport-Priorität: mobil zuerst (unser Default) / mobil + Desktop / Desktop zuerst.
+3. Interaktivitätsgrad: voll interaktiv / teilweise / rein visuell.
+4. Von welchen Screens Varianten gewünscht sind.
+5. Typografie-Richtung: neutral-präzise / geometrisch-technisch / humanistisch-freundlich / charaktervolle Grotesk.
+6. Datenrealismus: echte Domänen-Namen + realistische Daten (Default, macht testbar) vs. generische Platzhalter. Echte Firmen-/Personendaten nie (DSGVO), öffentliche Namen wie Netzbetreiber sind ok.
+7. Preisdarstellung: dezent; bei noch unvalidiertem Preis beide Modelle zeigen, nicht festnageln.
+8. Domänen-/Regions-Referenz: Branche, Region, reale Bezugsgrößen für realistische Beispiele.
+9. Look/Flow-Vorbild: den gewünschten Effekt NEUTRAL beschreiben, niemals eine fremde Marke nennen (Standard 020, "keine fremden Marken").
+
+**Werkzeug-Details + Stack** (shadcn/Radix/Base UI, Motion, React Hook Form + Zod, Formular-Prinzipien, gsd-ui-* Skills, Playwright-Verifikation): Memory `reference_design_ux_toolchain`.
 
 ---
 
