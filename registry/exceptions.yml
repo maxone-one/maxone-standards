@@ -121,14 +121,6 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
-  # repivot verwendet build: in docker-compose.yml — CI/CD-Pipeline noch nicht migriert.
-  - project: repivot
-    standard: '002'
-    reason: "docker-compose.yml nutzt noch build: statt image: — CI/CD-Pipeline-Migration ausstehend."
-    granted_at: '2026-05-12'
-    expires_until: '2026-11-12'
-    granted_by: max
-
   # plansey verwendet NextAuth (JWT-Sessions) statt Supabase SSR Auth.
   # @supabase/ssr ist nur für DB-Zugriffe (server-side queries), nicht für Auth.
   # Token-Refresh läuft über NextAuth's auth()-Call in middleware.ts.
@@ -139,6 +131,17 @@ exceptions:
     expires_until: '2026-11-12'
     granted_by: max
 
+
+  # vanfree hat PLAN.md seit 2026-06-08 bewusst durch die GSD .planning/-Struktur
+  # abgelöst (ROADMAP.md/STATE.md/REQUIREMENTS.md als SSoT). PLAN.md selbst sagt
+  # das explizit ("ist abgelöst") — Noch-offen/Erledigt-Abschnitte dort nachtragen
+  # wäre irreführend. Check 048 kennt das GSD-.planning-Muster noch nicht.
+  - project: vanfree
+    standard: '048'
+    reason: "PLAN.md bewusst durch .planning/ROADMAP.md + STATE.md (GSD) abgelöst seit 2026-06-08, siehe PLAN.md selbst. Kein Rückbau geplant."
+    granted_at: '2026-07-06'
+    expires_until: '2027-01-06'
+    granted_by: max
 
   # vanfree hat keine Footer-Komponente — wird in nächstem UI-Sprint nachgerüstet.
   - project: vanfree
@@ -369,42 +372,6 @@ exceptions:
     granted_by: max
 
   # --- Standard 051: DB-Isolation ---
-
-  # vector ist ein Infra-Ops-Agent — er aggregiert read-only Daten aus mehreren
-  # Projekten (SLF, vanfree, voltfair) und nutzt panel.maxone.one als eigene
-  # primäre DB. Kein Cross-Projekt-Schreiben; Ausnahme gilt nur solange
-  # vector ausschließlich read-only Monitoring-Zugriff auf Fremd-DBs hält.
-  - project: vector
-    standard: '051'
-    reason: "Infra-Ops-Agent mit read-only Monitoring-Zugriff auf mehrere Projekt-DBs. Kein Schreiben auf Fremd-Instanzen. Langfristig: API-basierter Datenzugriff statt direkter DB-URLs."
-    granted_at: '2026-05-18'
-    expires_until: '2026-11-18'
-    granted_by: max
-
-  # repivot teilt panel.maxone.one mit maxone.one — Migration auf eigene Supabase-Instanz ausstehend.
-  - project: repivot
-    standard: '051'
-    reason: "Teilt panel.maxone.one mit maxone.one — eigene Supabase-Instanz ausstehend (Migration-Sprint nötig)."
-    granted_at: '2026-05-18'
-    expires_until: '2026-11-18'
-    granted_by: max
-
-  # stadtpunkt teilt panel.maxone.one mit maxone.one — Migration auf eigene Supabase-Instanz ausstehend.
-  - project: stadtpunkt
-    standard: '051'
-    reason: "Teilt panel.maxone.one mit maxone.one — eigene Supabase-Instanz ausstehend (Migration-Sprint nötig)."
-    granted_at: '2026-05-18'
-    expires_until: '2026-11-18'
-    granted_by: max
-
-  # plansey-2026 verbindet direkt auf supabase-db:5432 (maxone.one DB-Container).
-  # Dies ist ein FAIL — direkte Container-DB-Verbindung. Migration dringend.
-  - project: plansey-2026
-    standard: '051'
-    reason: "DATABASE_URL zeigt direkt auf supabase-db:5432 (maxone.one DB-Container) — kritische Verletzung. Eigene DB-Instanz muss vor nächstem Datenschutz-Review bereitstehen."
-    granted_at: '2026-05-18'
-    expires_until: '2026-08-18'
-    granted_by: max
 
   # voltfair Deploy-Pfad ist ein lokales deploy.sh auf dem Server (Coolify-Stil,
   # kein GitHub-Actions-CI-Workflow). docker build + Image-Transfer läuft manuell

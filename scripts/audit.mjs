@@ -313,8 +313,10 @@ const localChecks = {
     if (project.name === 'maxone.one') return PASS('hostet Widget mit, Einbau geprüft separat');
     if (project.tags === 'infra') return SKIP('Infra-Projekt');
     if (project.tags === 'internal') return SKIP('Internes Tool');
+    const widgetAutoLoader = grepRepo(project.path_local, /agent\.maxone\.one\/widget\/embed\.js/, 1);
     const widgetNew = grepRepo(project.path_local, /agent\.maxone\.one\/widget\/vector-chat\.js/, 1);
     const widgetOld = grepRepo(project.path_local, /agent\.maxone\.studio\/widget/, 1);
+    if (widgetAutoLoader.length) return PASS(`eingebunden via Auto-Loader in ${widgetAutoLoader[0]}`);
     if (widgetNew.length) return PASS(`eingebunden in ${widgetNew[0]}`);
     if (widgetOld.length) return WARN(`alte URL agent.maxone.studio in ${widgetOld[0]}`);
     // Some projects (z.B. SLF) beziehen die Widget-URL aus einer env-Variable, um
@@ -1833,6 +1835,7 @@ const localChecks = {
       return SKIP(`status=${project.status}`);
     if (project.status !== 'live') return SKIP(`status=${project.status ?? 'null'}`);
     if (!project.server) return SKIP('kein Container-Deploy');
+    if (!project.path_local) return SKIP('kein path_local');
 
     const tags = Array.isArray(project.tags) ? project.tags : [project.tags].filter(Boolean);
     const isInfra = tags.includes('infra');
