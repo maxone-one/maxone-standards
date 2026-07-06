@@ -39,6 +39,12 @@ Backups, Updates) trivial.
 - Subprojekte → `<name>.maxone.one` (DNS-Record einzeln, kein Wildcard)
 - Niemals neue Resourcen auf `maxone.studio` (siehe 008)
 
+**Docker-Netzwerke (2026-07-06):**
+- Schema `<scope>-<tier>`.
+- Geteiltes Edge-Netz (Traefik-Routing, alle Container): `maxone-public`. Ein einziges Netz, kein Splitting pro Projekt (Traefik-Routing-Komplexität ohne Nutzen).
+- Privates Projekt-Netz (DB/interne Services): `<projekt>-private`, ersetzt bisher compose-autogenerierte Namen (`<projekt>_<projekt>-internal` o.ä.).
+- Ersetzt das verwaiste Coolify-Relikt-Netz `coolify` (Alt-Alias-Kollisionen zwischen Kundenprojekten, siehe Vorfall 2026-06-05). Rollout welle-weise, kein Big-Bang: Welle 1 bei `maxone-sign` bereits umgesetzt, Rest der Plattform folgt opportunistisch bei nächstem Anfassen des jeweiligen Projekts.
+
 ## Audit
 
 `scripts/audit.mjs` prüft:
