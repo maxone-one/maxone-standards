@@ -99,6 +99,24 @@ fix(<projekt>): resolve BCAST-YYYY-MM-DD-<slug>
 
 **Warum:** Drift entsteht wenn Änderung in A still B-N bricht. Vorfall 2026-04-22: `maxone.studio`→`maxone.one`-Wechsel, hardkodierte Studio-URLs in mehreren Projekten, Entdeckung Wochen später.
 
+## D: Claude-Artefakte — niemals in Repos (OBERSTE PRIORITÄT, 2026-06-04)
+
+Claude-Konfigurationsdateien sind rein lokal und dürfen in keinem Git-Repository auftauchen — weder committed noch in einer projekt-lokalen `.gitignore` referenziert.
+
+**Betroffene Dateien:** `CLAUDE.md`, `AGENTS.md`, `.claude/`, `.clinerules`, `.cursorrules`, `.antigravityrules`, `*.session`
+
+**Durchsetzung:** Globale Git-Excludes-Datei (`~/.gitignore_global`), konfiguriert via `git config --global core.excludesfile ~/.gitignore_global`. Rein maschinenlokal, wird nie gepusht.
+
+**Verboten:** `git add CLAUDE.md`, Einträge für Claude-Artefakte in projekt-lokalen `.gitignore`-Dateien.
+
+**Bestehende Repos bereinigen:**
+```bash
+git rm --cached CLAUDE.md AGENTS.md
+git commit -m "chore: Claude-Artefakte aus Git-Tracking entfernen"
+```
+
+**Warum:** Claude-Dateien enthalten Geschäftsstrategie und interne KI-Konfiguration. Sie gehören nicht in Versionsgeschichten, auch nicht in private Repos. Die Extension-Strategie erfordert zusätzlich, dass kein venfree-Kontext in unabhängige Repos leckt.
+
 ---
 
 ## Audit

@@ -49,6 +49,18 @@ Beispiele bereits umgesetzter Erweiterungen:
 
 ---
 
+## Fremder Kunde = Referenz, Eigengebrauch = Tenant-Flag
+
+**Ein zentraler Dienst wird immer für den fremden Kunden gebaut, nie für den Eigengebrauch.** Der fremde Kunde ist die Referenz und das Zielbild. Der eigene Gebrauch (maxone selbst als Nutzer eines Dienstes) ist nur ein **Tenant-Flag** auf demselben Pfad, niemals ein zweiter Codepfad und niemals eine Abkürzung, die zur Architektur wird.
+
+Konkret: braucht der Eigengebrauch eine Sonderbehandlung (z.B. „meine eigenen Leads sind sofort akzeptiert, ohne Bezahlvorgang"), wird das als Tenant-Konfiguration gelöst (`auto_approve=true`), die im normalen Kundenpfad einfach einen Schritt überspringt. Der Kundenpfad bleibt der einzige Pfad.
+
+Begründung: sobald der Eigengebrauch einen eigenen, kürzeren Codeweg bekommt, verrottet der Kundenpfad ungetestet, und die Dogfooding-Abkürzung wird versehentlich zur Produktrealität. Wer für den Kunden baut und sich selbst als Tenant behandelt, testet den Kundenpfad bei jeder eigenen Nutzung mit.
+
+Anwendungsfall (Lead-Liefer-Produkt, 2026-07): Kunde bestellt Leads, bekommt sie pseudonymisiert, akzeptiert pro Lead (Mollie-Abrechnung). Der Eigengebrauch (GridDone) ist ein Tenant mit `auto_approve`, dessen Karten sofort als akzeptiert gelten, ohne Abrechnungsereignis, auf demselben Auslieferungs-Codepfad. Konzept: `maxone-enricher/LEAD-CRM-ZIELBILD.md`.
+
+---
+
 ## Verbot
 
 - Eigener Crawler-Code in Projekten (kein `fetch` + loop + Regex statt Crawler-API)
