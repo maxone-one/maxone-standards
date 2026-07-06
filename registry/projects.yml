@@ -461,3 +461,69 @@ projects:
         evidence: Brevo DPA im Account hinterlegt
         reviewed_at: "2026-05-30"
     notes: "Phase 0 der neuen Plansey-Strategie. Verlobungsverkündungs-Plattform (React 18 + Vite + Tailwind + shadcn/ui + Supabase + Mollie). Kein bekanntes Server-Deployment Stand 2026-05-26. Plansey-Produktfamilie: Legacy (2015/PHP) + 2026 (Next.js) + Engaged (Phase 0)."
+
+  - name: marek
+    workspace: marek
+    domain: null  # noch nicht deployed; geplant api.marek.maxone.one / db.marek.maxone.one
+    server: null  # eigener EU-Server (Hetzner) geplant, siehe marek/docs/architektur.md
+    deploy: null
+    container: null  # geplant marek-* (eigene DB, Standard 018 DB-Isolation)
+    supabase_url: null  # nacktes PostgreSQL, kein Supabase
+    status: dev
+    tags: customer
+    external_subscriptions: []  # noch keine; geplant Hetzner (vps-hosting) + WhatsApp-BSP, sobald Bausteine entschieden
+    data_processors: []  # Pflicht erst vor Live-Gang; Auswahl WhatsApp-Kanal/STT/OCR offen, siehe marek/docs/oekosystem-recherche.md
+    outbound_avv:
+      - client: "Marek Sitowski"
+        contact: null
+        avv_status: missing
+        evidence: null
+        reviewed_at: "2026-07-05"
+        notes: "Erster zahlender Kunde der KI-Integrations-Schiene. Max verarbeitet Mareks personenbezogene Kunden-, Geschäfts- und Belegdaten als Auftragsverarbeiter (DSGVO Art. 28). AVV vor Verarbeitung unterzeichnen. Konzept: marek/CONCEPT.md (Gate 1, Status Draft)."
+    notes: "KI-Assistent per WhatsApp plus Belegerfassung (DE/PL), aufzeichnen statt verbuchen. Deal nur mündlich (niedriger vierstelliger Referenzpreis, Cloud statt Mac Mini). Fakturierung erst nach Gate G0 (Vorinsolvenz, mit Anwalt Schneider). Repo Stand 2026-07-05 nur lokal (kein Remote), GitHub maxone-one privat nach Freigabe durch Max."
+
+  - name: maxone-sign
+    workspace: maxone-sign
+    domain: sign.maxone.one
+    server: maxone-prod
+    deploy: single
+    container: maxone-sign-app
+    supabase_url: null  # nacktes Postgres (maxone-sign-db), kein Supabase
+    status: live
+    tags: internal
+    external_subscriptions:
+      - service: Hetzner
+        reason: vps-hosting
+        cost_per_month_eur: variabel
+        sunset_plan: keiner - VPS-Hosting ist strukturell notwendig (geteilt mit maxone-prod)
+    last_review_date: "2026-07-06"
+    data_processors:
+      - service: Hetzner
+        purpose: VPS-Hosting (maxone-prod)
+        personal_data: IP-Adressen, Log-Daten
+        region: EU (Deutschland)
+        avv_status: standard-terms
+        evidence: Hetzner AV-Vertrag automatisch per DSGVO/AGB
+        reviewed_at: "2026-07-06"
+      - service: Brevo
+        purpose: Einladungs- und Bestätigungsmail beim Klick-Annahme-Flow
+        personal_data: E-Mail-Adressen, Namen, Vertragsdaten
+        region: EU (Frankreich)
+        avv_status: account-enabled
+        evidence: Brevo DPA im Account hinterlegt
+        reviewed_at: "2026-07-06"
+        notes: "Übergangszustand (Standard 016 präzisiert 2026-07-06): Brevo ist estate-weit nur noch für Outreach-Kampagnen vorgesehen, transaktionale Mail soll self-hosted über Stalwart laufen. Stalwart-Submission-Adapter in maxone-mailgate noch nicht gebaut, daher läuft dieser Dienst technisch noch über Brevo."
+    notes: "Ebene-1-Klick-Annahme-Dienst (Vertrag/AVV per Link annehmen ohne Signatur, append-only Audit-Trail), gebaut für den ersten Marek-Vorgang, als wiederverwendbare Infra für künftige Kunden gedacht. D14 (marek/docs/DECISIONS.md): für Marek konkret ist Telegram der primäre Zustellkanal, nicht E-Mail, dieser Dienst wurde aber vor D10/D14 email-basiert konzipiert und noch nicht auf Telegram-Zustellung nachgezogen. Documenso-Vorgänger eingemottet, nicht gelöscht."
+
+  - name: maxone-telegram-gate
+    workspace: maxone-telegram-gate
+    domain: null  # noch nicht deployed, lokal gebaut und getestet
+    server: null
+    deploy: null
+    container: null
+    supabase_url: null  # nacktes Postgres, kein Supabase
+    status: dev
+    tags: internal
+    external_subscriptions: []  # geplant Hetzner (vps-hosting), sobald deployed
+    data_processors: []  # Pflicht vor Live-Gang; Telegram + Mollie folgen bei Deploy
+    notes: "Koppelt Telegram-Gruppenbeitritt (chat_join_request) automatisiert an eine Mollie-Zahlung, ohne Telegrams eigene Stars-Zahlungsschiene zu nutzen (ToS-Recherche: zulässig, weil physical statt digital service). Entstanden aus einer Marek-Session (marek/.planning/SESSION-LOG.md Session 16), bewusst als eigenständiges, wiederverwendbares Repo angelegt, kein Teil des Marek-Kernsystems. Gate 1 durchlaufen, lokal gebaut und getestet. Noch offen: echtes Bot-Konto, echter Mollie-Key, Prod-Deploy (eigenes Gate)."
