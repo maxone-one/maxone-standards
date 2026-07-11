@@ -22,8 +22,19 @@ Jede neue Funktion entsteht im zentralen Dienst und profitiert allen Projekten s
 | Enricher | https://enricher.maxone.one | Website-Email-Enrichment, Datenanreicherung |
 | Outreacher | https://outreach.maxone.one | E-Mail-Sequenzen, Outbound (Sende-Engine, sendet über das Gateway) |
 | Mail-Gateway | https://mail.maxone.one | EINZIGER Engpass für allen ausgehenden Mailverkehr (tx + outreach), fail-closed + Consent + append-only Audit. Einziger Halter der Provider-Keys. Spec: Standard 016-C. |
+| n8n (Automatisierung) | selfhosted auf maxone-prod | No-Code-/Workflow-Automatisierung + Webhook-Orchestrierung, projektübergreifender Hub. Kein gehostetes SaaS (Zapier/Make). |
 
 Alle drei sind API-first und von KI bedienbar. Neue Fähigkeiten werden als neue Job-Typen, Sources oder Worker eingebaut, nicht als Einzelskripte in Projekten.
+
+---
+
+## No-Code-Automatisierung: selfhosted n8n, nie Zapier/Make
+
+Alle No-Code-/Workflow-Automatisierung und Webhook-Orchestrierung läuft über **selfhosted n8n** (auf maxone-prod), nie über Zapier, Make oder ein anderes gehostetes SaaS. Grund: Datenhoheit, selfhosted-Linie, keine laufenden Fremdkosten, "Code für KI, von KI". Analog zur Tool-Wahl-Logik Mollie-nie-Stripe und Claude-CLI-nie-Anthropic-API.
+
+- n8n ist der **projektübergreifende Automatisierungs-Hub**: jedes Projekt (snapflow, venfree, alle maxone-Properties) hängt seine Webhooks dort ein, statt je Projekt einen eigenen SaaS-Connector.
+- Eigene Dienste bleiben **toolagnostisch**: sie sprechen Standard-HTTP/JSON und senden signierte Webhooks (HMAC). n8n konsumiert sie nativ, der Dienst weiß nichts von n8n, kein Vendor-Lock-in.
+- Optionaler Ein-Klick-Komfort je Dienst: eine eigene n8n-Community-Node oder ein fertiges Workflow-Template (analog zu einem WordPress-Plugin), nie eine harte Kopplung.
 
 ---
 
@@ -66,5 +77,6 @@ Anwendungsfall (Lead-Liefer-Produkt, 2026-07): Kunde bestellt Leads, bekommt sie
 - Eigener Crawler-Code in Projekten (kein `fetch` + loop + Regex statt Crawler-API)
 - Eigener Enricher-Code (kein manuelles WHOIS/Scraping statt Enricher-API)
 - Eigene Outreach-Skripte (kein direktes Brevo-Call statt Outreacher-API)
+- No-Code-/Automatisierungs-SaaS (Zapier, Make, IFTTT o.ä.) für Workflow-/Webhook-Orchestrierung. Stattdessen selfhosted n8n auf maxone-prod.
 - **Direkter Mail-Provider-Aufruf aus IRGENDEINEM Repo** (Brevo, SMTP, SendGrid, Mailgun, SES …). Aller Mailversand läuft über das Gateway `mail.maxone.one`, Provider-Keys nur dort. Spec: Standard 016-C.
 - Begründung "das geht nicht" ohne vorherigen Bauversuch
